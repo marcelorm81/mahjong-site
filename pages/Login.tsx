@@ -107,14 +107,16 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
       <motion.div
         initial={{ opacity: 0, scale: 0.95, x: '-50%' }}
         animate={{
-          opacity: (animStage >= 2 && !isUIReady) ? 1 : 0, // Fade out when UI ready
+          opacity: animStage >= 2 ? 1 : 0,
           scale: animStage >= 2 ? 1 : 0.95,
-          left: '50%', // Centered
-          x: '-50%'
+          left: '50%',
+          // When UI is ready: slide out to the right (+150% from centre = off-screen right)
+          x: isUIReady ? '50%' : '-50%',
         }}
         transition={{
           opacity: { duration: 0.7 },
-          scale: { duration: 0.7, ease: "easeOut" }
+          scale: { duration: 0.7, ease: "easeOut" },
+          x: { duration: 0.7, ease: [0.4, 0, 0.2, 1] },
         }}
         className="absolute z-10 bottom-[20vh] md:bottom-0 w-full h-[112%] md:h-[95%] pointer-events-none origin-bottom"
       >
@@ -169,10 +171,10 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
       {/* 6. Login UI Form */}
       <AnimatePresence>
         {isUIReady && (
-          <motion.div 
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
+          <motion.div
+            initial={{ x: '-60%', opacity: 0 }}
+            animate={{ x: '0%', opacity: 1 }}
+            transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
             className="absolute inset-0 z-40 flex flex-col items-center justify-center pt-[140px] md:pt-[160px]"
           >
              <div className="w-full max-w-xs px-6">
