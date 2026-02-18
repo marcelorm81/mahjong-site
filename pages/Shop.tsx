@@ -250,27 +250,45 @@ const VoucherCard: React.FC<{ item: VoucherItem; index: number }> = ({ item, ind
 
 // ── Awning — roof.png tiled, true full-viewport bleed, no gaps ────────────
 // Tile: 262×217px. Contains 2 scallop arches; bottom ~30px is transparent shadow.
-// Display at 140px tall, tile width scaled proportionally: 262*(140/217) ≈ 169px.
-// repeat-x fills the full viewport. calc(-50vw+50%) bleeds to viewport edges.
+// Mobile: 80px tall. Desktop: 140px tall. Width scaled proportionally.
 const TILE_NATURAL_W = 262;
 const TILE_NATURAL_H = 217;
-const DISPLAY_H      = 140;
-const DISPLAY_W      = Math.round(TILE_NATURAL_W * (DISPLAY_H / TILE_NATURAL_H)); // ≈169px
+const DISPLAY_H_MOBILE  = 80;
+const DISPLAY_H_DESKTOP = 140;
+const DISPLAY_W_MOBILE  = Math.round(TILE_NATURAL_W * (DISPLAY_H_MOBILE  / TILE_NATURAL_H)); // ≈97px
+const DISPLAY_W_DESKTOP = Math.round(TILE_NATURAL_W * (DISPLAY_H_DESKTOP / TILE_NATURAL_H)); // ≈169px
 
 const Awning: React.FC = () => (
-  <div
-    className="mb-5 flex-shrink-0"
-    style={{
-      marginLeft:  'calc(-50vw + 50%)',
-      marginRight: 'calc(-50vw + 50%)',
-      width:       '100vw',
-      height:      DISPLAY_H,
-      backgroundImage:    'url(/assets/roof.png)',
-      backgroundRepeat:   'repeat-x',
-      backgroundSize:     `${DISPLAY_W}px ${DISPLAY_H}px`,
-      backgroundPosition: 'top left',
-    }}
-  />
+  <>
+    {/* Mobile awning */}
+    <div
+      className="mb-4 flex-shrink-0 md:hidden"
+      style={{
+        marginLeft:  'calc(-50vw + 50%)',
+        marginRight: 'calc(-50vw + 50%)',
+        width:       '100vw',
+        height:      DISPLAY_H_MOBILE,
+        backgroundImage:    'url(/assets/roof.png)',
+        backgroundRepeat:   'repeat-x',
+        backgroundSize:     `${DISPLAY_W_MOBILE}px ${DISPLAY_H_MOBILE}px`,
+        backgroundPosition: 'top left',
+      }}
+    />
+    {/* Desktop awning */}
+    <div
+      className="mb-5 flex-shrink-0 hidden md:block"
+      style={{
+        marginLeft:  'calc(-50vw + 50%)',
+        marginRight: 'calc(-50vw + 50%)',
+        width:       '100vw',
+        height:      DISPLAY_H_DESKTOP,
+        backgroundImage:    'url(/assets/roof.png)',
+        backgroundRepeat:   'repeat-x',
+        backgroundSize:     `${DISPLAY_W_DESKTOP}px ${DISPLAY_H_DESKTOP}px`,
+        backgroundPosition: 'top left',
+      }}
+    />
+  </>
 );
 
 // ── Main Shop Page ─────────────────────────────────────────────────────────

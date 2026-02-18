@@ -104,23 +104,23 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
       </motion.div>
 
       {/* 2. Characters Layer - Z-Index 10 (Lower than Logo) */}
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.6, x: '-50%' }}
-        animate={{ 
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, x: '-50%' }}
+        animate={{
           opacity: (animStage >= 2 && !isUIReady) ? 1 : 0, // Fade out when UI ready
-          scale: animStage >= 2 ? 0.65 : 0.6, 
+          scale: animStage >= 2 ? 1 : 0.95,
           left: '50%', // Centered
-          x: '-50%' 
+          x: '-50%'
         }}
-        transition={{ 
+        transition={{
           opacity: { duration: 0.7 },
           scale: { duration: 0.7, ease: "easeOut" }
         }}
-        className="absolute z-10 bottom-0 w-full h-[70%] md:h-[90%] pointer-events-none origin-bottom"
+        className="absolute z-10 bottom-0 w-full h-[80%] md:h-[95%] pointer-events-none origin-bottom"
       >
-        <img 
-          src={CHARACTERS_IMAGE} 
-          alt="Characters" 
+        <img
+          src={CHARACTERS_IMAGE}
+          alt="Characters"
           className="w-full h-full object-contain object-bottom drop-shadow-[0_20px_50px_rgba(0,0,0,0.8)]"
         />
       </motion.div>
@@ -128,18 +128,18 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
       {/* 4. Logo Layer - Z-Index 30 (Higher than Characters) */}
       <div className="absolute inset-0 z-30 flex flex-col items-center pointer-events-none">
         <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: '25vh' }}
-          animate={{ 
-            opacity: animStage >= 4 ? 1 : 0, 
+          initial={{ opacity: 0, scale: 0.9, y: '30vh' }}
+          animate={{
+            opacity: animStage >= 4 ? 1 : 0,
             scale: animStage >= 4 ? 1 : 0.9,
             // Slight adjustment when UI enters, but mostly staying in "Header" area
-            y: isUIReady ? '18vh' : '25vh' 
+            y: isUIReady ? '12vh' : '18vh'
           }}
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="relative"
         >
-          {/* Logo SVG - Reduced Size */}
-          <div className="w-[150px] md:w-[220px]">
+          {/* Logo SVG */}
+          <div className="w-[200px] md:w-[300px]">
              <svg viewBox="0 0 375 125" fill="none" className="w-full h-auto drop-shadow-2xl">
               <path d="M16.365 58.9789H0V0H22.1972L32.904 24.4718L38.6492 39.7007H39.7808L45.2648 24.4718L55.4494 0H77.6465V58.9789H61.2816V34.5951L61.8909 24.7359H60.7593L57.4515 34.5951L48.7467 55.4577H28.8998L20.1951 34.5951L16.8872 24.7359H15.7556L16.365 34.5951V58.9789Z" fill="white"/>
               <path d="M97.0711 59.8592C87.1476 59.8592 81.5766 55.2817 81.5766 47.7113C81.5766 41.4613 85.8419 36.9718 95.7654 36.0035L113.61 34.243V33.3627C113.61 28.8732 111.695 28.169 105.863 28.169C100.466 28.169 98.812 29.2253 98.812 32.9225V33.2746H82.4471V33.0986C82.4471 21.3028 92.1964 13.7324 107.082 13.7324C122.402 13.7324 129.801 21.3028 129.801 33.7148V58.9789H114.481V49.6479H113.61C111.956 55.8979 106.559 59.8592 97.0711 59.8592ZM98.0286 46.6549C98.0286 48.0634 99.4214 48.3275 101.946 48.3275C109.867 48.3275 113.088 47.3592 113.523 43.3979L100.118 44.9824C98.6379 45.1584 98.0286 45.6866 98.0286 46.6549Z" fill="white"/>

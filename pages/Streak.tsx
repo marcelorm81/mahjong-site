@@ -53,7 +53,7 @@ const DayButton: React.FC<{ day: number; completed: boolean; current: boolean; i
   );
 };
 
-export const Streak: React.FC = () => {
+export const Streak: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const windowRef = useRef<HTMLDivElement>(null);
@@ -130,12 +130,25 @@ export const Streak: React.FC = () => {
       {/* Title Tab */}
       <div ref={titleRef} className="rounded-t-2xl overflow-hidden shrink-0">
         <div
-          className="px-6 py-2.5 md:py-3 flex items-center justify-center shadow-[inset_0_2px_4px_rgba(255,255,255,0.25)]"
+          className="px-6 py-2.5 md:py-3 flex items-center justify-between shadow-[inset_0_2px_4px_rgba(255,255,255,0.25)]"
           style={{ background: 'linear-gradient(180deg, #D00501 13%, #8c0000 100%)', backdropFilter: 'blur(5px)' }}
         >
+          {/* Spacer to balance close button */}
+          <div className="w-8" />
           <h1 className="text-white font-bold text-2xl md:text-3xl short:text-xl uppercase tracking-tight font-['Clash_Display',sans-serif]">
             7-Day Streak
           </h1>
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-black/30 hover:bg-black/50 transition-colors border border-white/20"
+            aria-label="Close"
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
+              <line x1="2" y1="2" x2="12" y2="12" />
+              <line x1="12" y1="2" x2="2" y2="12" />
+            </svg>
+          </button>
         </div>
       </div>
 

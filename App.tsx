@@ -71,7 +71,7 @@ const App: React.FC = () => {
   const renderOverlay = () => {
     switch (overlay) {
       case Page.STREAK:
-        return <Streak />;
+        return <Streak onClose={() => setOverlay(null)} />;
       case Page.REWARD:
         return <PlaceholderPage title="Daily Rewards" icon={Gift} />;
       default:
@@ -130,7 +130,7 @@ const App: React.FC = () => {
 
             {/* Overlay content — slides up with a slight delay after backdrop */}
             <motion.div
-              className="relative z-10 w-full h-full md:h-auto md:max-h-[calc(100vh-40px)] overflow-y-auto overflow-x-hidden flex items-start md:items-center justify-center"
+              className="relative z-10 w-full h-full overflow-y-auto overflow-x-hidden flex items-center justify-center py-16"
               initial={{ opacity: 0, y: 32 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}

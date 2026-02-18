@@ -1,0 +1,41 @@
+/* ── Force Teachers font everywhere — prevents iOS falling back to system font ── */
+* {
+  font-family: 'Teachers', ui-sans-serif, system-ui, sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Exception: let SVG text, code, and elements that explicitly need monospace keep their font */
+code, pre, kbd, samp {
+  font-family: ui-monospace, monospace !important;
+}
+
+/* ── Prevent overscroll / rubber-band drag on the whole page ── */
+html, body {
+  overscroll-behavior: none;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  position: fixed; /* Prevents iOS pull-to-refresh bounce on the root */
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* ── Scrollable containers should scroll normally (not the page itself) ── */
+main {
+  overscroll-behavior-y: contain;
+}
+
+/* ── Hide scrollbar for Chrome, Safari and Opera ── */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+/* ── Hide scrollbar for IE, Edge and Firefox ── */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

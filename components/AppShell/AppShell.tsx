@@ -22,7 +22,7 @@ export const AppShell: React.FC<AppShellProps> = ({
   showHeader = true
 }) => {
   return (
-    <div className="min-h-screen bg-[#620000] relative overflow-hidden flex flex-col">
+    <div className="bg-[#620000] relative overflow-hidden flex flex-col" style={{ height: '100dvh', maxHeight: '100dvh' }}>
       {/* Background Pattern */}
       <div 
         className="fixed inset-0 opacity-100 pointer-events-none mix-blend-multiply"
@@ -43,11 +43,14 @@ export const AppShell: React.FC<AppShellProps> = ({
       )}
 
       {/* Main Scrollable Content */}
-      <main className={`
-        flex-1 relative z-10 overflow-y-auto overflow-x-hidden transition-all duration-300
-        ${showHeader ? 'pt-[100px] md:pt-[75px]' : ''}
-        ${showNav ? 'pb-[100px] short:pb-[60px]' : ''}
-      `}>
+      <main
+        className={`
+          flex-1 relative z-10 overflow-y-auto overflow-x-hidden transition-all duration-300
+          ${showHeader ? 'pt-[100px] md:pt-[75px]' : ''}
+          ${showNav ? 'pb-[100px] short:pb-[60px]' : ''}
+        `}
+        style={{ overscrollBehaviorY: 'contain' }}
+      >
         <AnimatePresence mode="wait">
           <motion.div
             key={currentPage}
