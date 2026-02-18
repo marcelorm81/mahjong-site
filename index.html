@@ -2,7 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
+    <!-- Safari status bar + iOS 26 Liquid Glass bottom bar color -->
+    <meta name="theme-color" content="#0a0000" />
+    <!-- iOS standalone PWA: black-translucent makes status bar overlay the app (full bleed) -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>Bang Bang Tables</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Preconnect for faster font load on mobile -->

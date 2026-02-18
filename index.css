@@ -17,12 +17,21 @@ html, body {
   height: 100%;
   width: 100%;
   position: fixed; /* Prevents iOS pull-to-refresh bounce on the root */
+  /* Match the theme-color so the area outside the app (status bar region) is dark */
+  background-color: #0a0000;
 }
 
 #root {
   height: 100%;
   width: 100%;
   overflow: hidden;
+  /* Bleed into safe areas (notch, home bar) so app bg shows through */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  box-sizing: border-box;
+  background-color: #0a0000;
 }
 
 /* ── Scrollable containers should scroll normally (not the page itself) ── */
