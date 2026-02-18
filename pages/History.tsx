@@ -75,12 +75,12 @@ const DateInput: React.FC<DateInputProps> = ({ label, value, onChange }) => {
           placeholder="YYYY-MM-DD"
           maxLength={10}
           autoComplete="off"
-          className="w-full bg-black/40 border border-white/10 rounded-lg pl-3 pr-9 py-2.5 text-white text-sm focus:outline-none focus:border-white/30 placeholder:text-white/20 transition-colors"
-          style={{ fontFamily: "'Teachers', sans-serif", letterSpacing: '0.03em' }}
+          className="w-full bg-black/40 border border-white/10 rounded-lg pl-2.5 pr-7 py-2 text-white text-xs focus:outline-none focus:border-white/30 placeholder:text-white/20 transition-colors"
+          style={{ fontFamily: "'Teachers', sans-serif", letterSpacing: '0.02em' }}
         />
         <Calendar
-          size={14}
-          className={`absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none transition-colors ${isComplete ? 'text-brand-gold' : 'text-white/25'}`}
+          size={12}
+          className={`absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none transition-colors ${isComplete ? 'text-brand-gold' : 'text-white/25'}`}
         />
       </div>
     </div>
