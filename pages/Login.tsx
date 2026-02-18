@@ -116,7 +116,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
           opacity: { duration: 0.7 },
           scale: { duration: 0.7, ease: "easeOut" }
         }}
-        className="absolute z-10 bottom-0 w-full h-[80%] md:h-[95%] pointer-events-none origin-bottom"
+        className="absolute z-10 bottom-[20vh] md:bottom-0 w-full h-[112%] md:h-[95%] pointer-events-none origin-bottom"
       >
         <img
           src={CHARACTERS_IMAGE}
