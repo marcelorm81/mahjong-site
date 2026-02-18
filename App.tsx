@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom/';
 import { AppShell } from './components/AppShell/AppShell';
 import { Lobby } from './pages/Lobby';
 import { Login } from './pages/Login';
@@ -82,66 +83,71 @@ const App: React.FC = () => {
   const isLoginPage = currentPage === Page.LOGIN;
 
   return (
-    <AppShell
-      user={user}
-      currentPage={overlay ?? currentPage}
-      onNavigate={handleNavigate}
-      showNav={!isLoginPage}
-      showHeader={!isLoginPage}
-    >
-      {renderContent()}
+    <>
+      <AppShell
+        user={user}
+        currentPage={overlay ?? currentPage}
+        onNavigate={handleNavigate}
+        showNav={!isLoginPage}
+        showHeader={!isLoginPage}
+      >
+        {renderContent()}
+      </AppShell>
 
-      {/* Overlay — two-stage entrance: backdrop fades in first, then content slides up */}
-      <AnimatePresence>
-        {overlay && (
-          <motion.div
-            key={overlay}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: 'easeOut' }}
-            className="fixed inset-0 z-40 flex items-center justify-center"
-          >
-            {/* Dim backdrop — fades in immediately, click to close */}
+      {/* Overlay — rendered via portal at body level so it covers header + nav */}
+      {createPortal(
+        <AnimatePresence>
+          {overlay && (
             <motion.div
-              className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+              key={overlay}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.25, ease: 'easeOut' }}
-              onClick={() => setOverlay(null)}
-            />
-
-            {/* Close button — appears with content */}
-            <motion.button
-              onClick={() => setOverlay(null)}
-              className="absolute top-4 right-4 md:top-6 md:right-6 z-50 w-10 h-10 md:w-12 md:h-12 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-sm flex items-center justify-center transition-colors border border-white/20"
-              aria-label="Close"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ delay: 0.2, duration: 0.2 }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+              className="fixed inset-0 z-[9999] flex items-center justify-center"
             >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
-                <line x1="5" y1="5" x2="15" y2="15" />
-                <line x1="15" y1="5" x2="5" y2="15" />
-              </svg>
-            </motion.button>
+              {/* Dim backdrop — fades in immediately, click to close */}
+              <motion.div
+                className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
+                onClick={() => setOverlay(null)}
+              />
 
-            {/* Overlay content — slides up with a slight delay after backdrop */}
-            <motion.div
-              className="relative z-10 w-full h-full overflow-y-auto overflow-x-hidden flex items-center justify-center py-16"
-              initial={{ opacity: 0, y: 32 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ delay: 0.15, duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
-            >
-              {renderOverlay()}
+              {/* Close button — appears with content */}
+              <motion.button
+                onClick={() => setOverlay(null)}
+                className="absolute top-4 right-4 md:top-6 md:right-6 z-50 w-10 h-10 md:w-12 md:h-12 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-sm flex items-center justify-center transition-colors border border-white/20"
+                aria-label="Close"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ delay: 0.2, duration: 0.2 }}
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
+                  <line x1="5" y1="5" x2="15" y2="15" />
+                  <line x1="15" y1="5" x2="5" y2="15" />
+                </svg>
+              </motion.button>
+
+              {/* Overlay content — slides up with a slight delay after backdrop */}
+              <motion.div
+                className="relative z-10 w-full h-full overflow-y-auto overflow-x-hidden flex items-center justify-center py-16"
+                initial={{ opacity: 0, y: 32 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                transition={{ delay: 0.15, duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
+              >
+                {renderOverlay()}
+              </motion.div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </AppShell>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
+    </>
   );
 };
 
