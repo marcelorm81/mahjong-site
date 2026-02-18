@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createPortal } from 'react-dom/';
+import { createPortal } from 'react-dom';
 import { AppShell } from './components/AppShell/AppShell';
 import { Lobby } from './pages/Lobby';
 import { Login } from './pages/Login';
