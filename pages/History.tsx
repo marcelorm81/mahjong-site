@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Play, Search } from 'lucide-react';
+import { Play, Search, Calendar } from 'lucide-react';
 
 interface HistoryEntry {
   id: number;
@@ -26,17 +26,80 @@ const MOCK_HISTORY: HistoryEntry[] = [
 
 const formatNumber = (n: number) => n.toLocaleString();
 
+// Auto-formats user typing into YYYY-MM-DD
+// Accepts digits only, inserts dashes automatically
+const formatDateInput = (raw: string, prev: string): string => {
+  // Strip all non-digit characters
+  const digits = raw.replace(/\D/g, '');
+  if (digits.length === 0) return '';
+  // Build formatted string: YYYY-MM-DD
+  let out = digits.slice(0, 4);
+  if (digits.length >= 5) out += '-' + digits.slice(4, 6);
+  if (digits.length >= 7) out += '-' + digits.slice(6, 8);
+  return out;
+};
+
+// Returns YYYY-MM-DD if fully entered, else ''
+const toISODate = (val: string): string => {
+  const m = val.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return '';
+  return val;
+};
+
+interface DateInputProps {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}
+
+const DateInput: React.FC<DateInputProps> = ({ label, value, onChange }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatDateInput(e.target.value, value);
+    onChange(formatted);
+  };
+
+  const isComplete = /^\d{4}-\d{2}-\d{2}$/.test(value);
+
+  return (
+    <div className="flex-1">
+      <label className="text-white/50 text-[10px] uppercase tracking-wider mb-1 block">{label}</label>
+      <div className="relative">
+        <input
+          ref={inputRef}
+          type="text"
+          inputMode="numeric"
+          value={value}
+          onChange={handleChange}
+          placeholder="YYYY-MM-DD"
+          maxLength={10}
+          autoComplete="off"
+          className="w-full bg-black/40 border border-white/10 rounded-lg pl-3 pr-9 py-2.5 text-white text-sm focus:outline-none focus:border-white/30 placeholder:text-white/20 transition-colors"
+          style={{ fontFamily: "'Teachers', sans-serif", letterSpacing: '0.03em' }}
+        />
+        <Calendar
+          size={14}
+          className={`absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none transition-colors ${isComplete ? 'text-brand-gold' : 'text-white/25'}`}
+        />
+      </div>
+    </div>
+  );
+};
+
 export const History: React.FC = () => {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [filtered, setFiltered] = useState(MOCK_HISTORY);
 
   const handleSearch = () => {
-    if (!fromDate && !toDate) { setFiltered(MOCK_HISTORY); return; }
+    const from = toISODate(fromDate);
+    const to = toISODate(toDate);
+    if (!from && !to) { setFiltered(MOCK_HISTORY); return; }
     setFiltered(MOCK_HISTORY.filter(e => {
       const d = e.startTime.split(' ')[0];
-      if (fromDate && d < fromDate) return false;
-      if (toDate && d > toDate) return false;
+      if (from && d < from) return false;
+      if (to && d > to) return false;
       return true;
     }));
   };
@@ -63,24 +126,8 @@ export const History: React.FC = () => {
       >
         {/* Date fields row — always side by side */}
         <div className="flex gap-2">
-          <div className="flex-1">
-            <label className="text-white/50 text-[10px] uppercase tracking-wider mb-1 block">From</label>
-            <input
-              type="date"
-              value={fromDate}
-              onChange={e => setFromDate(e.target.value)}
-              className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-white/40 [color-scheme:dark]"
-            />
-          </div>
-          <div className="flex-1">
-            <label className="text-white/50 text-[10px] uppercase tracking-wider mb-1 block">To</label>
-            <input
-              type="date"
-              value={toDate}
-              onChange={e => setToDate(e.target.value)}
-              className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-white/40 [color-scheme:dark]"
-            />
-          </div>
+          <DateInput label="From" value={fromDate} onChange={setFromDate} />
+          <DateInput label="To" value={toDate} onChange={setToDate} />
         </div>
 
         {/* Search button — full width on mobile, auto width on desktop */}
