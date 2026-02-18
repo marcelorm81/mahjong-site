@@ -22,9 +22,28 @@ export const AppShell: React.FC<AppShellProps> = ({
   showHeader = true
 }) => {
   return (
-    <div className="bg-[#620000] relative overflow-hidden flex flex-col" style={{ height: '100dvh', maxHeight: '100dvh' }}>
+    <div
+      className="bg-[#620000] relative flex flex-col"
+      style={{
+        // Extend the app into safe areas so our dark bg covers status bar + home indicator
+        height: '100dvh',
+        maxHeight: '100dvh',
+        paddingTop: 'env(safe-area-inset-top)',
+        paddingBottom: 'env(safe-area-inset-bottom)',
+        paddingLeft: 'env(safe-area-inset-left)',
+        paddingRight: 'env(safe-area-inset-right)',
+        boxSizing: 'border-box',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Safe-area fills — dark bg bleeds behind status bar (top) and home indicator (bottom) */}
+      <div className="fixed inset-x-0 top-0 pointer-events-none z-[100]"
+        style={{ height: 'env(safe-area-inset-top)', background: '#500000' }} />
+      <div className="fixed inset-x-0 bottom-0 pointer-events-none z-[100]"
+        style={{ height: 'env(safe-area-inset-bottom)', background: '#500000' }} />
+
       {/* Background Pattern */}
-      <div 
+      <div
         className="fixed inset-0 opacity-100 pointer-events-none mix-blend-multiply"
         style={{
           backgroundImage: `url('https://raw.githubusercontent.com/marcelorm81/Mahjongtest/8c67fd0165c919a3b0e220a3511528ee6a78dd52/pattern1.png')`,
