@@ -1,3 +1,12 @@
+/* ── Clash Display Bold — local font for tournament titles ── */
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/assets/ClashDisplay-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ── Force Teachers font everywhere — prevents iOS falling back to system font ── */
 * {
   font-family: 'Teachers', ui-sans-serif, system-ui, sans-serif !important;

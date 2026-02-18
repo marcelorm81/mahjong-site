@@ -167,10 +167,11 @@ const TournamentCard: React.FC<{ t: TournamentItem; index: number }> = ({ t, ind
           {/* Title (Clash Display gradient) */}
           <div>
             <h2
-              className="font-['Clash_Display',sans-serif] uppercase leading-[0.9] tracking-tight"
+              className="uppercase leading-[0.9] tracking-tight"
               style={{
+                fontFamily: "'Clash Display', sans-serif",
                 fontSize: 64,
-                fontWeight: 600,
+                fontWeight: 700,
                 fontStyle: 'normal',
                 background: t.gradient,
                 WebkitBackgroundClip: 'text',
@@ -266,7 +267,7 @@ const TournamentCard: React.FC<{ t: TournamentItem; index: number }> = ({ t, ind
           {/* Coming Soon dark overlay */}
           {isComingSoon && (
             <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-10">
-              <p className="font-['Clash_Display',sans-serif] text-white text-4xl font-semibold uppercase tracking-tight">
+              <p className="uppercase tracking-tight text-white text-4xl" style={{ fontFamily: "'Clash Display', sans-serif", fontWeight: 700 }}>
                 COMING SOON
               </p>
             </div>
@@ -296,10 +297,11 @@ const TournamentCard: React.FC<{ t: TournamentItem; index: number }> = ({ t, ind
         <div className="flex flex-col gap-4 py-4">
           <div>
             <h2
-              className="font-['Clash_Display',sans-serif] uppercase leading-[0.9] tracking-tight"
+              className="uppercase leading-[0.9] tracking-tight"
               style={{
+                fontFamily: "'Clash Display', sans-serif",
                 fontSize: 64,
-                fontWeight: 600,
+                fontWeight: 700,
                 fontStyle: 'normal',
                 background: t.gradient,
                 WebkitBackgroundClip: 'text',
@@ -389,7 +391,7 @@ const TournamentCard: React.FC<{ t: TournamentItem; index: number }> = ({ t, ind
           {/* Coming Soon overlay */}
           {isComingSoon && (
             <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
-              <p className="font-['Clash_Display',sans-serif] text-white text-2xl font-semibold uppercase">
+              <p className="uppercase text-white text-2xl" style={{ fontFamily: "'Clash Display', sans-serif", fontWeight: 700 }}>
                 COMING SOON
               </p>
             </div>
