@@ -167,8 +167,11 @@ const TournamentCard: React.FC<{ t: TournamentItem; index: number }> = ({ t, ind
           {/* Title (Clash Display gradient) */}
           <div>
             <h2
-              className="font-['Clash_Display',sans-serif] text-[42px] lg:text-[52px] font-semibold leading-[0.9] uppercase tracking-tight"
+              className="font-['Clash_Display',sans-serif] uppercase leading-[0.9] tracking-tight"
               style={{
+                fontSize: 64,
+                fontWeight: 600,
+                fontStyle: 'normal',
                 background: t.gradient,
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
@@ -293,8 +296,11 @@ const TournamentCard: React.FC<{ t: TournamentItem; index: number }> = ({ t, ind
         <div className="flex flex-col gap-4 py-4">
           <div>
             <h2
-              className="font-['Clash_Display',sans-serif] text-[36px] short:text-[28px] font-semibold leading-[0.9] uppercase tracking-tight"
+              className="font-['Clash_Display',sans-serif] uppercase leading-[0.9] tracking-tight"
               style={{
+                fontSize: 64,
+                fontWeight: 600,
+                fontStyle: 'normal',
                 background: t.gradient,
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
