@@ -59,17 +59,17 @@ export const History: React.FC = () => {
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="flex flex-col sm:flex-row gap-2 mb-6 short:mb-3 items-center"
-        style={glassCard}
+        className="flex flex-col gap-2 mb-6 short:mb-3"
       >
-        <div className="flex flex-1 w-full gap-2">
+        {/* Date fields row — always side by side */}
+        <div className="flex gap-2">
           <div className="flex-1">
             <label className="text-white/50 text-[10px] uppercase tracking-wider mb-1 block">From</label>
             <input
               type="date"
               value={fromDate}
               onChange={e => setFromDate(e.target.value)}
-              className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-white/40 [color-scheme:dark]"
+              className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-white/40 [color-scheme:dark]"
             />
           </div>
           <div className="flex-1">
@@ -78,13 +78,15 @@ export const History: React.FC = () => {
               type="date"
               value={toDate}
               onChange={e => setToDate(e.target.value)}
-              className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-white/40 [color-scheme:dark]"
+              className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-white/40 [color-scheme:dark]"
             />
           </div>
         </div>
+
+        {/* Search button — full width on mobile, auto width on desktop */}
         <button
           onClick={handleSearch}
-          className="flex items-center gap-2 bg-[#D00501] hover:bg-[#b00401] active:scale-95 transition-all text-white font-bold uppercase text-sm px-5 py-2.5 rounded-lg shadow-[3px_3px_0px_0px_#4a0000] mt-auto"
+          className="w-full md:w-auto md:self-end flex items-center justify-center gap-2 bg-[#D00501] hover:bg-[#b00401] active:scale-95 transition-all text-white font-bold uppercase text-sm px-6 py-3 rounded-lg shadow-[3px_3px_0px_0px_#4a0000]"
         >
           <Search size={16} />
           Search
