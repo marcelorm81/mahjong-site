@@ -88,60 +88,65 @@ export const MyAccount: React.FC<MyAccountProps> = ({ onClose, initialUsername =
   return (
     <>
       {/* ───────────────── DESKTOP layout ───────────────── */}
-      <div className="hidden md:flex w-full h-full min-h-0">
+      <div className="hidden md:flex flex-col w-full h-full min-h-0">
 
-        {/* Left sidebar — settings nav */}
-        <motion.aside
-          initial={{ opacity: 0, x: -16 }}
-          animate={{ opacity: 1, x: 0 }}
+        {/* Centered SETTINGS title */}
+        <motion.p
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.25 }}
-          className="w-[280px] xl:w-[320px] shrink-0 flex flex-col gap-4 pt-[238px] pl-[max(48px,5.6%)]"
+          className="text-white text-2xl uppercase tracking-[-0.6px] text-center py-4"
+          style={{ fontFamily: "'Teachers', sans-serif", fontWeight: 600 }}
         >
-          {/* Page title above sidebar */}
-          <p
-            className="text-white text-2xl uppercase tracking-[-0.6px] mb-6"
-            style={{ fontFamily: "'Teachers', sans-serif", fontWeight: 600 }}
+          SETTINGS
+        </motion.p>
+
+        {/* Content row: sidebar + form */}
+        <div className="flex flex-1 min-h-0">
+          {/* Left sidebar — settings nav */}
+          <motion.aside
+            initial={{ opacity: 0, x: -16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.25 }}
+            className="w-[280px] xl:w-[320px] shrink-0 flex flex-col gap-4 pt-8 pl-[max(48px,5.6%)]"
           >
-            SETTINGS
-          </p>
-
-          {SIDEBAR_ITEMS.map(({ icon: Icon, label, active }) => (
-            <button
-              key={label}
-              className={`flex items-center gap-3 px-2.5 py-2 rounded-[10px] text-left transition-colors w-full
-                ${active ? 'bg-[#D00501]' : 'hover:bg-white/10'}`}
-            >
-              <Icon size={22} className="text-[#e3e3e3] shrink-0" strokeWidth={1.6} />
-              <span
-                className="text-white text-[18px] tracking-[-0.4px] leading-none"
-                style={{ fontFamily: "'Teachers', sans-serif", fontWeight: 500 }}
+            {SIDEBAR_ITEMS.map(({ icon: Icon, label, active }) => (
+              <button
+                key={label}
+                className={`flex items-center gap-3 px-2.5 py-2 rounded-[10px] text-left transition-colors w-full
+                  ${active ? 'bg-[#D00501]' : 'hover:bg-white/10'}`}
               >
-                {label}
-              </span>
-            </button>
-          ))}
-
-          <div className="flex flex-col px-2.5 mt-2">
-            {SIDEBAR_LINKS.map(label => (
-              <button key={label} className="py-1.5 text-left">
+                <Icon size={22} className="text-[#e3e3e3] shrink-0" strokeWidth={1.6} />
                 <span
-                  className="text-white/50 text-[16px] tracking-[-0.4px]"
+                  className="text-white text-[18px] tracking-[-0.4px] leading-none"
                   style={{ fontFamily: "'Teachers', sans-serif", fontWeight: 500 }}
                 >
                   {label}
                 </span>
               </button>
             ))}
-          </div>
-        </motion.aside>
 
-        {/* Right: form panel */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.05 }}
-          className="flex-1 pt-[217px] pr-[48px] pb-8 pl-8 xl:pl-12 overflow-y-auto"
-        >
+            <div className="flex flex-col px-2.5 mt-2">
+              {SIDEBAR_LINKS.map(label => (
+                <button key={label} className="py-1.5 text-left">
+                  <span
+                    className="text-white/50 text-[16px] tracking-[-0.4px]"
+                    style={{ fontFamily: "'Teachers', sans-serif", fontWeight: 500 }}
+                  >
+                    {label}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </motion.aside>
+
+          {/* Right: form panel */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.05 }}
+            className="flex-1 pr-[48px] pb-8 pl-8 xl:pl-12 overflow-y-auto"
+          >
           <div
             className="w-full rounded-[10px] border border-white overflow-hidden"
             style={{ background: 'rgba(255,255,255,0.10)', backdropFilter: 'blur(8px)' }}
@@ -267,7 +272,8 @@ export const MyAccount: React.FC<MyAccountProps> = ({ onClose, initialUsername =
               </div>
             </div>
           </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </div>
 
       {/* ───────────────── MOBILE layout ───────────────── */}

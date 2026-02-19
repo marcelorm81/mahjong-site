@@ -27,14 +27,14 @@ html, body {
   width: 100%;
   position: fixed; /* Prevents iOS pull-to-refresh bounce on the root */
   /* Match the theme-color so the area outside the app (status bar region) is dark */
-  background-color: #500000;
+  background-color: #1a0000;
 }
 
 #root {
   height: 100%;
   width: 100%;
   overflow: hidden;
-  background-color: #500000;
+  background-color: #1a0000;
 }
 
 /* ── Scrollable containers should scroll normally (not the page itself) ── */

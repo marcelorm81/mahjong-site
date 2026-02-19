@@ -42,9 +42,9 @@ export const AppShell: React.FC<AppShellProps> = ({
     >
       {/* Safe-area fills — dark bg bleeds behind status bar (top) and home indicator (bottom) */}
       <div className="fixed inset-x-0 top-0 pointer-events-none z-[100]"
-        style={{ height: 'env(safe-area-inset-top)', background: '#500000' }} />
+        style={{ height: 'env(safe-area-inset-top)', background: '#1a0000' }} />
       <div className="fixed inset-x-0 bottom-0 pointer-events-none z-[100]"
-        style={{ height: 'env(safe-area-inset-bottom)', background: '#500000' }} />
+        style={{ height: 'env(safe-area-inset-bottom)', background: '#1a0000' }} />
 
       {/* Background Pattern */}
       <div

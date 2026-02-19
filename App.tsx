@@ -65,6 +65,15 @@ const App: React.FC = () => {
   };
 
   const renderContent = () => {
+    if (showMyAccount) {
+      return (
+        <MyAccount
+          onClose={() => setShowMyAccount(false)}
+          initialUsername={user.username}
+        />
+      );
+    }
+
     switch (currentPage) {
       case Page.LOGIN:
         return <Login onLogin={handleLogin} />;
@@ -178,57 +187,6 @@ const App: React.FC = () => {
         document.body
       )}
 
-      {/* ── My Account full-screen overlay — portal at body level ── */}
-      {createPortal(
-        <AnimatePresence>
-          {showMyAccount && (
-            <motion.div
-              key="my-account"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              className="fixed inset-0 z-[9999] overflow-y-auto"
-              style={{ background: '#620000' }}
-            >
-              {/* Background pattern */}
-              <div
-                className="fixed inset-0 pointer-events-none mix-blend-multiply"
-                style={{
-                  backgroundImage: `url('https://raw.githubusercontent.com/marcelorm81/Mahjongtest/8c67fd0165c919a3b0e220a3511528ee6a78dd52/pattern1.png')`,
-                  backgroundRepeat: 'repeat',
-                  backgroundSize: '150px 150px',
-                }}
-              />
-
-              {/* Safe-area fills */}
-              <div className="fixed inset-x-0 top-0 pointer-events-none z-[100]"
-                style={{ height: 'env(safe-area-inset-top)', background: '#500000' }} />
-              <div className="fixed inset-x-0 bottom-0 pointer-events-none z-[100]"
-                style={{ height: 'env(safe-area-inset-bottom)', background: '#500000' }} />
-
-              {/* Content — fills full screen, padded for safe areas */}
-              <div
-                className="relative z-10 flex flex-col w-full"
-                style={{
-                  paddingTop: 'env(safe-area-inset-top)',
-                  paddingBottom: 'env(safe-area-inset-bottom)',
-                  minHeight: '100dvh',
-                }}
-              >
-                {/* Mobile: top bar spacer matching the app header height */}
-                <div className="md:hidden h-[100px]" />
-
-                <MyAccount
-                  onClose={() => setShowMyAccount(false)}
-                  initialUsername={user.username}
-                />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>,
-        document.body
-      )}
     </>
   );
 };
