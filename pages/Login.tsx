@@ -107,16 +107,16 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
       <motion.div
         initial={{ opacity: 0, scale: 0.95, x: '-50%' }}
         animate={{
-          opacity: animStage >= 2 ? 1 : 0,
+          opacity: isUIReady ? 0 : (animStage >= 2 ? 1 : 0),
           scale: animStage >= 2 ? 1 : 0.95,
           left: '50%',
-          // When UI is ready: slide out to the right (+150% from centre = off-screen right)
-          x: isUIReady ? '50%' : '-50%',
+          // When UI is ready: slide fully off-screen right and fade out
+          x: isUIReady ? '120%' : '-50%',
         }}
         transition={{
-          opacity: { duration: 0.7 },
+          opacity: { duration: 0.6, ease: "easeOut" },
           scale: { duration: 0.7, ease: "easeOut" },
-          x: { duration: 0.7, ease: [0.4, 0, 0.2, 1] },
+          x: { duration: 0.8, ease: [0.4, 0, 0.2, 1] },
         }}
         className="absolute z-10 bottom-[20vh] md:bottom-0 w-full md:w-[50%] h-[112%] md:h-[75%] pointer-events-none origin-bottom"
       >

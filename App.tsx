@@ -121,6 +121,7 @@ const App: React.FC = () => {
         onAddCoins={handleAddCoins}
         showNav={!isLoginPage}
         showHeader={!isLoginPage}
+        contentKey={showMyAccount ? 'my-account' : undefined}
       >
         {renderContent()}
       </AppShell>

@@ -4,17 +4,22 @@
   src: url('/assets/ClashDisplay-Bold.woff') format('woff');
   font-weight: 700;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
-/* ── Force Teachers font everywhere — prevents iOS falling back to system font ── */
+/* ── Default font: Teachers everywhere via inheritance ── */
+/* We set it on html/body so all elements inherit it.
+   Elements that explicitly set fontFamily (e.g. Clash Display) will override naturally.
+   No !important needed — inline styles have higher specificity. */
+html, body, #root {
+  font-family: 'Teachers', ui-sans-serif, system-ui, sans-serif;
+}
 * {
-  font-family: 'Teachers', ui-sans-serif, system-ui, sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Exception: let SVG text, code, and elements that explicitly need monospace keep their font */
+/* Exception: let code elements keep monospace */
 code, pre, kbd, samp {
   font-family: ui-monospace, monospace !important;
 }

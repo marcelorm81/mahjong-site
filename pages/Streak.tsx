@@ -111,6 +111,8 @@ export const Streak: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
         repeat: 1,
         onComplete: () => {
           gsap.to(btnRef.current, { scale: 1, duration: 0.2 });
+          // Auto-close overlay after showing the "Checked In!" feedback
+          setTimeout(() => onClose?.(), 1200);
         },
       });
     }
@@ -135,7 +137,7 @@ export const Streak: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
         >
           {/* Spacer to balance close button */}
           <div className="w-8" />
-          <h1 className="text-white font-bold text-2xl md:text-3xl short:text-xl uppercase tracking-tight font-['Clash_Display',sans-serif]">
+          <h1 className="text-white font-bold text-2xl md:text-3xl short:text-xl uppercase tracking-tight" style={{ fontFamily: "'Clash Display'" }}>
             7-Day Streak
           </h1>
           {/* Close button */}

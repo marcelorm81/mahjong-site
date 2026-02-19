@@ -13,6 +13,8 @@ interface AppShellProps {
   onAddCoins?: () => void;
   showNav?: boolean;
   showHeader?: boolean;
+  /** Optional key override for AnimatePresence (e.g. when overlays change content) */
+  contentKey?: string;
 }
 
 export const AppShell: React.FC<AppShellProps> = ({
@@ -23,7 +25,8 @@ export const AppShell: React.FC<AppShellProps> = ({
   onOpenSettings,
   onAddCoins,
   showNav = true,
-  showHeader = true
+  showHeader = true,
+  contentKey,
 }) => {
   return (
     <div
@@ -72,13 +75,13 @@ export const AppShell: React.FC<AppShellProps> = ({
         className={`
           flex-1 relative z-10 overflow-y-auto overflow-x-hidden transition-all duration-300
           ${showHeader ? 'pt-[100px] md:pt-[75px]' : ''}
-          ${showNav ? 'pb-[100px] short:pb-[60px]' : ''}
+          ${showNav ? 'pb-[120px] short:pb-[70px]' : ''}
         `}
         style={{ overscrollBehaviorY: 'contain' }}
       >
         <AnimatePresence mode="wait">
           <motion.div
-            key={currentPage}
+            key={contentKey ?? currentPage}
             initial={{ opacity: 0, y: 10, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.98 }}
