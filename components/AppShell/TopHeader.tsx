@@ -61,7 +61,7 @@ const XPBar: React.FC<{ pct?: number }> = ({ pct = 50 }) => (
 );
 
 /** Coin balance pill with add button */
-const CoinPill: React.FC<{ coins: number }> = ({ coins }) => (
+const CoinPill: React.FC<{ coins: number; onAddCoins?: () => void }> = ({ coins, onAddCoins }) => (
   <div className="relative flex items-center">
     {/* Coin icon overlapping the pill */}
     <img src={iconCoin} alt="Coins" className="w-[30px] h-[30px] md:w-[38px] md:h-[38px] object-contain relative z-10" />
@@ -76,7 +76,13 @@ const CoinPill: React.FC<{ coins: number }> = ({ coins }) => (
       <span className="text-white font-medium text-xs md:text-lg tracking-tight text-center min-w-[60px] md:min-w-[100px]">
         {formatNumber(coins)}
       </span>
-      <img src={iconAdd} alt="+" className="w-[15px] h-[15px] md:w-[23px] md:h-[23px] object-contain" />
+      <button
+        onClick={onAddCoins}
+        className="flex items-center justify-center active:scale-90 transition-transform relative z-10"
+        aria-label="Buy Star Points"
+      >
+        <img src={iconAdd} alt="+" className="w-[15px] h-[15px] md:w-[23px] md:h-[23px] object-contain" />
+      </button>
       {/* Inner shadow */}
       <div className="absolute inset-0 pointer-events-none rounded-[inherit]"
         style={{ boxShadow: 'inset -2.85px 2.85px 5.7px rgba(0,0,0,0.25)' }}
@@ -90,9 +96,10 @@ interface TopHeaderProps {
   user: User;
   onOpenSettings: () => void;
   onOpenProfile: () => void;
+  onAddCoins?: () => void;
 }
 
-export const TopHeader: React.FC<TopHeaderProps> = ({ user, onOpenSettings, onOpenProfile }) => {
+export const TopHeader: React.FC<TopHeaderProps> = ({ user, onOpenSettings, onOpenProfile, onAddCoins }) => {
   const xpPct = Math.round((user.xp / user.maxXp) * 100);
 
   return (
@@ -121,7 +128,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({ user, onOpenSettings, onOp
           <XPBar pct={xpPct} />
 
           {/* Coin pill */}
-          <CoinPill coins={user.coins} />
+          <CoinPill coins={user.coins} onAddCoins={onAddCoins} />
 
           {/* Settings */}
           <button
@@ -150,7 +157,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({ user, onOpenSettings, onOp
 
           {/* Coin + Settings */}
           <div className="flex items-center gap-5">
-            <CoinPill coins={user.coins} />
+            <CoinPill coins={user.coins} onAddCoins={onAddCoins} />
             <button
               onClick={onOpenSettings}
               className="w-[25px] h-[25px] flex items-center justify-center flex-shrink-0"

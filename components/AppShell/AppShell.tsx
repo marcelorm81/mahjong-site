@@ -9,15 +9,19 @@ interface AppShellProps {
   user: User;
   currentPage: Page;
   onNavigate: (page: Page) => void;
+  onOpenSettings?: () => void;
+  onAddCoins?: () => void;
   showNav?: boolean;
   showHeader?: boolean;
 }
 
-export const AppShell: React.FC<AppShellProps> = ({ 
-  children, 
-  user, 
-  currentPage, 
+export const AppShell: React.FC<AppShellProps> = ({
+  children,
+  user,
+  currentPage,
   onNavigate,
+  onOpenSettings,
+  onAddCoins,
   showNav = true,
   showHeader = true
 }) => {
@@ -54,10 +58,11 @@ export const AppShell: React.FC<AppShellProps> = ({
       
       {/* Top Header */}
       {showHeader && (
-        <TopHeader 
-          user={user} 
-          onOpenSettings={() => console.log('Open Settings')} 
+        <TopHeader
+          user={user}
+          onOpenSettings={onOpenSettings ?? (() => {})}
           onOpenProfile={() => onNavigate(Page.PROFILE)}
+          onAddCoins={onAddCoins}
         />
       )}
 

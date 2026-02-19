@@ -10,6 +10,7 @@ import { Profile } from './pages/Profile';
 import { Shop } from './pages/Shop';
 import { Tournament } from './pages/Tournament';
 import { Streak } from './pages/Streak';
+import { Settings } from './pages/Settings';
 import { PlaceholderPage } from './pages/PlaceholderPage';
 import { MOCK_USER } from './constants';
 import { Page, User } from './types';
@@ -24,6 +25,12 @@ const App: React.FC = () => {
   const [overlay, setOverlay] = useState<Page | null>(null);
   const [user, setUser] = useState<User>(MOCK_USER);
 
+  // Settings panel state (dropdown from top-right cog)
+  const [showSettings, setShowSettings] = useState(false);
+
+  // When plus (+) is tapped, navigate to Shop and scroll to Star Points
+  const [scrollToStarPoints, setScrollToStarPoints] = useState(false);
+
   const handleLogin = (username: string) => {
     setUser(prev => ({ ...prev, username }));
     setCurrentPage(Page.LOBBY);
@@ -34,6 +41,7 @@ const App: React.FC = () => {
   };
 
   const handleNavigate = (page: Page) => {
+    setShowSettings(false); // close settings on any navigation
     if (OVERLAY_PAGES.has(page)) {
       // Toggle overlay: if already open, close it; otherwise open it
       setOverlay(prev => (prev === page ? null : page));
@@ -42,6 +50,15 @@ const App: React.FC = () => {
       setOverlay(null);
       setCurrentPage(page);
     }
+  };
+
+  const handleAddCoins = () => {
+    setShowSettings(false);
+    setScrollToStarPoints(false); // reset first so useEffect fires again if already on Shop
+    setCurrentPage(Page.SHOP);
+    setOverlay(null);
+    // Use a micro-delay so the Shop page has a chance to mount before triggering scroll
+    setTimeout(() => setScrollToStarPoints(true), 50);
   };
 
   const renderContent = () => {
@@ -57,7 +74,7 @@ const App: React.FC = () => {
       case Page.FRIENDS:
         return <Friends />;
       case Page.SHOP:
-        return <Shop />;
+        return <Shop scrollToStarPoints={scrollToStarPoints} />;
       case Page.RANK:
         return <Rank />;
       case Page.PROFILE:
@@ -88,13 +105,15 @@ const App: React.FC = () => {
         user={user}
         currentPage={overlay ?? currentPage}
         onNavigate={handleNavigate}
+        onOpenSettings={() => setShowSettings(prev => !prev)}
+        onAddCoins={handleAddCoins}
         showNav={!isLoginPage}
         showHeader={!isLoginPage}
       >
         {renderContent()}
       </AppShell>
 
-      {/* Overlay — rendered via portal at body level so it covers header + nav */}
+      {/* ── Page overlays (Streak, Reward) — portal at body level ── */}
       {createPortal(
         <AnimatePresence>
           {overlay && (
@@ -143,6 +162,16 @@ const App: React.FC = () => {
                 {renderOverlay()}
               </motion.div>
             </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
+
+      {/* ── Settings dropdown — portal at body level ── */}
+      {createPortal(
+        <AnimatePresence>
+          {showSettings && (
+            <Settings onClose={() => setShowSettings(false)} />
           )}
         </AnimatePresence>,
         document.body

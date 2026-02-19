@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 // ── Local assets (public/assets/) ────────────────────────────────────────────
@@ -292,49 +292,67 @@ const Awning: React.FC = () => (
 );
 
 // ── Main Shop Page ─────────────────────────────────────────────────────────
-export const Shop: React.FC = () => (
-  <>
-    <style>{`
-      @keyframes twinkle {
-        0%, 100% { opacity: 0; transform: scale(0.4); }
-        50%       { opacity: 1; transform: scale(1.3); }
-      }
-      @keyframes propFloat {
-        0%, 100% { transform: translateY(0px); }
-        50%      { transform: translateY(-8px); }
-      }
-    `}</style>
+interface ShopProps {
+  scrollToStarPoints?: boolean;
+}
 
-    <div className="w-full max-w-5xl mx-auto px-3 md:px-4 py-4 short:py-2">
-      <Awning />
+export const Shop: React.FC<ShopProps> = ({ scrollToStarPoints }) => {
+  const starPointsRef = useRef<HTMLElement>(null);
 
-      {/* OUR OFFERS */}
-      <section className="mb-7 md:mb-10">
-        <SectionHeader title="Our Offers!" />
-        {/* Mobile: 1-col (full-width square cards stacked)
-            Desktop: 3-col grid */}
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-4">
-          {CHARACTERS.map((c, i) => <CharCard key={c.name} item={c} index={i} />)}
-        </div>
-      </section>
+  useEffect(() => {
+    if (scrollToStarPoints && starPointsRef.current) {
+      // Small delay lets the page mount and animate in first
+      const t = setTimeout(() => {
+        starPointsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 350);
+      return () => clearTimeout(t);
+    }
+  }, [scrollToStarPoints]);
 
-      {/* STARPOINTS */}
-      <section className="mb-7 md:mb-10">
-        <SectionHeader title="Star Points" />
-        <div className="grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-4">
-          {STAR_POINTS.map((s, i) => <StarCard key={s.stars} item={s} index={i} />)}
-        </div>
-      </section>
+  return (
+    <>
+      <style>{`
+        @keyframes twinkle {
+          0%, 100% { opacity: 0; transform: scale(0.4); }
+          50%       { opacity: 1; transform: scale(1.3); }
+        }
+        @keyframes propFloat {
+          0%, 100% { transform: translateY(0px); }
+          50%      { transform: translateY(-8px); }
+        }
+      `}</style>
 
-      {/* VOUCHERS */}
-      <section className="mb-7 md:mb-10">
-        <SectionHeader title="Vouchers" />
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-4">
-          {VOUCHERS.map((v, i) => <VoucherCard key={i} item={v} index={i} />)}
-        </div>
-      </section>
+      <div className="w-full max-w-5xl mx-auto px-3 md:px-4 py-4 short:py-2">
+        <Awning />
 
-      <div className="h-6" />
-    </div>
-  </>
-);
+        {/* OUR OFFERS */}
+        <section className="mb-7 md:mb-10">
+          <SectionHeader title="Our Offers!" />
+          {/* Mobile: 1-col (full-width square cards stacked)
+              Desktop: 3-col grid */}
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-4">
+            {CHARACTERS.map((c, i) => <CharCard key={c.name} item={c} index={i} />)}
+          </div>
+        </section>
+
+        {/* STARPOINTS */}
+        <section ref={starPointsRef} className="mb-7 md:mb-10">
+          <SectionHeader title="Star Points" />
+          <div className="grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-4">
+            {STAR_POINTS.map((s, i) => <StarCard key={s.stars} item={s} index={i} />)}
+          </div>
+        </section>
+
+        {/* VOUCHERS */}
+        <section className="mb-7 md:mb-10">
+          <SectionHeader title="Vouchers" />
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-4">
+            {VOUCHERS.map((v, i) => <VoucherCard key={i} item={v} index={i} />)}
+          </div>
+        </section>
+
+        <div className="h-6" />
+      </div>
+    </>
+  );
+};
