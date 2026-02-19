@@ -63,6 +63,7 @@ export const AppShell: React.FC<AppShellProps> = ({
           onOpenSettings={onOpenSettings ?? (() => {})}
           onOpenProfile={() => onNavigate(Page.PROFILE)}
           onAddCoins={onAddCoins}
+          onNavigate={onNavigate}
         />
       )}
 

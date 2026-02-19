@@ -11,6 +11,7 @@ import { Shop } from './pages/Shop';
 import { Tournament } from './pages/Tournament';
 import { Streak } from './pages/Streak';
 import { Settings } from './pages/Settings';
+import { MyAccount } from './pages/MyAccount';
 import { PlaceholderPage } from './pages/PlaceholderPage';
 import { MOCK_USER } from './constants';
 import { Page, User } from './types';
@@ -25,8 +26,11 @@ const App: React.FC = () => {
   const [overlay, setOverlay] = useState<Page | null>(null);
   const [user, setUser] = useState<User>(MOCK_USER);
 
-  // Settings panel state (dropdown from top-right cog)
+  // Settings dropdown (cog)
   const [showSettings, setShowSettings] = useState(false);
+
+  // My Account full-screen overlay
+  const [showMyAccount, setShowMyAccount] = useState(false);
 
   // When plus (+) is tapped, navigate to Shop and scroll to Star Points
   const [scrollToStarPoints, setScrollToStarPoints] = useState(false);
@@ -41,12 +45,11 @@ const App: React.FC = () => {
   };
 
   const handleNavigate = (page: Page) => {
-    setShowSettings(false); // close settings on any navigation
+    setShowSettings(false);
+    setShowMyAccount(false);
     if (OVERLAY_PAGES.has(page)) {
-      // Toggle overlay: if already open, close it; otherwise open it
       setOverlay(prev => (prev === page ? null : page));
     } else {
-      // Regular page navigation — close any overlay
       setOverlay(null);
       setCurrentPage(page);
     }
@@ -54,10 +57,10 @@ const App: React.FC = () => {
 
   const handleAddCoins = () => {
     setShowSettings(false);
-    setScrollToStarPoints(false); // reset first so useEffect fires again if already on Shop
+    setShowMyAccount(false);
+    setScrollToStarPoints(false);
     setCurrentPage(Page.SHOP);
     setOverlay(null);
-    // Use a micro-delay so the Shop page has a chance to mount before triggering scroll
     setTimeout(() => setScrollToStarPoints(true), 50);
   };
 
@@ -125,7 +128,6 @@ const App: React.FC = () => {
               transition={{ duration: 0.3, ease: 'easeOut' }}
               className="fixed inset-0 z-[9999] flex items-center justify-center"
             >
-              {/* Dim backdrop — fades in immediately, click to close */}
               <motion.div
                 className="absolute inset-0 bg-black/70 backdrop-blur-sm"
                 initial={{ opacity: 0 }}
@@ -134,8 +136,6 @@ const App: React.FC = () => {
                 transition={{ duration: 0.25, ease: 'easeOut' }}
                 onClick={() => setOverlay(null)}
               />
-
-              {/* Close button — appears with content */}
               <motion.button
                 onClick={() => setOverlay(null)}
                 className="absolute top-4 right-4 md:top-6 md:right-6 z-50 w-10 h-10 md:w-12 md:h-12 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-sm flex items-center justify-center transition-colors border border-white/20"
@@ -150,8 +150,6 @@ const App: React.FC = () => {
                   <line x1="15" y1="5" x2="5" y2="15" />
                 </svg>
               </motion.button>
-
-              {/* Overlay content — slides up with a slight delay after backdrop */}
               <motion.div
                 className="relative z-10 w-full h-full overflow-y-auto overflow-x-hidden flex items-center justify-center py-16"
                 initial={{ opacity: 0, y: 32 }}
@@ -171,7 +169,62 @@ const App: React.FC = () => {
       {createPortal(
         <AnimatePresence>
           {showSettings && (
-            <Settings onClose={() => setShowSettings(false)} />
+            <Settings
+              onClose={() => setShowSettings(false)}
+              onOpenMyAccount={() => setShowMyAccount(true)}
+            />
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
+
+      {/* ── My Account full-screen overlay — portal at body level ── */}
+      {createPortal(
+        <AnimatePresence>
+          {showMyAccount && (
+            <motion.div
+              key="my-account"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="fixed inset-0 z-[9999] overflow-y-auto"
+              style={{ background: '#620000' }}
+            >
+              {/* Background pattern */}
+              <div
+                className="fixed inset-0 pointer-events-none mix-blend-multiply"
+                style={{
+                  backgroundImage: `url('https://raw.githubusercontent.com/marcelorm81/Mahjongtest/8c67fd0165c919a3b0e220a3511528ee6a78dd52/pattern1.png')`,
+                  backgroundRepeat: 'repeat',
+                  backgroundSize: '150px 150px',
+                }}
+              />
+
+              {/* Safe-area fills */}
+              <div className="fixed inset-x-0 top-0 pointer-events-none z-[100]"
+                style={{ height: 'env(safe-area-inset-top)', background: '#500000' }} />
+              <div className="fixed inset-x-0 bottom-0 pointer-events-none z-[100]"
+                style={{ height: 'env(safe-area-inset-bottom)', background: '#500000' }} />
+
+              {/* Content — fills full screen, padded for safe areas */}
+              <div
+                className="relative z-10 flex flex-col w-full"
+                style={{
+                  paddingTop: 'env(safe-area-inset-top)',
+                  paddingBottom: 'env(safe-area-inset-bottom)',
+                  minHeight: '100dvh',
+                }}
+              >
+                {/* Mobile: top bar spacer matching the app header height */}
+                <div className="md:hidden h-[100px]" />
+
+                <MyAccount
+                  onClose={() => setShowMyAccount(false)}
+                  initialUsername={user.username}
+                />
+              </div>
+            </motion.div>
           )}
         </AnimatePresence>,
         document.body

@@ -1,5 +1,5 @@
 import React from 'react';
-import { User } from '../../types';
+import { User, Page } from '../../types';
 
 /* ── Local assets (downloaded from Figma) ────────────────────────────── */
 const iconFriends  = '/assets/topbar-friends.png';
@@ -9,13 +9,6 @@ const iconXP       = '/assets/topbar-xp.png';
 const iconCoin     = '/assets/topbar-coin.png';
 const iconSettings = '/assets/topbar-settings.png';
 const iconAdd      = '/assets/topbar-add.svg';
-
-/* ── Mock stats (until real data is wired) ───────────────────────────── */
-const STATS = [
-  { icon: iconFriends, value: 200, label: 'friends' },
-  { icon: iconTable,   value: 60,  label: 'tables' },
-  { icon: iconCalendar,value: 30,  label: 'checkins' },
-];
 
 /* ── Helpers ─────────────────────────────────────────────────────────── */
 const formatNumber = (num: number): string => {
@@ -27,14 +20,24 @@ const formatNumber = (num: number): string => {
 
 /* ── Sub-components ──────────────────────────────────────────────────── */
 
-/** Stat chip: icon + number */
-const StatChip: React.FC<{ icon: string; value: number; className?: string }> = ({ icon, value, className = '' }) => (
-  <div className={`flex items-center gap-0.5 ${className}`}>
+/** Clickable stat chip: icon + number — navigates to a page on tap */
+const StatChip: React.FC<{
+  icon: string;
+  value: number;
+  page: Page;
+  onNavigate: (page: Page) => void;
+  className?: string;
+}> = ({ icon, value, page, onNavigate, className = '' }) => (
+  <button
+    onClick={() => onNavigate(page)}
+    className={`flex items-center gap-0.5 hover:opacity-80 active:scale-95 transition-all ${className}`}
+    aria-label={`Go to ${page}`}
+  >
     <img src={icon} alt="" className="w-5 h-5 md:w-[36px] md:h-[36px] object-contain" />
     <span className="text-white font-semibold text-xs md:text-lg tracking-tight min-w-[30px] md:min-w-[54px] text-center">
       {value}
     </span>
-  </div>
+  </button>
 );
 
 /** XP progress bar (golden) */
@@ -91,15 +94,29 @@ const CoinPill: React.FC<{ coins: number; onAddCoins?: () => void }> = ({ coins,
   </div>
 );
 
+/* ── Stat definitions: icon, value, destination page ─────────────────── */
+const STATS = [
+  { icon: iconFriends,  value: 200, page: Page.FRIENDS,    label: 'friends'  },
+  { icon: iconTable,    value: 60,  page: Page.LOBBY,      label: 'tables'   },
+  { icon: iconCalendar, value: 30,  page: Page.TOURNAMENT, label: 'checkins' },
+];
+
 /* ── Main Component ──────────────────────────────────────────────────── */
 interface TopHeaderProps {
   user: User;
   onOpenSettings: () => void;
   onOpenProfile: () => void;
   onAddCoins?: () => void;
+  onNavigate: (page: Page) => void;
 }
 
-export const TopHeader: React.FC<TopHeaderProps> = ({ user, onOpenSettings, onOpenProfile, onAddCoins }) => {
+export const TopHeader: React.FC<TopHeaderProps> = ({
+  user,
+  onOpenSettings,
+  onOpenProfile,
+  onAddCoins,
+  onNavigate,
+}) => {
   const xpPct = Math.round((user.xp / user.maxXp) * 100);
 
   return (
@@ -119,9 +136,9 @@ export const TopHeader: React.FC<TopHeaderProps> = ({ user, onOpenSettings, onOp
 
         {/* Right: stats, XP, coins, settings */}
         <div className="flex items-center gap-6">
-          {/* Stats: friends, tables, checkins */}
+          {/* Clickable stats */}
           {STATS.map((s) => (
-            <StatChip key={s.label} icon={s.icon} value={s.value} />
+            <StatChip key={s.label} icon={s.icon} value={s.value} page={s.page} onNavigate={onNavigate} />
           ))}
 
           {/* XP Bar */}
@@ -167,15 +184,15 @@ export const TopHeader: React.FC<TopHeaderProps> = ({ user, onOpenSettings, onOp
           </div>
         </div>
 
-        {/* Row 2: XP bar left, stats right */}
+        {/* Row 2: XP bar left, clickable stats right */}
         <div className="flex items-center justify-between">
           {/* XP Bar */}
           <XPBar pct={xpPct} />
 
-          {/* Stats row */}
+          {/* Clickable stats row */}
           <div className="flex items-center gap-2.5">
             {STATS.map((s) => (
-              <StatChip key={s.label} icon={s.icon} value={s.value} />
+              <StatChip key={s.label} icon={s.icon} value={s.value} page={s.page} onNavigate={onNavigate} />
             ))}
           </div>
         </div>

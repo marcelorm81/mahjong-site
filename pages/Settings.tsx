@@ -16,9 +16,10 @@ const LINK_ITEMS = ['Log Out', 'Delete Account', 'Help Center'] as const;
 // ── Settings Panel ────────────────────────────────────────────────────────────
 interface SettingsProps {
   onClose: () => void;
+  onOpenMyAccount?: () => void;
 }
 
-export const Settings: React.FC<SettingsProps> = ({ onClose }) => {
+export const Settings: React.FC<SettingsProps> = ({ onClose, onOpenMyAccount }) => {
   return (
     <>
       {/* Invisible full-screen backdrop — click to close */}
@@ -67,6 +68,12 @@ export const Settings: React.FC<SettingsProps> = ({ onClose }) => {
                 initial={{ opacity: 0, x: 8 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.05 + i * 0.05, duration: 0.2 }}
+                onClick={() => {
+                  if (label === 'My Account' && onOpenMyAccount) {
+                    onClose();
+                    onOpenMyAccount();
+                  }
+                }}
                 className="flex items-center gap-3 px-2.5 py-2 rounded-[10px] text-left
                            hover:bg-white/10 active:bg-white/15 transition-colors w-full"
               >
