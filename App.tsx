@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AppShell } from './components/AppShell/AppShell';
+import { SettingsShell, SettingsTab } from './components/SettingsShell';
 import { Lobby } from './pages/Lobby';
 import { Login } from './pages/Login';
 import { History } from './pages/History';
@@ -12,6 +13,7 @@ import { Tournament } from './pages/Tournament';
 import { Streak } from './pages/Streak';
 import { Settings } from './pages/Settings';
 import { MyAccount } from './pages/MyAccount';
+import { Notifications } from './pages/Notifications';
 import { PlaceholderPage } from './pages/PlaceholderPage';
 import { MOCK_USER } from './constants';
 import { Page, User } from './types';
@@ -21,6 +23,15 @@ import { AnimatePresence, motion } from 'framer-motion';
 // Pages that render as overlays on top of the current page
 const OVERLAY_PAGES = new Set([Page.STREAK, Page.REWARD]);
 
+// Mobile title for each settings tab
+const SETTINGS_MOBILE_TITLES: Record<SettingsTab, string> = {
+  'my-account': 'MY ACCOUNT',
+  'notifications': 'NOTIFICATIONS',
+  'security': 'SECURITY & PRIVACY',
+  'wallet': 'WALLET & VIRTUAL CURRENCY',
+  'payments': 'PAYMENTS',
+};
+
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>(Page.LOGIN);
   const [overlay, setOverlay] = useState<Page | null>(null);
@@ -29,8 +40,8 @@ const App: React.FC = () => {
   // Settings dropdown (cog)
   const [showSettings, setShowSettings] = useState(false);
 
-  // My Account full-screen overlay
-  const [showMyAccount, setShowMyAccount] = useState(false);
+  // Settings sub-pages (My Account, Notifications, etc.)
+  const [settingsTab, setSettingsTab] = useState<SettingsTab | null>(null);
 
   // When plus (+) is tapped, navigate to Shop and scroll to Star Points
   const [scrollToStarPoints, setScrollToStarPoints] = useState(false);
@@ -46,7 +57,7 @@ const App: React.FC = () => {
 
   const handleNavigate = (page: Page) => {
     setShowSettings(false);
-    setShowMyAccount(false);
+    setSettingsTab(null);
     if (OVERLAY_PAGES.has(page)) {
       setOverlay(prev => (prev === page ? null : page));
     } else {
@@ -57,20 +68,44 @@ const App: React.FC = () => {
 
   const handleAddCoins = () => {
     setShowSettings(false);
-    setShowMyAccount(false);
+    setSettingsTab(null);
     setScrollToStarPoints(false);
     setCurrentPage(Page.SHOP);
     setOverlay(null);
     setTimeout(() => setScrollToStarPoints(true), 50);
   };
 
+  const handleCloseSettings = () => {
+    setSettingsTab(null);
+  };
+
+  const renderSettingsContent = () => {
+    switch (settingsTab) {
+      case 'my-account':
+        return (
+          <MyAccount
+            onClose={handleCloseSettings}
+            initialUsername={user.username}
+          />
+        );
+      case 'notifications':
+        return <Notifications onClose={handleCloseSettings} />;
+      default:
+        return null;
+    }
+  };
+
   const renderContent = () => {
-    if (showMyAccount) {
+    if (settingsTab) {
       return (
-        <MyAccount
-          onClose={() => setShowMyAccount(false)}
-          initialUsername={user.username}
-        />
+        <SettingsShell
+          activeTab={settingsTab}
+          onChangeTab={setSettingsTab}
+          onClose={handleCloseSettings}
+          mobileTitle={SETTINGS_MOBILE_TITLES[settingsTab]}
+        >
+          {renderSettingsContent()}
+        </SettingsShell>
       );
     }
 
@@ -121,7 +156,7 @@ const App: React.FC = () => {
         onAddCoins={handleAddCoins}
         showNav={!isLoginPage}
         showHeader={!isLoginPage}
-        contentKey={showMyAccount ? 'my-account' : undefined}
+        contentKey={settingsTab ? `settings-${settingsTab}` : undefined}
       >
         {renderContent()}
       </AppShell>
@@ -181,7 +216,10 @@ const App: React.FC = () => {
           {showSettings && (
             <Settings
               onClose={() => setShowSettings(false)}
-              onOpenMyAccount={() => setShowMyAccount(true)}
+              onOpenMyAccount={() => {
+                setShowSettings(false);
+                setSettingsTab('my-account');
+              }}
             />
           )}
         </AnimatePresence>,
