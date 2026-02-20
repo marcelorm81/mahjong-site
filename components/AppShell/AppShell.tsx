@@ -85,7 +85,6 @@ export const AppShell: React.FC<AppShellProps> = ({
         className={`
           flex-1 relative z-10 overflow-y-auto overflow-x-hidden transition-all duration-300
           ${showHeader ? 'pt-[100px] compact:pt-[72px] md:pt-[75px]' : ''}
-          ${showNav ? 'pb-[100px] compact:pb-[80px] short:pb-[70px]' : ''}
         `}
         style={{ overscrollBehaviorY: 'contain' }}
       >
@@ -96,7 +95,7 @@ export const AppShell: React.FC<AppShellProps> = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.98 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="w-full h-full"
+            className={`w-full min-h-full ${showNav ? 'pb-[88px] compact:pb-[68px] short:pb-[56px]' : ''}`}
           >
             {children}
           </motion.div>
