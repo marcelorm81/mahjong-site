@@ -14,6 +14,7 @@ import { Streak } from './pages/Streak';
 import { Settings } from './pages/Settings';
 import { MyAccount } from './pages/MyAccount';
 import { Notifications } from './pages/Notifications';
+import { Security } from './pages/Security';
 import { PlaceholderPage } from './pages/PlaceholderPage';
 import { MOCK_USER } from './constants';
 import { Page, User } from './types';
@@ -90,6 +91,8 @@ const App: React.FC = () => {
         );
       case 'notifications':
         return <Notifications onClose={handleCloseSettings} />;
+      case 'security':
+        return <Security onClose={handleCloseSettings} />;
       default:
         return null;
     }
@@ -216,9 +219,9 @@ const App: React.FC = () => {
           {showSettings && (
             <Settings
               onClose={() => setShowSettings(false)}
-              onOpenMyAccount={() => {
+              onOpenTab={(tab) => {
                 setShowSettings(false);
-                setSettingsTab('my-account');
+                setSettingsTab(tab);
               }}
             />
           )}

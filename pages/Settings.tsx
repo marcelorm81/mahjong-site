@@ -1,25 +1,28 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { User, Bell, Lock, Wallet, CreditCard } from 'lucide-react';
+import { SettingsTab } from '../components/SettingsShell';
 
 // ── Menu data ─────────────────────────────────────────────────────────────────
-const MENU_ITEMS = [
-  { icon: User,       label: 'My Account' },
-  { icon: Bell,       label: 'Notifications' },
-  { icon: Lock,       label: 'Security & Privacy' },
-  { icon: Wallet,     label: 'Wallet & Virtual Currency' },
-  { icon: CreditCard, label: 'Payments' },
-] as const;
+const MENU_ITEMS: { icon: typeof User; label: string; tab: SettingsTab }[] = [
+  { icon: User,       label: 'My Account',                tab: 'my-account'    },
+  { icon: Bell,       label: 'Notifications',              tab: 'notifications' },
+  { icon: Lock,       label: 'Security & Privacy',         tab: 'security'      },
+  { icon: Wallet,     label: 'Wallet & Virtual Currency',  tab: 'wallet'        },
+  { icon: CreditCard, label: 'Payments',                   tab: 'payments'      },
+];
 
 const LINK_ITEMS = ['Log Out', 'Delete Account', 'Help Center'] as const;
 
 // ── Settings Panel ────────────────────────────────────────────────────────────
 interface SettingsProps {
   onClose: () => void;
+  onOpenTab: (tab: SettingsTab) => void;
+  /** @deprecated Use onOpenTab instead */
   onOpenMyAccount?: () => void;
 }
 
-export const Settings: React.FC<SettingsProps> = ({ onClose, onOpenMyAccount }) => {
+export const Settings: React.FC<SettingsProps> = ({ onClose, onOpenTab }) => {
   return (
     <>
       {/* Invisible full-screen backdrop — click to close */}
@@ -62,17 +65,15 @@ export const Settings: React.FC<SettingsProps> = ({ onClose, onOpenMyAccount }) 
 
           {/* Icon menu items */}
           <div className="relative flex flex-col gap-1">
-            {MENU_ITEMS.map(({ icon: Icon, label }, i) => (
+            {MENU_ITEMS.map(({ icon: Icon, label, tab }, i) => (
               <motion.button
                 key={label}
                 initial={{ opacity: 0, x: 8 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.05 + i * 0.05, duration: 0.2 }}
                 onClick={() => {
-                  if (label === 'My Account' && onOpenMyAccount) {
-                    onClose();
-                    onOpenMyAccount();
-                  }
+                  onClose();
+                  onOpenTab(tab);
                 }}
                 className="flex items-center gap-3 px-2.5 py-2 rounded-[10px] text-left
                            hover:bg-white/10 active:bg-white/15 transition-colors w-full"
