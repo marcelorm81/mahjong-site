@@ -15,6 +15,8 @@ import { Settings } from './pages/Settings';
 import { MyAccount } from './pages/MyAccount';
 import { Notifications } from './pages/Notifications';
 import { Security } from './pages/Security';
+import { WalletCurrency } from './pages/WalletCurrency';
+import { Payments } from './pages/Payments';
 import { PlaceholderPage } from './pages/PlaceholderPage';
 import { MOCK_USER } from './constants';
 import { Page, User } from './types';
@@ -93,6 +95,10 @@ const App: React.FC = () => {
         return <Notifications onClose={handleCloseSettings} />;
       case 'security':
         return <Security onClose={handleCloseSettings} />;
+      case 'wallet':
+        return <WalletCurrency onClose={handleCloseSettings} />;
+      case 'payments':
+        return <Payments onClose={handleCloseSettings} />;
       default:
         return null;
     }
