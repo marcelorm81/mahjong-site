@@ -84,7 +84,7 @@ export const AppShell: React.FC<AppShellProps> = ({
         ref={mainRef}
         className={`
           flex-1 relative z-10 overflow-y-auto overflow-x-hidden transition-all duration-300
-          ${showHeader ? 'pt-[100px] compact:pt-[72px] md:pt-[75px]' : ''}
+          ${showHeader ? 'pt-[100px] compact:pt-[72px] md:pt-[75px] short:pt-[50px]' : ''}
         `}
         style={{ overscrollBehaviorY: 'contain' }}
       >
