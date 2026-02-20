@@ -157,29 +157,29 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
         </div>
       </div>
 
-      {/* ─── Mobile: two rows ─── */}
-      <div className="flex md:hidden flex-col gap-2.5 px-2.5 py-2.5">
+      {/* ─── Mobile: two rows (compact on small portrait screens) ─── */}
+      <div className="flex md:hidden flex-col gap-2.5 compact:gap-1 px-2.5 py-2.5 compact:py-1.5">
         {/* Row 1: Profile + Coin + Settings */}
         <div className="flex items-center justify-between">
           {/* Profile */}
-          <div className="flex items-center gap-4 cursor-pointer" onClick={onOpenProfile}>
-            <div className="w-[50px] h-[50px] rounded-[3px] overflow-hidden border border-[#831A1A] bg-brand-dark shadow-lg flex-shrink-0">
+          <div className="flex items-center gap-4 compact:gap-2 cursor-pointer" onClick={onOpenProfile}>
+            <div className="w-[50px] h-[50px] compact:w-[36px] compact:h-[36px] rounded-[3px] overflow-hidden border border-[#831A1A] bg-brand-dark shadow-lg flex-shrink-0">
               <img src={user.avatarUrl} alt={user.username} className="w-full h-full object-cover" style={{ objectPosition: 'center 8%' }} />
             </div>
-            <div className="flex flex-col gap-1">
-              <span className="text-white font-semibold text-lg tracking-tight leading-none">{user.username}</span>
-              <span className="text-white/80 font-semibold text-sm tracking-tight">lv.{user.level}</span>
+            <div className="flex flex-col gap-1 compact:gap-0">
+              <span className="text-white font-semibold text-lg compact:text-sm tracking-tight leading-none">{user.username}</span>
+              <span className="text-white/80 font-semibold text-sm compact:text-xs tracking-tight">lv.{user.level}</span>
             </div>
           </div>
 
           {/* Coin + Settings */}
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-5 compact:gap-3">
             <CoinPill coins={user.coins} onAddCoins={onAddCoins} />
             <button
               onClick={onOpenSettings}
-              className="w-[25px] h-[25px] flex items-center justify-center flex-shrink-0"
+              className="w-[25px] h-[25px] compact:w-[20px] compact:h-[20px] flex items-center justify-center flex-shrink-0"
             >
-              <img src={iconSettings} alt="Settings" className="w-[25px] h-[25px] object-contain" />
+              <img src={iconSettings} alt="Settings" className="w-[25px] h-[25px] compact:w-[20px] compact:h-[20px] object-contain" />
             </button>
           </div>
         </div>
