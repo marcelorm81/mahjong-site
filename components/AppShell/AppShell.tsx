@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { TopHeader } from './TopHeader';
 import { BottomNav } from './BottomNav';
 import { User, Page } from '../../types';
@@ -28,6 +28,15 @@ export const AppShell: React.FC<AppShellProps> = ({
   showHeader = true,
   contentKey,
 }) => {
+  const mainRef = useRef<HTMLElement>(null);
+
+  // Reset scroll to top whenever the page or content changes
+  useEffect(() => {
+    if (mainRef.current) {
+      mainRef.current.scrollTop = 0;
+    }
+  }, [currentPage, contentKey]);
+
   return (
     <div
       className="bg-[#620000] relative flex flex-col"
@@ -72,6 +81,7 @@ export const AppShell: React.FC<AppShellProps> = ({
 
       {/* Main Scrollable Content */}
       <main
+        ref={mainRef}
         className={`
           flex-1 relative z-10 overflow-y-auto overflow-x-hidden transition-all duration-300
           ${showHeader ? 'pt-[100px] md:pt-[75px]' : ''}
