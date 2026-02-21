@@ -33,7 +33,7 @@ const TileImg: React.FC<{ src: string; alt: string }> = ({ src, alt }) => (
   <img
     src={src}
     alt={alt}
-    className="mahjong-tile w-[28px] h-[37px] md:w-[66px] md:h-[88px] object-contain drop-shadow"
+    className="mahjong-tile w-[36px] h-[48px] md:w-[66px] md:h-[88px] object-contain drop-shadow"
   />
 );
 
@@ -448,7 +448,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
       {/* vh-based top keeps the tail near the character's face at any screen height:
           mobile  ≈ 22 vh  (portrait — face is high up in the frame)
           desktop ≈ 30 vh  (landscape — character is more centred)          */}
-      <div className={`absolute z-20 left-4 ${step === 1 ? 'md:left-[calc(18%+300px)]' : 'md:left-[18%]'} top-[22vh] md:top-[calc(30vh-30px)] w-[min(82vw,48vh)] max-w-[260px] md:w-[min(28vw,45vh)] md:max-w-[340px] overflow-visible`}>
+      <div className={`absolute z-20 left-4 ${step === 1 ? 'md:left-[calc(18%+500px)]' : 'md:left-[18%]'} top-[calc(22vh+350px)] md:top-[calc(30vh-130px)] w-[min(82vw,48vh)] max-w-[260px] md:w-[min(28vw,45vh)] md:max-w-[340px] overflow-visible`}>
         <ChatBubble
           key={step}
           lines={currentStep.text}
