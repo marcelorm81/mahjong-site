@@ -17,10 +17,11 @@ import { Notifications } from './pages/Notifications';
 import { Security } from './pages/Security';
 import { WalletCurrency } from './pages/WalletCurrency';
 import { Payments } from './pages/Payments';
+import { Tutorial } from './pages/Tutorial';
 import { PlaceholderPage } from './pages/PlaceholderPage';
 import { MOCK_USER } from './constants';
 import { Page, User } from './types';
-import { BookOpen, Gift } from 'lucide-react';
+import { Gift } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 // Pages that render as overlays on top of the current page
@@ -136,7 +137,7 @@ const App: React.FC = () => {
       case Page.PROFILE:
         return <Profile user={user} onUpdateUser={handleUpdateUser} onNavigate={handleNavigate} />;
       case Page.TUTORIAL:
-        return <PlaceholderPage title="How to Play" icon={BookOpen} />;
+        return <Tutorial onClose={() => handleNavigate(Page.LOBBY)} onNavigate={handleNavigate} />;
       default:
         return <Lobby />;
     }
@@ -153,7 +154,7 @@ const App: React.FC = () => {
     }
   };
 
-  const isLoginPage = currentPage === Page.LOGIN;
+  const isFullscreenPage = currentPage === Page.LOGIN || currentPage === Page.TUTORIAL;
 
   return (
     <>
@@ -163,8 +164,8 @@ const App: React.FC = () => {
         onNavigate={handleNavigate}
         onOpenSettings={() => setShowSettings(prev => !prev)}
         onAddCoins={handleAddCoins}
-        showNav={!isLoginPage}
-        showHeader={!isLoginPage}
+        showNav={!isFullscreenPage}
+        showHeader={!isFullscreenPage}
         contentKey={settingsTab ? `settings-${settingsTab}` : undefined}
       >
         {renderContent()}
