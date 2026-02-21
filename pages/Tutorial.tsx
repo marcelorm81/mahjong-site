@@ -359,7 +359,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
       {/* vh-based top keeps the tail near the character's face at any screen height:
           mobile  ≈ 22 vh  (portrait — face is high up in the frame)
           desktop ≈ 30 vh  (landscape — character is more centred)          */}
-      <div className="absolute z-20 left-4 md:left-[5%] top-[22vh] md:top-[30vh] max-w-[260px] md:max-w-[340px] overflow-visible">
+      <div className="absolute z-20 left-4 md:left-[calc(5%+40px)] top-[22vh] md:top-[30vh] w-[82vw] max-w-[260px] md:w-[28vw] md:max-w-[340px] overflow-visible">
         <ChatBubble
           key={step}
           lines={currentStep.text}
