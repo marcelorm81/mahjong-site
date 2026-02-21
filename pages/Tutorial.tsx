@@ -26,58 +26,15 @@ const STEPS: TutorialStep[] = [
 
 const TOTAL_STEPS = STEPS.length;
 
-/* ── Mahjong tile components ─────────────────────────────────────── */
+/* ── Mahjong tile image component ───────────────────────────────── */
 
-/** Base tile shell — cream card with shadow */
-const TileBase: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
-  <div
-    className={`mahjong-tile inline-flex items-center justify-center
-      rounded-[2px] md:rounded-[4px]
-      bg-[#FFF8EE] border border-black/10
-      shadow-[0_2px_5px_rgba(0,0,0,0.35)]
-      w-[28px] h-[37px] md:w-[54px] md:h-[72px] ${className ?? ''}`}
-  >
-    {children}
-  </div>
-);
-
-/** Dot-suit tiles 1–9 using SVG circles in the classic Mahjong arrangement */
-const DOT_MAP: Record<number, [number, number, 'b' | 'r'][]> = {
-  1: [[33,44,'b']],
-  2: [[33,27,'b'],[33,61,'r']],
-  3: [[33,22,'b'],[33,44,'r'],[33,66,'b']],
-  4: [[22,27,'b'],[44,27,'r'],[22,61,'r'],[44,61,'b']],
-  5: [[22,22,'b'],[44,22,'r'],[33,44,'b'],[22,66,'r'],[44,66,'b']],
-  6: [[22,22,'b'],[44,22,'r'],[22,44,'r'],[44,44,'b'],[22,66,'b'],[44,66,'r']],
-  7: [[22,18,'b'],[44,18,'r'],[33,31,'b'],[22,44,'r'],[44,44,'b'],[22,70,'r'],[44,70,'b']],
-  8: [[22,18,'b'],[44,18,'r'],[22,37,'r'],[44,37,'b'],[22,57,'b'],[44,57,'r'],[22,74,'r'],[44,74,'b']],
-  9: [[20,20,'b'],[33,20,'r'],[46,20,'b'],[20,44,'r'],[33,44,'b'],[46,44,'r'],[20,68,'b'],[33,68,'r'],[46,68,'b']],
-};
-const DotTile: React.FC<{ n: number }> = ({ n }) => (
-  <TileBase>
-    <svg viewBox="0 0 66 88" className="w-full h-full p-[2px] md:p-[3px]">
-      {DOT_MAP[n].map(([cx, cy, col], i) => (
-        <circle key={i} cx={cx} cy={cy} r={5.5}
-          fill={col === 'b' ? '#1a50c8' : '#c41e3a'} />
-      ))}
-    </svg>
-  </TileBase>
-);
-
-/** Wind tiles — Chinese characters 東南西北 */
-const WindTile: React.FC<{ char: string }> = ({ char }) => (
-  <TileBase>
-    <span className="font-bold leading-none text-[#1a6e3a] text-[14px] md:text-[28px]">{char}</span>
-  </TileBase>
-);
-
-/** Dragon tiles — 中(red) 發(green) 白(outlined) */
-const DragonTile: React.FC<{ char: string; color?: string; outlined?: boolean }> = ({ char, color, outlined }) => (
-  <TileBase className={outlined ? 'border-2 border-[#4169E1]' : ''}>
-    {outlined
-      ? <span className="font-bold leading-none text-[#4169E1] text-[11px] md:text-[22px]">{char}</span>
-      : <span style={{ color }} className="font-bold leading-none text-[13px] md:text-[26px]">{char}</span>}
-  </TileBase>
+/** Single tile — renders the Figma-exported SVG asset */
+const TileImg: React.FC<{ src: string; alt: string }> = ({ src, alt }) => (
+  <img
+    src={src}
+    alt={alt}
+    className="mahjong-tile w-[28px] h-[37px] md:w-[66px] md:h-[88px] object-contain drop-shadow"
+  />
 );
 
 /** Three-row tile showcase with GSAP stagger animation */
@@ -120,7 +77,9 @@ const TileSection: React.FC = () => {
         Number Tiles
       </p>
       <div className="tile-row-0 flex gap-[3px] md:gap-[5px] mb-[10px] md:mb-[16px]">
-        {[1,2,3,4,5,6,7,8,9].map(n => <DotTile key={n} n={n} />)}
+        {[1,2,3,4,5,6,7,8,9,10].map(n => (
+          <TileImg key={n} src={`/assets/tiles/tile-num-${n}.svg`} alt={`Number ${n}`} />
+        ))}
       </div>
 
       {/* Wind Tiles */}
@@ -128,7 +87,9 @@ const TileSection: React.FC = () => {
         Wind Tiles
       </p>
       <div className="tile-row-1 flex gap-[3px] md:gap-[5px] mb-[10px] md:mb-[16px]">
-        {['東','南','西','北'].map(c => <WindTile key={c} char={c} />)}
+        {(['east','south','west','north'] as const).map(d => (
+          <TileImg key={d} src={`/assets/tiles/tile-wind-${d}.svg`} alt={`Wind ${d}`} />
+        ))}
       </div>
 
       {/* Dragon Tiles */}
@@ -136,9 +97,9 @@ const TileSection: React.FC = () => {
         Dragon Tiles
       </p>
       <div className="tile-row-2 flex gap-[3px] md:gap-[5px]">
-        <DragonTile char="中" color="#c41e3a" />
-        <DragonTile char="發" color="#1a6e3a" />
-        <DragonTile char="白" outlined />
+        {(['zhong','fa','bai'] as const).map(d => (
+          <TileImg key={d} src={`/assets/tiles/tile-dragon-${d}.svg`} alt={`Dragon ${d}`} />
+        ))}
       </div>
     </div>
   );
@@ -199,17 +160,17 @@ const buildBubblePath = (W: number, bodyH: number): string => {
 
 /* ── Page dot indicator ────────────────────────────────────────────── */
 const PageDots: React.FC<{ current: number; total: number }> = ({ current, total }) => (
-  <div className="flex items-center gap-[14px]">
+  <div className="flex items-center gap-[10px]">
     {Array.from({ length: total }, (_, i) => (
       <div
         key={i}
         className="rounded-full transition-all duration-300"
         style={{
-          width:  i === current ? '12px' : '10px',
-          height: i === current ? '12px' : '10px',
+          width:  i === current ? '8px' : '6px',
+          height: i === current ? '8px' : '6px',
           backgroundColor: 'white',
           opacity: i === current ? 1 : 0.45,
-          boxShadow: i === current ? '0 0 6px rgba(255,255,255,0.8)' : 'none',
+          boxShadow: i === current ? '0 0 4px rgba(255,255,255,0.8)' : 'none',
         }}
       />
     ))}
@@ -487,7 +448,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
       {/* vh-based top keeps the tail near the character's face at any screen height:
           mobile  ≈ 22 vh  (portrait — face is high up in the frame)
           desktop ≈ 30 vh  (landscape — character is more centred)          */}
-      <div className={`absolute z-20 left-4 ${step === 1 ? 'md:left-[calc(18%+100px)]' : 'md:left-[18%]'} top-[22vh] md:top-[calc(30vh-30px)] w-[min(82vw,48vh)] max-w-[260px] md:w-[min(28vw,45vh)] md:max-w-[340px] overflow-visible`}>
+      <div className={`absolute z-20 left-4 ${step === 1 ? 'md:left-[calc(18%+300px)]' : 'md:left-[18%]'} top-[22vh] md:top-[calc(30vh-30px)] w-[min(82vw,48vh)] max-w-[260px] md:w-[min(28vw,45vh)] md:max-w-[340px] overflow-visible`}>
         <ChatBubble
           key={step}
           lines={currentStep.text}
