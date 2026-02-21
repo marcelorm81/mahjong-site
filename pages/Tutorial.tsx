@@ -120,49 +120,32 @@ const ChatBubble: React.FC<{
   }, [lines, onComplete]);
 
   return (
-    <div ref={bubbleRef} className="relative inline-block" style={{ opacity: 0 }}>
-      {/*
-        Two-part speech bubble:
-        1. Rounded rectangle body — stretches with text via preserveAspectRatio="none"
-        2. Fixed-size tail — absolutely positioned, never distorted
-      */}
-      <div className="relative">
-        {/* SVG body — stretches to fill the text box */}
+    <div ref={bubbleRef} className="relative inline-block w-full" style={{ opacity: 0 }}>
+      <div className="relative" style={{ filter: 'drop-shadow(6px 6px 0px #4A0000)' }}>
+        {/* User's exact SVG — single path, original shape, no splitting */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 458 126"
+          viewBox="0 0 458 151"
           fill="none"
-          preserveAspectRatio="none"
-          className="absolute inset-0 w-full h-full"
-          style={{ filter: 'drop-shadow(6px 6px 0px #4A0000)' }}
+          className="w-full h-auto block"
         >
-          <rect x="2" y="2" width="454" height="122" rx="22" ry="22" fill="#620000" stroke="white" strokeWidth="4" />
+          <path
+            d="M24 2H434C446.15 2 456 11.8497 456 24V102C456 114.15 446.15 124 434 124H406.5C403.186 124 400.5 126.686 400.5 130V148.651L373.706 125.686C372.437 124.598 370.821 124 369.15 124H24C11.8497 124 2 114.15 2 102V24C2 11.8497 11.8497 2 24 2Z"
+            fill="#620000"
+            stroke="white"
+            strokeWidth="4"
+          />
         </svg>
-
-        {/* Fixed-size tail — bottom-right, never stretches */}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="34"
-          height="28"
-          viewBox="0 0 34 28"
-          fill="none"
-          className="absolute -bottom-[26px] right-[15%] md:right-[12%] z-[1]"
-          style={{ filter: 'drop-shadow(6px 6px 0px #4A0000)' }}
-        >
-          {/* White border triangle (slightly larger, behind) */}
-          <path d="M0 0H34L7.2 24.97A3.5 3.5 0 0 1 2.5 24.97L0 22.6V0Z" fill="white" />
-          {/* Fill triangle (matches bubble body) */}
-          <path d="M0 0H34L9.5 21.5A2 2 0 0 1 6.2 21.5L0 16V0Z" fill="#620000" />
-          {/* Top edge cover — hides the seam between body and tail */}
-          <rect x="0" y="0" width="34" height="4" fill="#620000" />
-        </svg>
-
-        {/* Text content — positioned over the SVG body */}
+        {/* Text overlay — positioned within the body area of the SVG */}
         <div
           ref={textRef}
-          className="relative z-10 font-semibold text-white leading-snug px-6 py-4 md:px-9 md:py-6"
+          className="absolute font-semibold text-white leading-snug flex flex-col justify-center"
           style={{
-            fontSize: 'clamp(14px, 1.8vw, 24px)',
+            top: '12%',
+            left: '7%',
+            right: '10%',
+            bottom: '26%',
+            fontSize: 'clamp(13px, 3.5vw, 22px)',
             letterSpacing: '-0.02em',
           }}
         />
@@ -190,7 +173,9 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
     if (textComplete && nextBtnRef.current) {
       pulseAnimRef.current = gsap.to(nextBtnRef.current, {
         scale: 1.05,
-        duration: 0.6,
+        boxShadow: '0 0 22px rgba(230,162,60,0.7)',
+        borderColor: 'rgba(230,162,60,1)',
+        duration: 0.7,
         ease: 'power1.inOut',
         yoyo: true,
         repeat: -1,
@@ -199,7 +184,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
     return () => {
       pulseAnimRef.current?.kill();
       if (nextBtnRef.current) {
-        gsap.set(nextBtnRef.current, { scale: 1 });
+        gsap.set(nextBtnRef.current, { scale: 1, boxShadow: 'none', borderColor: 'white' });
       }
     };
   }, [textComplete]);
@@ -264,7 +249,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
         {/* Skip button */}
         <button
           onClick={handleSkip}
-          className="border border-white rounded-[6px] px-8 md:px-16 py-3 md:py-4 text-white font-semibold text-sm md:text-lg uppercase tracking-tight hover:bg-white/10 active:scale-95 transition-all"
+          className="border border-white rounded-[6px] px-8 md:px-[20px] py-2.5 md:h-[45px] md:flex md:items-center text-white font-semibold text-sm md:text-base uppercase tracking-tight hover:bg-white/10 active:scale-95 transition-all"
           style={{
             background: 'radial-gradient(ellipse at center, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 100%)',
           }}
@@ -284,7 +269,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
         <button
           ref={nextBtnRef}
           onClick={handleNext}
-          className="border border-white rounded-[6px] px-8 md:px-16 py-3 md:py-4 text-white font-semibold text-sm md:text-lg uppercase tracking-tight hover:brightness-110 active:scale-95 transition-all"
+          className="border border-white rounded-[6px] px-8 md:px-[20px] py-2.5 md:h-[45px] md:flex md:items-center text-white font-semibold text-sm md:text-base uppercase tracking-tight hover:brightness-110 active:scale-95 transition-all"
           style={{
             background: 'linear-gradient(181deg, rgba(255,255,255,0) 9%, rgba(230,162,60,0.6) 98%)',
           }}
