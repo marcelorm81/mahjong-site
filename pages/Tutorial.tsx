@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Page } from '../types';
 import gsap from 'gsap';
 
@@ -20,6 +20,59 @@ const STEPS: TutorialStep[] = [
 
 const TOTAL_STEPS = STEPS.length;
 
+/* ── Dynamic bubble SVG path builder ─────────────────────────────── */
+// Generates the exact original SVG path shape, but adjusts corner-node
+// positions so the body adapts in width & height.  The tail's bezier
+// curves are always identical — only translated to follow the bottom edge.
+const buildBubblePath = (W: number, bodyH: number): string => {
+  if (W < 60 || bodyH < 50) return '';
+
+  const s = 2;      // stroke inset
+  const r = 22;     // corner radius
+  const k = 12.15;  // bezier handle length for r=22
+
+  const edgeY = bodyH - s; // body-path bottom
+
+  // Tail anchors — fixed distance from the right edge (matches original)
+  const tailRX = W - 51.5;
+  const tailLX = W - 88.85;
+
+  // If bubble is too narrow for the tail, draw a plain rounded rect
+  if (tailLX <= s + r) {
+    return [
+      `M${s+r} ${s}`, `H${W-s-r}`,
+      `C${W-s-r+k} ${s} ${W-s} ${s+r-k} ${W-s} ${s+r}`,
+      `V${edgeY-r}`,
+      `C${W-s} ${edgeY-r+k} ${W-s-r+k} ${edgeY} ${W-s-r} ${edgeY}`,
+      `H${s+r}`,
+      `C${s+r-k} ${edgeY} ${s} ${edgeY-r+k} ${s} ${edgeY-r}`,
+      `V${s+r}`,
+      `C${s} ${s+r-k} ${s+r-k} ${s} ${s+r} ${s}`, 'Z',
+    ].join('');
+  }
+
+  return [
+    // ── Top edge + top-right corner
+    `M${s+r} ${s}`, `H${W-s-r}`,
+    `C${W-s-r+k} ${s} ${W-s} ${s+r-k} ${W-s} ${s+r}`,
+    // ── Right edge + bottom-right corner
+    `V${edgeY-r}`,
+    `C${W-s} ${edgeY-r+k} ${W-s-r+k} ${edgeY} ${W-s-r} ${edgeY}`,
+    // ── Bottom edge → tail (exact original bezier curves)
+    `H${tailRX}`,
+    `C${tailRX-3.314} ${edgeY} ${tailRX-6} ${edgeY+2.686} ${tailRX-6} ${edgeY+6}`,
+    `V${edgeY+24.651}`,
+    `L${tailLX+4.556} ${edgeY+1.686}`,
+    `C${tailLX+3.287} ${edgeY+0.598} ${tailLX+1.671} ${edgeY} ${tailLX} ${edgeY}`,
+    // ── Continue bottom edge + bottom-left corner
+    `H${s+r}`,
+    `C${s+r-k} ${edgeY} ${s} ${edgeY-r+k} ${s} ${edgeY-r}`,
+    // ── Left edge + top-left corner
+    `V${s+r}`,
+    `C${s} ${s+r-k} ${s+r-k} ${s} ${s+r} ${s}`, 'Z',
+  ].join('');
+};
+
 /* ── Page dot indicator ────────────────────────────────────────────── */
 const PageDots: React.FC<{ current: number; total: number }> = ({ current, total }) => (
   <div className="flex items-center gap-[18px]">
@@ -37,44 +90,61 @@ const PageDots: React.FC<{ current: number; total: number }> = ({ current, total
 );
 
 /* ── Chat bubble with typewriter ───────────────────────────────────── */
+const TAIL_H = 27; // px the tail extends below the body
+
 const ChatBubble: React.FC<{
   lines: string[];
   onComplete: () => void;
 }> = ({ lines, onComplete }) => {
   const bubbleRef = useRef<HTMLDivElement>(null);
-  const textRef = useRef<HTMLDivElement>(null);
+  const textRef  = useRef<HTMLDivElement>(null);
+  const wrapRef  = useRef<HTMLDivElement>(null);
   const completedRef = useRef(false);
+  const [size, setSize] = useState({ w: 0, h: 0 });
 
+  // ── Measure wrapper (text + padding) for dynamic SVG ──
+  useLayoutEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    setSize({ w: el.offsetWidth, h: el.offsetHeight });
+  }, [lines]);
+
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => {
+      setSize({ w: el.offsetWidth, h: el.offsetHeight });
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  // ── Typewriter effect ──
   useEffect(() => {
     completedRef.current = false;
     const bubble = bubbleRef.current;
     const textEl = textRef.current;
     if (!bubble || !textEl) return;
 
-    // Reset
     gsap.set(bubble, { opacity: 0, y: 20, scale: 0.95 });
     textEl.innerHTML = '';
 
     const tl = gsap.timeline();
 
-    // 1. Fade in & slide the bubble
     tl.to(bubble, {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      duration: 0.6,
-      ease: 'power3.out',
+      opacity: 1, y: 0, scale: 1,
+      duration: 0.6, ease: 'power3.out',
     });
 
-    // 2. Typewriter effect for each line
     const fullText = lines.join('\n');
     const chars = fullText.split('');
 
-    // Build spans for each line
+    // Create line elements — use nbsp placeholder so they occupy height
     const lineSpans = lines.map((line) => {
-      const span = document.createElement('p');
-      span.style.margin = '0';
-      return { el: span, text: line };
+      const p = document.createElement('p');
+      p.style.margin = '0';
+      p.innerHTML = '\u00A0'; // non-breaking space for initial height
+      return { el: p, text: line };
     });
     lineSpans.forEach(({ el }) => textEl.appendChild(el));
 
@@ -88,7 +158,6 @@ const ChatBubble: React.FC<{
       onUpdate: function () {
         const progress = this.progress();
         const targetChar = Math.floor(progress * chars.length);
-
         while (charIndex < targetChar && charIndex < chars.length) {
           const char = chars[charIndex];
           if (char === '\n') {
@@ -103,10 +172,7 @@ const ChatBubble: React.FC<{
         }
       },
       onComplete: () => {
-        // Ensure full text is shown
-        lineSpans.forEach(({ el, text }) => {
-          el.textContent = text;
-        });
+        lineSpans.forEach(({ el, text }) => { el.textContent = text; });
         if (!completedRef.current) {
           completedRef.current = true;
           onComplete();
@@ -114,37 +180,40 @@ const ChatBubble: React.FC<{
       },
     });
 
-    return () => {
-      tl.kill();
-    };
+    return () => { tl.kill(); };
   }, [lines, onComplete]);
+
+  // ── Build SVG path from measured wrapper size ──
+  const svgW = size.w;
+  const svgH = size.h + TAIL_H;
+  const path  = buildBubblePath(svgW, size.h);
 
   return (
     <div ref={bubbleRef} className="relative inline-block w-full" style={{ opacity: 0 }}>
-      <div className="relative" style={{ filter: 'drop-shadow(6px 6px 0px #4A0000)' }}>
-        {/* User's exact SVG — single path, original shape, no splitting */}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 458 151"
-          fill="none"
-          className="w-full h-auto block"
-        >
-          <path
-            d="M24 2H434C446.15 2 456 11.8497 456 24V102C456 114.15 446.15 124 434 124H406.5C403.186 124 400.5 126.686 400.5 130V148.651L373.706 125.686C372.437 124.598 370.821 124 369.15 124H24C11.8497 124 2 114.15 2 102V24C2 11.8497 11.8497 2 24 2Z"
-            fill="#620000"
-            stroke="white"
-            strokeWidth="4"
-          />
-        </svg>
-        {/* Text overlay — positioned within the body area of the SVG */}
+      <div
+        ref={wrapRef}
+        className="relative"
+        style={{ filter: 'drop-shadow(6px 6px 0px #4A0000)' }}
+      >
+        {/* Dynamic SVG — exact original shape, corner nodes adapt to content */}
+        {svgW > 0 && (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox={`0 0 ${svgW} ${svgH}`}
+            fill="none"
+            className="absolute top-0 left-0 pointer-events-none"
+            width={svgW}
+            height={svgH}
+          >
+            <path d={path} fill="#620000" stroke="white" strokeWidth="4" />
+          </svg>
+        )}
+
+        {/* Text content — its size drives the bubble dimensions */}
         <div
           ref={textRef}
-          className="absolute font-semibold text-white leading-snug flex flex-col justify-center"
+          className="relative z-10 font-semibold text-white leading-snug px-7 py-5 md:px-9 md:py-6"
           style={{
-            top: '12%',
-            left: '7%',
-            right: '10%',
-            bottom: '26%',
             fontSize: 'clamp(13px, 3.5vw, 22px)',
             letterSpacing: '-0.02em',
           }}
@@ -284,7 +353,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
       </div>
 
       {/* ── Chat bubble ── */}
-      <div className="absolute z-20 left-4 md:left-[5%] top-[140px] md:top-[210px] max-w-[260px] md:max-w-[340px]">
+      <div className="absolute z-20 left-4 md:left-[5%] top-[140px] md:top-[160px] max-w-[260px] md:max-w-[340px] overflow-visible">
         <ChatBubble
           key={step}
           lines={currentStep.text}
