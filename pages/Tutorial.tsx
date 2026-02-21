@@ -2,23 +2,147 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Page } from '../types';
 import gsap from 'gsap';
 
-/* ── Assets ────────────────────────────────────────────────────────── */
-const videoDesktop = '/assets/waving_loop_desktop.mp4';
-const videoMobile = '/assets/waving_loop_mobile.mp4';
+/* ── Default video assets ───────────────────────────────────────────── */
+const DEFAULT_VIDEO_DESKTOP = '/assets/waving_loop_desktop.mp4';
+const DEFAULT_VIDEO_MOBILE  = '/assets/waving_loop_mobile.mp4';
 
 /* ── Tutorial step data ────────────────────────────────────────────── */
 interface TutorialStep {
   text: string[];
+  videoDesktop?: string; // overrides default waving video
+  videoMobile?:  string;
 }
 
 const STEPS: TutorialStep[] = [
   { text: ['Welcome to Mahjong Stars!', 'New to here? No worries.'] },
-  { text: ['Let me show you around.', 'It\'s easy, I promise!'] },
+  {
+    text: ['Bang Bang is the most fun', 'and easiest rule to learn!'],
+    videoDesktop: '/assets/talking_loop_desktop.mp4',
+    videoMobile:  '/assets/talking_loop_mobile.mp4',
+  },
   { text: ['Pick your tiles wisely.', 'Match, strategize, and win!'] },
   { text: ['Ready to play?', 'Let\'s jump into a game!'] },
 ];
 
 const TOTAL_STEPS = STEPS.length;
+
+/* ── Mahjong tile components ─────────────────────────────────────── */
+
+/** Base tile shell — cream card with shadow */
+const TileBase: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
+  <div
+    className={`mahjong-tile inline-flex items-center justify-center
+      rounded-[2px] md:rounded-[4px]
+      bg-[#FFF8EE] border border-black/10
+      shadow-[0_2px_5px_rgba(0,0,0,0.35)]
+      w-[28px] h-[37px] md:w-[54px] md:h-[72px] ${className ?? ''}`}
+  >
+    {children}
+  </div>
+);
+
+/** Dot-suit tiles 1–9 using SVG circles in the classic Mahjong arrangement */
+const DOT_MAP: Record<number, [number, number, 'b' | 'r'][]> = {
+  1: [[33,44,'b']],
+  2: [[33,27,'b'],[33,61,'r']],
+  3: [[33,22,'b'],[33,44,'r'],[33,66,'b']],
+  4: [[22,27,'b'],[44,27,'r'],[22,61,'r'],[44,61,'b']],
+  5: [[22,22,'b'],[44,22,'r'],[33,44,'b'],[22,66,'r'],[44,66,'b']],
+  6: [[22,22,'b'],[44,22,'r'],[22,44,'r'],[44,44,'b'],[22,66,'b'],[44,66,'r']],
+  7: [[22,18,'b'],[44,18,'r'],[33,31,'b'],[22,44,'r'],[44,44,'b'],[22,70,'r'],[44,70,'b']],
+  8: [[22,18,'b'],[44,18,'r'],[22,37,'r'],[44,37,'b'],[22,57,'b'],[44,57,'r'],[22,74,'r'],[44,74,'b']],
+  9: [[20,20,'b'],[33,20,'r'],[46,20,'b'],[20,44,'r'],[33,44,'b'],[46,44,'r'],[20,68,'b'],[33,68,'r'],[46,68,'b']],
+};
+const DotTile: React.FC<{ n: number }> = ({ n }) => (
+  <TileBase>
+    <svg viewBox="0 0 66 88" className="w-full h-full p-[2px] md:p-[3px]">
+      {DOT_MAP[n].map(([cx, cy, col], i) => (
+        <circle key={i} cx={cx} cy={cy} r={5.5}
+          fill={col === 'b' ? '#1a50c8' : '#c41e3a'} />
+      ))}
+    </svg>
+  </TileBase>
+);
+
+/** Wind tiles — Chinese characters 東南西北 */
+const WindTile: React.FC<{ char: string }> = ({ char }) => (
+  <TileBase>
+    <span className="font-bold leading-none text-[#1a6e3a] text-[14px] md:text-[28px]">{char}</span>
+  </TileBase>
+);
+
+/** Dragon tiles — 中(red) 發(green) 白(outlined) */
+const DragonTile: React.FC<{ char: string; color?: string; outlined?: boolean }> = ({ char, color, outlined }) => (
+  <TileBase className={outlined ? 'border-2 border-[#4169E1]' : ''}>
+    {outlined
+      ? <span className="font-bold leading-none text-[#4169E1] text-[11px] md:text-[22px]">{char}</span>
+      : <span style={{ color }} className="font-bold leading-none text-[13px] md:text-[26px]">{char}</span>}
+  </TileBase>
+);
+
+/** Three-row tile showcase with GSAP stagger animation */
+const TileSection: React.FC = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+
+    const labels   = el.querySelectorAll('.tile-label');
+    const row0     = el.querySelectorAll('.tile-row-0 .mahjong-tile');
+    const row1     = el.querySelectorAll('.tile-row-1 .mahjong-tile');
+    const row2     = el.querySelectorAll('.tile-row-2 .mahjong-tile');
+    const allTiles = el.querySelectorAll('.mahjong-tile');
+
+    // Initial hidden state
+    gsap.set(labels, { opacity: 0, x: -10 });
+    gsap.set(allTiles, { opacity: 0, y: 20, scale: 0.7 });
+
+    const tl = gsap.timeline({ delay: 1.1 });
+
+    // Row 0 — Number tiles
+    tl.to(labels[0], { opacity: 1, x: 0, duration: 0.28, ease: 'power2.out' })
+      .to(row0, { opacity: 1, y: 0, scale: 1, duration: 0.28, stagger: 0.05, ease: 'back.out(1.5)' }, '-=0.08')
+    // Row 1 — Wind tiles
+      .to(labels[1], { opacity: 1, x: 0, duration: 0.25, ease: 'power2.out' }, '+=0.06')
+      .to(row1, { opacity: 1, y: 0, scale: 1, duration: 0.30, stagger: 0.07, ease: 'back.out(1.5)' }, '-=0.08')
+    // Row 2 — Dragon tiles
+      .to(labels[2], { opacity: 1, x: 0, duration: 0.25, ease: 'power2.out' }, '+=0.06')
+      .to(row2, { opacity: 1, y: 0, scale: 1, duration: 0.32, stagger: 0.09, ease: 'back.out(1.5)' }, '-=0.08');
+
+    return () => { tl.kill(); };
+  }, []);
+
+  return (
+    <div ref={sectionRef} className="select-none pointer-events-none">
+      {/* Number Tiles */}
+      <p className="tile-label text-white font-semibold text-[11px] md:text-[15px] mb-[4px] md:mb-[6px] drop-shadow-md">
+        Number Tiles
+      </p>
+      <div className="tile-row-0 flex gap-[3px] md:gap-[5px] mb-[10px] md:mb-[16px]">
+        {[1,2,3,4,5,6,7,8,9].map(n => <DotTile key={n} n={n} />)}
+      </div>
+
+      {/* Wind Tiles */}
+      <p className="tile-label text-white font-semibold text-[11px] md:text-[15px] mb-[4px] md:mb-[6px] drop-shadow-md">
+        Wind Tiles
+      </p>
+      <div className="tile-row-1 flex gap-[3px] md:gap-[5px] mb-[10px] md:mb-[16px]">
+        {['東','南','西','北'].map(c => <WindTile key={c} char={c} />)}
+      </div>
+
+      {/* Dragon Tiles */}
+      <p className="tile-label text-white font-semibold text-[11px] md:text-[15px] mb-[4px] md:mb-[6px] drop-shadow-md">
+        Dragon Tiles
+      </p>
+      <div className="tile-row-2 flex gap-[3px] md:gap-[5px]">
+        <DragonTile char="中" color="#c41e3a" />
+        <DragonTile char="發" color="#1a6e3a" />
+        <DragonTile char="白" outlined />
+      </div>
+    </div>
+  );
+};
 
 /* ── Dynamic bubble SVG path builder ─────────────────────────────── */
 // Generates the exact original SVG path shape, but adjusts corner-node
@@ -284,28 +408,25 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
   return (
     <div className="relative w-full h-full overflow-hidden">
       {/* ── Full-bleed looping video background ── */}
-      {/* Desktop video */}
-      <video
-        key="desktop"
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="hidden md:block absolute inset-0 w-full h-full object-cover"
-      >
-        <source src={videoDesktop} type="video/mp4" />
-      </video>
-      {/* Mobile video */}
-      <video
-        key="mobile"
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="block md:hidden absolute inset-0 w-full h-full object-cover"
-      >
-        <source src={videoMobile} type="video/mp4" />
-      </video>
+      {/* key = src so React remounts (and reloads) when step changes video */}
+      {(() => {
+        const desktopSrc = currentStep.videoDesktop ?? DEFAULT_VIDEO_DESKTOP;
+        const mobileSrc  = currentStep.videoMobile  ?? DEFAULT_VIDEO_MOBILE;
+        return (
+          <>
+            {/* Desktop video */}
+            <video key={desktopSrc} autoPlay loop muted playsInline
+              className="hidden md:block absolute inset-0 w-full h-full object-cover">
+              <source src={desktopSrc} type="video/mp4" />
+            </video>
+            {/* Mobile video */}
+            <video key={mobileSrc} autoPlay loop muted playsInline
+              className="block md:hidden absolute inset-0 w-full h-full object-cover">
+              <source src={mobileSrc} type="video/mp4" />
+            </video>
+          </>
+        );
+      })()}
 
       {/* ── Top gradient overlay ── */}
       <div
@@ -355,11 +476,18 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
         <PageDots current={step} total={TOTAL_STEPS} />
       </div>
 
+      {/* ── Tile showcase — step 2 only ── */}
+      {step === 1 && (
+        <div className="absolute z-10 left-[4vw] top-[18vh] md:left-[5%] md:top-[26vh]">
+          <TileSection key="tiles" />
+        </div>
+      )}
+
       {/* ── Chat bubble ── */}
       {/* vh-based top keeps the tail near the character's face at any screen height:
           mobile  ≈ 22 vh  (portrait — face is high up in the frame)
           desktop ≈ 30 vh  (landscape — character is more centred)          */}
-      <div className="absolute z-20 left-4 md:left-[18%] top-[22vh] md:top-[calc(30vh-30px)] w-[min(82vw,48vh)] max-w-[260px] md:w-[min(28vw,45vh)] md:max-w-[340px] overflow-visible">
+      <div className={`absolute z-20 left-4 ${step === 1 ? 'md:left-[calc(18%+100px)]' : 'md:left-[18%]'} top-[22vh] md:top-[calc(30vh-30px)] w-[min(82vw,48vh)] max-w-[260px] md:w-[min(28vw,45vh)] md:max-w-[340px] overflow-visible`}>
         <ChatBubble
           key={step}
           lines={currentStep.text}
