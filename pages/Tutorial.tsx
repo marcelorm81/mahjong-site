@@ -75,14 +75,17 @@ const buildBubblePath = (W: number, bodyH: number): string => {
 
 /* ── Page dot indicator ────────────────────────────────────────────── */
 const PageDots: React.FC<{ current: number; total: number }> = ({ current, total }) => (
-  <div className="flex items-center gap-[18px]">
+  <div className="flex items-center gap-[14px]">
     {Array.from({ length: total }, (_, i) => (
       <div
         key={i}
-        className="w-[6px] h-[6px] rounded-full transition-opacity duration-300"
+        className="rounded-full transition-all duration-300"
         style={{
+          width:  i === current ? '12px' : '10px',
+          height: i === current ? '12px' : '10px',
           backgroundColor: 'white',
-          opacity: i === current ? 1 : 0.4,
+          opacity: i === current ? 1 : 0.45,
+          boxShadow: i === current ? '0 0 6px rgba(255,255,255,0.8)' : 'none',
         }}
       />
     ))}
@@ -318,7 +321,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
         {/* Skip button */}
         <button
           onClick={handleSkip}
-          className="border border-white rounded-[6px] px-24 md:px-[60px] py-2.5 md:h-[45px] md:flex md:items-center text-white font-semibold text-sm md:text-base uppercase tracking-tight hover:bg-white/10 active:scale-95 transition-all"
+          className="border border-white rounded-[6px] px-8 md:px-[60px] py-2.5 md:h-[45px] md:flex md:items-center text-white font-semibold text-sm md:text-base uppercase tracking-tight hover:bg-white/10 active:scale-95 transition-all"
           style={{
             background: 'radial-gradient(ellipse at center, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 100%)',
           }}
@@ -338,7 +341,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
         <button
           ref={nextBtnRef}
           onClick={handleNext}
-          className="border border-white rounded-[6px] px-24 md:px-[60px] py-2.5 md:h-[45px] md:flex md:items-center text-white font-semibold text-sm md:text-base uppercase tracking-tight hover:brightness-110 active:scale-95 transition-all"
+          className="border border-white rounded-[6px] px-8 md:px-[60px] py-2.5 md:h-[45px] md:flex md:items-center text-white font-semibold text-sm md:text-base uppercase tracking-tight hover:brightness-110 active:scale-95 transition-all"
           style={{
             background: 'linear-gradient(181deg, rgba(255,255,255,0) 9%, rgba(230,162,60,0.6) 98%)',
           }}
@@ -348,12 +351,15 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
       </div>
 
       {/* ── Page dots ── */}
-      <div className="absolute z-20 left-1/2 -translate-x-1/2 top-[100px] md:top-[134px]">
+      <div className="absolute z-20 left-1/2 -translate-x-1/2 top-[72px] md:top-[80px]">
         <PageDots current={step} total={TOTAL_STEPS} />
       </div>
 
       {/* ── Chat bubble ── */}
-      <div className="absolute z-20 left-4 md:left-[5%] top-[140px] md:top-[160px] max-w-[260px] md:max-w-[340px] overflow-visible">
+      {/* vh-based top keeps the tail near the character's face at any screen height:
+          mobile  ≈ 22 vh  (portrait — face is high up in the frame)
+          desktop ≈ 30 vh  (landscape — character is more centred)          */}
+      <div className="absolute z-20 left-4 md:left-[5%] top-[22vh] md:top-[30vh] max-w-[260px] md:max-w-[340px] overflow-visible">
         <ChatBubble
           key={step}
           lines={currentStep.text}
