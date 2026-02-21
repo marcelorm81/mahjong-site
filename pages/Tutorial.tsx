@@ -120,36 +120,46 @@ const ChatBubble: React.FC<{
   }, [lines, onComplete]);
 
   return (
-    <div ref={bubbleRef} className="relative" style={{ opacity: 0 }}>
-      {/* Chat bubble background */}
-      <div className="absolute inset-0" style={{ filter: 'drop-shadow(10px 10px 0px #4A0000)' }}>
-        <svg
-          viewBox="0 0 458 126"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M434 0C447.255 0 458 10.7452 458 24V102C458 115.255 447.255 126 434 126H421.994V144.308C421.994 146.898 418.932 148.27 416.998 146.547L393.946 126H24C10.7452 126 0 115.255 0 102V24C0 10.7452 10.7452 0 24 0H434Z"
-            fill="#620000"
-          />
-          <path
-            d="M434 0C447.255 0 458 10.7452 458 24V102C458 115.255 447.255 126 434 126H421.994V144.308C421.994 146.898 418.932 148.27 416.998 146.547L393.946 126H24C10.7452 126 0 115.255 0 102V24C0 10.7452 10.7452 0 24 0H434Z"
-            stroke="white"
-            strokeWidth="3"
-          />
-        </svg>
-      </div>
-      {/* Text content */}
+    <div ref={bubbleRef} className="relative inline-block" style={{ opacity: 0 }}>
+      {/* Pure CSS speech bubble */}
       <div
-        ref={textRef}
-        className="relative z-10 font-semibold text-white leading-snug px-8 md:px-10 py-5 md:py-6"
+        className="relative rounded-2xl border-2 border-white/80 px-6 py-4 md:px-8 md:py-5"
         style={{
-          fontSize: 'clamp(16px, 2.2vw, 32px)',
-          letterSpacing: '-0.02em',
+          background: 'rgba(62, 0, 0, 0.85)',
+          backdropFilter: 'blur(8px)',
+          boxShadow: '8px 8px 0px rgba(40, 0, 0, 0.7)',
         }}
-      />
+      >
+        {/* Text content */}
+        <div
+          ref={textRef}
+          className="font-semibold text-white leading-snug"
+          style={{
+            fontSize: 'clamp(14px, 1.8vw, 24px)',
+            letterSpacing: '-0.02em',
+          }}
+        />
+        {/* Tail — bottom-right pointing toward the character */}
+        <div
+          className="absolute -bottom-[12px] right-[20%] md:right-[15%] w-0 h-0"
+          style={{
+            borderLeft: '14px solid transparent',
+            borderRight: '14px solid transparent',
+            borderTop: '14px solid rgba(62, 0, 0, 0.85)',
+            filter: 'drop-shadow(4px 4px 0px rgba(40, 0, 0, 0.7))',
+          }}
+        />
+        {/* Tail border overlay — white stroke on the tail */}
+        <div
+          className="absolute -bottom-[14px] right-[20%] md:right-[15%] w-0 h-0 -z-10"
+          style={{
+            borderLeft: '16px solid transparent',
+            borderRight: '16px solid transparent',
+            borderTop: '16px solid rgba(255, 255, 255, 0.8)',
+            marginLeft: '-2px',
+          }}
+        />
+      </div>
     </div>
   );
 };
@@ -282,7 +292,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
       </div>
 
       {/* ── Chat bubble ── */}
-      <div className="absolute z-20 left-4 md:left-[8%] top-[140px] md:top-[280px] w-[260px] md:w-[460px]">
+      <div className="absolute z-20 left-4 md:left-[5%] top-[140px] md:top-[260px] max-w-[260px] md:max-w-[340px]">
         <ChatBubble
           key={step}
           lines={currentStep.text}
