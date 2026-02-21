@@ -76,9 +76,9 @@ const TileSection: React.FC = () => {
       <p className="tile-label text-white font-semibold text-[11px] md:text-[15px] mb-[4px] md:mb-[6px] drop-shadow-md">
         Number Tiles
       </p>
-      <div className="tile-row-0 flex gap-[3px] md:gap-[5px] mb-[10px] md:mb-[16px]">
+      <div className="tile-row-0 flex gap-[1px] md:gap-[2px] mb-[10px] md:mb-[16px]">
         {[1,2,3,4,5,6,7,8,9,10].map(n => (
-          <TileImg key={n} src={`/assets/tiles/tile-num-${n}.svg`} alt={`Number ${n}`} />
+          <TileImg key={n} src={`/assets/tiles/tile-num-${n}.png`} alt={`Number ${n}`} />
         ))}
       </div>
 
@@ -86,9 +86,9 @@ const TileSection: React.FC = () => {
       <p className="tile-label text-white font-semibold text-[11px] md:text-[15px] mb-[4px] md:mb-[6px] drop-shadow-md">
         Wind Tiles
       </p>
-      <div className="tile-row-1 flex gap-[3px] md:gap-[5px] mb-[10px] md:mb-[16px]">
+      <div className="tile-row-1 flex gap-[1px] md:gap-[2px] mb-[10px] md:mb-[16px]">
         {(['east','south','west','north'] as const).map(d => (
-          <TileImg key={d} src={`/assets/tiles/tile-wind-${d}.svg`} alt={`Wind ${d}`} />
+          <TileImg key={d} src={`/assets/tiles/tile-wind-${d}.png`} alt={`Wind ${d}`} />
         ))}
       </div>
 
@@ -96,9 +96,9 @@ const TileSection: React.FC = () => {
       <p className="tile-label text-white font-semibold text-[11px] md:text-[15px] mb-[4px] md:mb-[6px] drop-shadow-md">
         Dragon Tiles
       </p>
-      <div className="tile-row-2 flex gap-[3px] md:gap-[5px]">
+      <div className="tile-row-2 flex gap-[1px] md:gap-[2px]">
         {(['zhong','fa','bai'] as const).map(d => (
-          <TileImg key={d} src={`/assets/tiles/tile-dragon-${d}.svg`} alt={`Dragon ${d}`} />
+          <TileImg key={d} src={`/assets/tiles/tile-dragon-${d}.png`} alt={`Dragon ${d}`} />
         ))}
       </div>
     </div>
