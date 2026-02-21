@@ -314,11 +314,11 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
       />
 
       {/* ── Top bar: Skip / Title / Next ── */}
-      <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-4 md:px-20 pt-3 md:pt-[55px]">
+      <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-[20px] pt-[20px]">
         {/* Skip button */}
         <button
           onClick={handleSkip}
-          className="border border-white rounded-[6px] px-8 md:px-[20px] py-2.5 md:h-[45px] md:flex md:items-center text-white font-semibold text-sm md:text-base uppercase tracking-tight hover:bg-white/10 active:scale-95 transition-all"
+          className="border border-white rounded-[6px] px-24 md:px-[60px] py-2.5 md:h-[45px] md:flex md:items-center text-white font-semibold text-sm md:text-base uppercase tracking-tight hover:bg-white/10 active:scale-95 transition-all"
           style={{
             background: 'radial-gradient(ellipse at center, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 100%)',
           }}
@@ -338,7 +338,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
         <button
           ref={nextBtnRef}
           onClick={handleNext}
-          className="border border-white rounded-[6px] px-8 md:px-[20px] py-2.5 md:h-[45px] md:flex md:items-center text-white font-semibold text-sm md:text-base uppercase tracking-tight hover:brightness-110 active:scale-95 transition-all"
+          className="border border-white rounded-[6px] px-24 md:px-[60px] py-2.5 md:h-[45px] md:flex md:items-center text-white font-semibold text-sm md:text-base uppercase tracking-tight hover:brightness-110 active:scale-95 transition-all"
           style={{
             background: 'linear-gradient(181deg, rgba(255,255,255,0) 9%, rgba(230,162,60,0.6) 98%)',
           }}
