@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAssetPreloader, APP_ASSETS } from '../hooks/useAssetPreloader';
 
 interface LoginProps {
   onLogin: (username: string) => void;
@@ -8,73 +9,86 @@ interface LoginProps {
 const BG_IMAGE = "https://raw.githubusercontent.com/marcelorm81/Mahjongtest/4fc239b0d3cda3435e374ac7b6e7307603371273/img%20-%20background.jpg";
 const CHARACTERS_IMAGE = "https://raw.githubusercontent.com/marcelorm81/Mahjongtest/3149293f5ccaff19c1a4dd0c716c9a8080a8c46f/img%20-%20characters.webp";
 
-// Loading text messages
+// Loading text messages mapped to real loading phases
 const LOADING_MESSAGES = [
+  "Loading textures...",
   "Loading characters...",
-  "Loading game styles...",
-  "Preparing intros...",
-  "Syncing assets..."
+  "Preparing game assets...",
+  "Almost ready..."
 ];
 
 export const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [email, setEmail] = useState('');
-  
+
+  // Real asset preloading
+  const { progress: assetProgress, ready: assetsReady } = useAssetPreloader(APP_ASSETS);
+
   // Animation States
   // 0: Init, 1: BG, 2: Chars, 3: Tiles (Skipped), 4: Logo, 5: UI Transition
   const [animStage, setAnimStage] = useState(0);
-  const [loadingProgress, setLoadingProgress] = useState(0);
   const [messageIndex, setMessageIndex] = useState(0);
 
-  // Orchestrate the Intro Sequence
+  // Smooth progress: interpolate towards the real asset progress so the bar
+  // never jumps and always feels fluid
+  const [displayProgress, setDisplayProgress] = useState(0);
+  const targetProgress = useRef(0);
+
+  // Keep target progress in sync with real loading
   useEffect(() => {
-    // 1. Background Establishment (0.8s)
-    const t1 = setTimeout(() => setAnimStage(1), 100);
-    
-    // 2. Characters Entrance (1.5s)
-    const t2 = setTimeout(() => setAnimStage(2), 1000);
-    
-    // 3. Tiles (Skipped) (2.2s)
-    const t3 = setTimeout(() => setAnimStage(3), 1800);
-    
-    // 4. Logo Reveal (2.8s)
-    const t4 = setTimeout(() => setAnimStage(4), 2500);
+    // Map asset progress (0-1) to display percentage (0-100)
+    // Reserve the last 10% for the animation finishing
+    targetProgress.current = Math.round(assetProgress * 90);
+    if (assetsReady) targetProgress.current = 100;
+  }, [assetProgress, assetsReady]);
 
-    // 5. World Transition to UI (5s) - Wait for logo glow to finish
-    const t5 = setTimeout(() => setAnimStage(5), 4500);
-
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
-      clearTimeout(t4);
-      clearTimeout(t5);
-    };
-  }, []);
-
-  // Fake Loading Progress Logic
+  // Smooth animation loop for the progress bar
   useEffect(() => {
     const interval = setInterval(() => {
-      setLoadingProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          return 100;
-        }
-        // Slow down as we get closer to 100 if animation isn't done
-        const increment = animStage < 5 ? 0.5 : 2; 
-        return Math.min(prev + increment, 100);
+      setDisplayProgress((prev) => {
+        const target = targetProgress.current;
+        if (prev >= target) return prev;
+        // Ease towards target: faster when far away, slower when close
+        const diff = target - prev;
+        const step = Math.max(0.5, diff * 0.15);
+        return Math.min(prev + step, target);
       });
     }, 30);
     return () => clearInterval(interval);
-  }, [animStage]);
+  }, []);
 
-  // Rotating Loading Messages
+  // Orchestrate the intro sequence — tied to real load state
   useEffect(() => {
-    if (loadingProgress >= 100) return;
-    const interval = setInterval(() => {
-      setMessageIndex(prev => (prev + 1) % LOADING_MESSAGES.length);
-    }, 1500);
-    return () => clearInterval(interval);
-  }, [loadingProgress]);
+    // Stage 1: Start BG fade-in immediately
+    const t1 = setTimeout(() => setAnimStage(1), 100);
+
+    return () => clearTimeout(t1);
+  }, []);
+
+  // Progress stages driven by real loading
+  useEffect(() => {
+    if (assetProgress >= 0.3 && animStage < 2) setAnimStage(2); // Characters in
+    if (assetProgress >= 0.5 && animStage < 3) setAnimStage(3); // Tiles (skipped)
+    if (assetProgress >= 0.7 && animStage < 4) setAnimStage(4); // Logo reveal
+  }, [assetProgress, animStage]);
+
+  // Final transition: only when assets are truly ready AND min time has passed
+  useEffect(() => {
+    if (assetsReady && animStage >= 4) {
+      // Give the logo glow a moment to play, then transition to UI
+      const t = setTimeout(() => setAnimStage(5), 1200);
+      return () => clearTimeout(t);
+    }
+  }, [assetsReady, animStage]);
+
+  // Rotating loading messages — mapped to progress phases
+  useEffect(() => {
+    if (assetProgress >= 1) return;
+    // Pick message based on progress
+    if (assetProgress < 0.25) setMessageIndex(0);
+    else if (assetProgress < 0.5) setMessageIndex(1);
+    else if (assetProgress < 0.75) setMessageIndex(2);
+    else setMessageIndex(3);
+  }, [assetProgress]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -260,10 +274,10 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
         <div className="w-full max-w-md h-2 bg-black/60 rounded-full border border-white/10 overflow-hidden relative shadow-2xl">
            <motion.div 
              className="h-full bg-brand-gold shadow-[0_0_10px_rgba(244,185,66,0.8)]"
-             style={{ width: `${loadingProgress}%` }}
+             style={{ width: `${displayProgress}%` }}
            />
         </div>
-        <span className="text-white/30 text-[10px] font-bold mt-2">{Math.round(loadingProgress)}%</span>
+        <span className="text-white/30 text-[10px] font-bold mt-2">{Math.round(displayProgress)}%</span>
       </motion.div>
 
     </div>
