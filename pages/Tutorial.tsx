@@ -217,7 +217,7 @@ const ChatBubble: React.FC<{
           ref={textRef}
           className="relative z-10 font-semibold text-white leading-snug px-7 py-5 md:px-9 md:py-6"
           style={{
-            fontSize: 'clamp(13px, 3.5vw, 22px)',
+            fontSize: 'clamp(10px, min(3.5vw, 2.5vh), 22px)',
             letterSpacing: '-0.02em',
           }}
         />
@@ -359,7 +359,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
       {/* vh-based top keeps the tail near the character's face at any screen height:
           mobile  ≈ 22 vh  (portrait — face is high up in the frame)
           desktop ≈ 30 vh  (landscape — character is more centred)          */}
-      <div className="absolute z-20 left-4 md:left-[calc(5%+40px)] top-[22vh] md:top-[30vh] w-[82vw] max-w-[260px] md:w-[28vw] md:max-w-[340px] overflow-visible">
+      <div className="absolute z-20 left-4 md:left-[18%] top-[22vh] md:top-[calc(30vh-30px)] w-[min(82vw,48vh)] max-w-[260px] md:w-[min(28vw,45vh)] md:max-w-[340px] overflow-visible">
         <ChatBubble
           key={step}
           lines={currentStep.text}
