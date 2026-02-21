@@ -121,42 +121,36 @@ const ChatBubble: React.FC<{
 
   return (
     <div ref={bubbleRef} className="relative inline-block" style={{ opacity: 0 }}>
-      {/* Pure CSS speech bubble */}
-      <div
-        className="relative rounded-2xl border-2 border-white/80 px-6 py-4 md:px-8 md:py-5"
-        style={{
-          background: 'rgba(62, 0, 0, 0.85)',
-          backdropFilter: 'blur(8px)',
-          boxShadow: '8px 8px 0px rgba(40, 0, 0, 0.7)',
-        }}
-      >
-        {/* Text content */}
+      {/*
+        Scalable SVG speech bubble — the SVG stretches to match whatever
+        size the text content needs via preserveAspectRatio="none".
+        The tail is baked into the SVG path at the bottom-right.
+        Extra pb accounts for the tail height so text stays inside the box.
+      */}
+      <div className="relative">
+        {/* SVG background — absolutely positioned, stretches to fill */}
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 458 151"
+          fill="none"
+          preserveAspectRatio="none"
+          className="absolute inset-0 w-full h-full"
+          style={{ filter: 'drop-shadow(6px 6px 0px #4A0000)' }}
+        >
+          <path
+            d="M24 2H434C446.15 2 456 11.8497 456 24V102C456 114.15 446.15 124 434 124H406.5C403.186 124 400.5 126.686 400.5 130V148.651L373.706 125.686C372.437 124.598 370.821 124 369.15 124H24C11.8497 124 2 114.15 2 102V24C2 11.8497 11.8497 2 24 2Z"
+            fill="#620000"
+            stroke="white"
+            strokeWidth="4"
+          />
+        </svg>
+        {/* Text content — positioned over the SVG, with padding */}
         <div
           ref={textRef}
-          className="font-semibold text-white leading-snug"
+          className="relative z-10 font-semibold text-white leading-snug px-6 py-4 pb-8 md:px-9 md:py-6 md:pb-10"
           style={{
             fontSize: 'clamp(14px, 1.8vw, 24px)',
             letterSpacing: '-0.02em',
-          }}
-        />
-        {/* Tail — bottom-right pointing toward the character */}
-        <div
-          className="absolute -bottom-[12px] right-[20%] md:right-[15%] w-0 h-0"
-          style={{
-            borderLeft: '14px solid transparent',
-            borderRight: '14px solid transparent',
-            borderTop: '14px solid rgba(62, 0, 0, 0.85)',
-            filter: 'drop-shadow(4px 4px 0px rgba(40, 0, 0, 0.7))',
-          }}
-        />
-        {/* Tail border overlay — white stroke on the tail */}
-        <div
-          className="absolute -bottom-[14px] right-[20%] md:right-[15%] w-0 h-0 -z-10"
-          style={{
-            borderLeft: '16px solid transparent',
-            borderRight: '16px solid transparent',
-            borderTop: '16px solid rgba(255, 255, 255, 0.8)',
-            marginLeft: '-2px',
           }}
         />
       </div>
