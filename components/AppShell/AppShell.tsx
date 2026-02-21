@@ -95,7 +95,7 @@ export const AppShell: React.FC<AppShellProps> = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.98 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className={`w-full min-h-full ${showNav ? 'pb-[88px] compact:pb-[68px] short:pb-[56px]' : ''}`}
+            className={`w-full ${showNav ? 'min-h-full pb-[88px] compact:pb-[68px] short:pb-[56px]' : 'h-full'}`}
           >
             {children}
           </motion.div>
