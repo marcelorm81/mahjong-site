@@ -8,15 +8,20 @@ const DEFAULT_VIDEO_MOBILE  = '/assets/waving_loop_mobile.mp4';
 
 /* ── Tutorial step data ────────────────────────────────────────────── */
 interface TutorialStep {
-  text: string[];
-  videoDesktop?: string; // overrides default waving video
+  text: string[];           // single-phrase step
+  phrases?: string[][];     // multi-phrase step: each sub-array = one bubble
+  videoDesktop?: string;    // overrides default waving video
   videoMobile?:  string;
 }
 
 const STEPS: TutorialStep[] = [
   { text: ['Welcome to Mahjong Stars!', 'New to here? No worries.'] },
   {
-    text: ['Bang Bang is the most fun', 'and easiest rule to learn!'],
+    phrases: [
+      ['Mahjong is played with tiles, not cards.', 'Matching tiles are used to build sets.'],
+      ['Bang Bang is the most fun', 'and easiest Mahjong rule to learn.'],
+    ],
+    text: ['Bang Bang is the most fun', 'and easiest Mahjong rule to learn.'], // fallback
     videoDesktop: '/assets/talking_loop_desktop.mp4',
     videoMobile:  '/assets/talking_loop_mobile.mp4',
   },
@@ -64,17 +69,18 @@ const TileSection: React.FC = () => {
     gsap.set(labels, { opacity: 0, x: -10 });
     gsap.set(allTiles, { opacity: 0, y: 20, scale: 0.7 });
 
-    const tl = gsap.timeline({ delay: 1.1 });
+    // Slower, more graceful animation — gives time for both step-2 sentences
+    const tl = gsap.timeline({ delay: 2.0 });
 
     // Row 0 — Number tiles
-    tl.to(labels[0], { opacity: 1, x: 0, duration: 0.28, ease: 'power2.out' })
-      .to(row0, { opacity: 1, y: 0, scale: 1, duration: 0.28, stagger: 0.05, ease: 'back.out(1.5)' }, '-=0.08')
-    // Row 1 — Wind tiles
-      .to(labels[1], { opacity: 1, x: 0, duration: 0.25, ease: 'power2.out' }, '+=0.06')
-      .to(row1, { opacity: 1, y: 0, scale: 1, duration: 0.30, stagger: 0.07, ease: 'back.out(1.5)' }, '-=0.08')
+    tl.to(labels[0], { opacity: 1, x: 0, duration: 0.35, ease: 'power2.out' })
+      .to(row0, { opacity: 1, y: 0, scale: 1, duration: 0.40, stagger: 0.14, ease: 'back.out(1.5)' }, '-=0.10')
+    // Row 1 — Wind tiles (generous pause between rows)
+      .to(labels[1], { opacity: 1, x: 0, duration: 0.30, ease: 'power2.out' }, '+=0.40')
+      .to(row1, { opacity: 1, y: 0, scale: 1, duration: 0.40, stagger: 0.16, ease: 'back.out(1.5)' }, '-=0.10')
     // Row 2 — Dragon tiles
-      .to(labels[2], { opacity: 1, x: 0, duration: 0.25, ease: 'power2.out' }, '+=0.06')
-      .to(row2, { opacity: 1, y: 0, scale: 1, duration: 0.32, stagger: 0.09, ease: 'back.out(1.5)' }, '-=0.08');
+      .to(labels[2], { opacity: 1, x: 0, duration: 0.30, ease: 'power2.out' }, '+=0.40')
+      .to(row2, { opacity: 1, y: 0, scale: 1, duration: 0.40, stagger: 0.18, ease: 'back.out(1.5)' }, '-=0.10');
 
     return () => { tl.kill(); };
   }, []);
@@ -109,89 +115,6 @@ const TileSection: React.FC = () => {
         {(['zhong','fa','bai'] as const).map(d => (
           <TileImg key={d} src={`/assets/tiles/tile-dragon-${d}.png`} alt={`Dragon ${d}`} />
         ))}
-      </div>
-    </div>
-  );
-};
-
-/* ── Compact callout label (KONG! / MAHJONG!) ────────────────────── */
-/** Compact callout label — used for KONG! / MAHJONG! on step 3 */
-const CalloutBubble: React.FC<{ text: string }> = ({ text }) => (
-  <div
-    className="callout-bubble inline-block rounded-[14px] px-5 py-2 border-[3px] border-white"
-    style={{ background: '#620000', filter: 'drop-shadow(4px 4px 0px #4A0000)' }}
-  >
-    <span className="text-white font-bold uppercase italic tracking-tight text-[20px] md:text-[28px] drop-shadow">
-      {text}
-    </span>
-  </div>
-);
-
-/* ── Step 3 tile layout (Kong + Mahjong winning hand) ────────────── */
-const Step3Section: React.FC = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const callouts  = el.querySelectorAll('.callout-bubble');
-    const kongTiles = el.querySelectorAll('.kong-tile');
-    const mjTiles   = el.querySelectorAll('.mj-tile');
-
-    gsap.set([callouts, kongTiles, mjTiles], { opacity: 0, scale: 0.7 });
-
-    const tl = gsap.timeline({ delay: 0.8 });
-    tl.to(callouts[0], { opacity: 1, scale: 1, duration: 0.3,  ease: 'back.out(1.5)' })
-      .to(kongTiles,   { opacity: 1, scale: 1, duration: 0.25, stagger: 0.06, ease: 'back.out(1.5)' }, '-=0.1')
-      .to(callouts[1], { opacity: 1, scale: 1, duration: 0.3,  ease: 'back.out(1.5)' }, '+=0.1')
-      .to(mjTiles,     { opacity: 1, scale: 1, duration: 0.18, stagger: 0.04, ease: 'back.out(1.5)' }, '-=0.1');
-
-    return () => { tl.kill(); };
-  }, []);
-
-  const T: React.FC<{ src: string; alt: string; extra: string }> = ({ src, alt, extra }) => (
-    <img src={src} alt={alt}
-      className={`mahjong-tile w-[26px] h-[35px] md:w-[52px] md:h-[69px] object-contain drop-shadow ${extra}`} />
-  );
-
-  const ROW1: [string, string][] = [
-    ['/assets/tiles/tile-wind-east.png', 'East'],
-    ['/assets/tiles/tile-wind-east.png', 'East'],
-    ['/assets/tiles/tile-man-6.png',     'Man 6'],
-    ['/assets/tiles/tile-man-6.png',     'Man 6'],
-    ['/assets/tiles/tile-sou-1.png',     'Sou 1'],
-    ['/assets/tiles/tile-sou-1.png',     'Sou 1'],
-    ['/assets/tiles/tile-sou-4.png',     'Sou 4'],
-    ['/assets/tiles/tile-sou-4.png',     'Sou 4'],
-  ];
-  const ROW2: [string, string][] = [
-    ['/assets/tiles/tile-sou-1.png', 'Sou 1'],
-    ['/assets/tiles/tile-sou-1.png', 'Sou 1'],
-    ['/assets/tiles/tile-sou-1.png', 'Sou 1'],
-    ['/assets/tiles/tile-sou-4.png', 'Sou 4'],
-    ['/assets/tiles/tile-sou-4.png', 'Sou 4'],
-    ['/assets/tiles/tile-sou-4.png', 'Sou 4'],
-  ];
-
-  return (
-    <div ref={sectionRef} className="select-none pointer-events-none">
-      {/* KONG! callout */}
-      <div className="mb-[5px] md:mb-[8px]"><CalloutBubble text="KONG!" /></div>
-      {/* Kong: 4× pin6 */}
-      <div className="flex gap-[1px] md:gap-[2px] mb-[10px] md:mb-[18px]">
-        {[0,1,2,3].map(i => (
-          <T key={i} src="/assets/tiles/tile-num-6.png" alt="Kong" extra="kong-tile" />
-        ))}
-      </div>
-      {/* MAHJONG! callout */}
-      <div className="mb-[5px] md:mb-[8px]"><CalloutBubble text="MAHJONG!" /></div>
-      {/* Winning hand row 1: 8 tiles */}
-      <div className="flex gap-[1px] md:gap-[2px] mb-[1px] md:mb-[2px]">
-        {ROW1.map(([src,alt],i) => <T key={i} src={src} alt={alt} extra="mj-tile" />)}
-      </div>
-      {/* Winning hand row 2: 6 tiles */}
-      <div className="flex gap-[1px] md:gap-[2px]">
-        {ROW2.map(([src,alt],i) => <T key={i} src={src} alt={alt} extra="mj-tile" />)}
       </div>
     </div>
   );
@@ -250,6 +173,135 @@ const buildBubblePath = (W: number, bodyH: number): string => {
   ].join('');
 };
 
+const TAIL_H = 27; // px the tail extends below the body
+
+/* ── Callout label — chat-bubble shape, Clash Display Bold, rotated ── */
+/**
+ * Same SVG bubble as ChatBubble: dark-red fill, white stroke, downward tail.
+ * Static text — no typewriter. Clash Display Bold. Slight rotation for energy.
+ * Parent (Step3Section) drives the scale+fade GSAP pop-in via `.callout-label`.
+ */
+const CalloutLabel: React.FC<{ text: string }> = ({ text }) => {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [size, setSize] = useState({ w: 0, h: 0 });
+
+  useLayoutEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    setSize({ w: el.offsetWidth, h: el.offsetHeight });
+  }, [text]);
+
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => {
+      if (wrapRef.current) setSize({ w: wrapRef.current.offsetWidth, h: wrapRef.current.offsetHeight });
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const svgW = size.w;
+  const svgH = size.h + TAIL_H;
+  const path = buildBubblePath(svgW, size.h);
+
+  return (
+    <div className="callout-label inline-block" style={{ transform: 'rotate(-6deg)', transformOrigin: 'center bottom' }}>
+      <div ref={wrapRef} className="relative" style={{ filter: 'drop-shadow(4px 4px 0px #4A0000)' }}>
+        {svgW > 0 && (
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${svgW} ${svgH}`} fill="none"
+            className="absolute top-0 left-0 pointer-events-none" width={svgW} height={svgH}>
+            <path d={path} fill="#620000" stroke="white" strokeWidth="4" />
+          </svg>
+        )}
+        <div className="relative z-10 px-7 py-3 md:px-9 md:py-4"
+          style={{
+            fontFamily: "'Clash Display'",
+            fontWeight: 700,
+            color: 'white',
+            fontSize: 'clamp(20px, min(4.5vw, 4vh), 38px)',
+            letterSpacing: '-0.02em',
+            textShadow: '1px 1px 0 rgba(0,0,0,0.4)',
+          }}>
+          {text}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ── Step 3 tile layout (Kong + Mahjong winning hand) ────────────── */
+const Step3Section: React.FC = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const labels    = el.querySelectorAll('.callout-label');
+    const kongTiles = el.querySelectorAll('.kong-tile');
+    const mjTiles   = el.querySelectorAll('.mj-tile');
+
+    gsap.set([labels, kongTiles, mjTiles], { opacity: 0, scale: 0.7 });
+
+    const tl = gsap.timeline({ delay: 0.8 });
+    tl.to(labels[0],  { opacity: 1, scale: 1, duration: 0.35, ease: 'back.out(1.7)' })
+      .to(kongTiles,  { opacity: 1, scale: 1, duration: 0.25, stagger: 0.06, ease: 'back.out(1.5)' }, '-=0.1')
+      .to(labels[1],  { opacity: 1, scale: 1, duration: 0.35, ease: 'back.out(1.7)' }, '+=0.15')
+      .to(mjTiles,    { opacity: 1, scale: 1, duration: 0.18, stagger: 0.04, ease: 'back.out(1.5)' }, '-=0.1');
+
+    return () => { tl.kill(); };
+  }, []);
+
+  const T: React.FC<{ src: string; alt: string; extra: string }> = ({ src, alt, extra }) => (
+    <img src={src} alt={alt}
+      className={`mahjong-tile w-[26px] h-[35px] md:w-[52px] md:h-[69px] object-contain drop-shadow ${extra}`} />
+  );
+
+  // Kong: 4× Pin1 (circles 1)
+  // Mahjong winning hand: Nan×2, man6×3, pin8×3, sou4×3, sou1×3 = 14 tiles
+  const ROW1: [string, string][] = [
+    ['/assets/tiles/tile-wind-south.png', 'Nan'],
+    ['/assets/tiles/tile-wind-south.png', 'Nan'],
+    ['/assets/tiles/tile-man-6.png',      'Man 6'],
+    ['/assets/tiles/tile-man-6.png',      'Man 6'],
+    ['/assets/tiles/tile-man-6.png',      'Man 6'],
+    ['/assets/tiles/tile-num-8.png',      'Pin 8'],
+    ['/assets/tiles/tile-num-8.png',      'Pin 8'],
+    ['/assets/tiles/tile-num-8.png',      'Pin 8'],
+  ];
+  const ROW2: [string, string][] = [
+    ['/assets/tiles/tile-sou-4.png', 'Sou 4'],
+    ['/assets/tiles/tile-sou-4.png', 'Sou 4'],
+    ['/assets/tiles/tile-sou-4.png', 'Sou 4'],
+    ['/assets/tiles/tile-sou-1.png', 'Sou 1'],
+    ['/assets/tiles/tile-sou-1.png', 'Sou 1'],
+    ['/assets/tiles/tile-sou-1.png', 'Sou 1'],
+  ];
+
+  return (
+    <div ref={sectionRef} className="select-none pointer-events-none">
+      {/* KONG! label — rotated chat-bubble above kong tiles */}
+      <div className="mb-[10px] md:mb-[16px]"><CalloutLabel text="KONG!" /></div>
+      {/* Kong: 4× Pin1 (circles 1) */}
+      <div className="flex gap-[1px] md:gap-[2px] mb-[16px] md:mb-[26px]">
+        {[0,1,2,3].map(i => (
+          <T key={i} src="/assets/tiles/tile-num-1.png" alt="Kong" extra="kong-tile" />
+        ))}
+      </div>
+      {/* MAHJONG! label — rotated chat-bubble above winning hand */}
+      <div className="mb-[10px] md:mb-[16px]"><CalloutLabel text="MAHJONG!" /></div>
+      {/* Winning hand row 1: 8 tiles (Nan×2, man6×3, pin8×3) */}
+      <div className="flex gap-[1px] md:gap-[2px] mb-[1px] md:mb-[2px]">
+        {ROW1.map(([src,alt],i) => <T key={i} src={src} alt={alt} extra="mj-tile" />)}
+      </div>
+      {/* Winning hand row 2: 6 tiles (sou4×3, sou1×3) */}
+      <div className="flex gap-[1px] md:gap-[2px]">
+        {ROW2.map(([src,alt],i) => <T key={i} src={src} alt={alt} extra="mj-tile" />)}
+      </div>
+    </div>
+  );
+};
+
 /* ── Page dot indicator ────────────────────────────────────────────── */
 const PageDots: React.FC<{ current: number; total: number }> = ({ current, total }) => (
   <div className="flex items-center gap-[10px]">
@@ -270,8 +322,6 @@ const PageDots: React.FC<{ current: number; total: number }> = ({ current, total
 );
 
 /* ── Chat bubble with typewriter ───────────────────────────────────── */
-const TAIL_H = 27; // px the tail extends below the body
-
 const ChatBubble: React.FC<{
   lines: string[];
   onComplete: () => void;
@@ -411,11 +461,24 @@ interface TutorialProps {
 
 export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
   const [step, setStep] = useState(0);
+  const [phraseIdx, setPhraseIdx] = useState(0);
   const [textComplete, setTextComplete] = useState(false);
   const nextBtnRef = useRef<HTMLButtonElement>(null);
   const pulseAnimRef = useRef<gsap.core.Tween | null>(null);
+  const phraseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const bubbleWrapRef = useRef<HTMLDivElement>(null);
 
   const currentStep = STEPS[step];
+  // Multi-phrase steps use `phrases`; single-phrase steps fall back to `text`
+  const currentPhrases = currentStep.phrases ?? [currentStep.text];
+  const currentLines   = currentPhrases[phraseIdx];
+  const isLastPhrase   = phraseIdx >= currentPhrases.length - 1;
+
+  // Reset phrase position whenever the step changes
+  useEffect(() => {
+    phraseTimerRef.current && clearTimeout(phraseTimerRef.current);
+    setPhraseIdx(0);
+  }, [step]);
 
   // Pulse the NEXT button when text is done
   useEffect(() => {
@@ -439,6 +502,8 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
   }, [textComplete]);
 
   const handleNext = () => {
+    phraseTimerRef.current && clearTimeout(phraseTimerRef.current);
+    gsap.killTweensOf(bubbleWrapRef.current);
     if (step < TOTAL_STEPS - 1) {
       setTextComplete(false);
       pulseAnimRef.current?.kill();
@@ -451,12 +516,30 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
   };
 
   const handleSkip = () => {
+    phraseTimerRef.current && clearTimeout(phraseTimerRef.current);
+    gsap.killTweensOf(bubbleWrapRef.current);
     onNavigate(Page.LOBBY);
   };
 
   const handleTextComplete = React.useCallback(() => {
-    setTextComplete(true);
-  }, []);
+    if (!isLastPhrase) {
+      // Fade the bubble container out, then swap to next phrase
+      const el = bubbleWrapRef.current;
+      if (el) {
+        gsap.to(el, {
+          opacity: 0, y: -10, duration: 0.35, ease: 'power2.in', delay: 0.6,
+          onComplete: () => {
+            gsap.set(el, { opacity: 1, y: 0 }); // reset so next bubble can animate in
+            setPhraseIdx(p => p + 1);
+          },
+        });
+      } else {
+        phraseTimerRef.current = setTimeout(() => setPhraseIdx(p => p + 1), 1000);
+      }
+    } else {
+      setTextComplete(true);
+    }
+  }, [isLastPhrase]);
 
   return (
     <div className="relative w-full h-full overflow-hidden">
@@ -547,7 +630,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
       {/* vh-based top keeps the tail near the character's face at any screen height:
           mobile  ≈ 22 vh  (portrait — face is high up in the frame)
           desktop ≈ 30 vh  (landscape — character is more centred)          */}
-      <div className={`absolute z-20 left-4 ${
+      <div ref={bubbleWrapRef} className={`absolute z-20 left-4 ${
         step === 1 ? 'md:left-[calc(18%+500px)]' :
         step === 2 ? 'md:left-[42%]' :
         'md:left-[18%]'
@@ -557,8 +640,8 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
           : 'top-[calc(22vh+350px)] md:top-[calc(30vh-130px)]'
       } w-[min(82vw,48vh)] max-w-[260px] md:w-[min(28vw,45vh)] md:max-w-[340px] overflow-visible`}>
         <ChatBubble
-          key={step}
-          lines={currentStep.text}
+          key={`${step}-${phraseIdx}`}
+          lines={currentLines}
           onComplete={handleTextComplete}
         />
       </div>
