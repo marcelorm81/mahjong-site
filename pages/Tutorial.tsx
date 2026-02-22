@@ -206,7 +206,7 @@ const CalloutLabel: React.FC<{ text: string }> = ({ text }) => {
   const path = buildBubblePath(svgW, size.h);
 
   return (
-    <div className="callout-label inline-block" style={{ transform: 'rotate(-6deg)', transformOrigin: 'center bottom' }}>
+    <div className="callout-label inline-block">
       <div ref={wrapRef} className="relative" style={{ filter: 'drop-shadow(4px 4px 0px #4A0000)' }}>
         {svgW > 0 && (
           <svg xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${svgW} ${svgH}`} fill="none"
@@ -241,12 +241,14 @@ const Step3Section: React.FC = () => {
     const kongTiles = el.querySelectorAll('.kong-tile');
     const mjTiles   = el.querySelectorAll('.mj-tile');
 
-    gsap.set([labels, kongTiles, mjTiles], { opacity: 0, scale: 0.7 });
+    // GSAP owns ALL transforms — no CSS transform on .callout-label to avoid React conflict
+    gsap.set([kongTiles, mjTiles], { opacity: 0, scale: 0.7 });
+    gsap.set(labels, { opacity: 0, scale: 0.7, rotation: -6, transformOrigin: 'center bottom' });
 
     const tl = gsap.timeline({ delay: 0.8 });
-    tl.to(labels[0],  { opacity: 1, scale: 1, duration: 0.35, ease: 'back.out(1.7)' })
+    tl.to(labels[0],  { opacity: 1, scale: 1, rotation: -6, duration: 0.35, ease: 'back.out(1.7)' })
       .to(kongTiles,  { opacity: 1, scale: 1, duration: 0.25, stagger: 0.06, ease: 'back.out(1.5)' }, '-=0.1')
-      .to(labels[1],  { opacity: 1, scale: 1, duration: 0.35, ease: 'back.out(1.7)' }, '+=0.15')
+      .to(labels[1],  { opacity: 1, scale: 1, rotation: -6, duration: 0.35, ease: 'back.out(1.7)' }, '+=0.15')
       .to(mjTiles,    { opacity: 1, scale: 1, duration: 0.18, stagger: 0.04, ease: 'back.out(1.5)' }, '-=0.1');
 
     return () => { tl.kill(); };
@@ -419,7 +421,7 @@ const ChatBubble: React.FC<{
   const path  = buildBubblePath(svgW, size.h);
 
   return (
-    <div ref={bubbleRef} className="relative inline-block w-full" style={{ opacity: 0 }}>
+    <div ref={bubbleRef} className="relative inline-block w-full opacity-0">
       <div
         ref={wrapRef}
         className="relative"
