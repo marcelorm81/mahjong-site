@@ -18,10 +18,9 @@ import { Security } from './pages/Security';
 import { WalletCurrency } from './pages/WalletCurrency';
 import { Payments } from './pages/Payments';
 import { Tutorial } from './pages/Tutorial';
-import { PlaceholderPage } from './pages/PlaceholderPage';
+import { Reward } from './pages/Reward';
 import { MOCK_USER } from './constants';
 import { Page, User } from './types';
-import { Gift } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 // Pages that render as overlays on top of the current page
@@ -148,7 +147,7 @@ const App: React.FC = () => {
       case Page.STREAK:
         return <Streak onClose={() => setOverlay(null)} />;
       case Page.REWARD:
-        return <PlaceholderPage title="Daily Rewards" icon={Gift} />;
+        return <Reward onClose={() => setOverlay(null)} />;
       default:
         return null;
     }

@@ -92,7 +92,11 @@ const TileSection: React.FC = () => {
         Number Tiles
       </p>
       <div className="tile-row-0 flex gap-[1px] md:gap-[2px] mb-[10px] md:mb-[16px]">
-        {[1,2,3,4,5,6,7,8,9,10].map(n => (
+        {[1,2,3,4,5].map(n => (
+          <TileImg key={n} src={`/assets/tiles/tile-num-${n}.png`} alt={`Number ${n}`} />
+        ))}
+        <TileImg key="5d" src="/assets/tiles/tile-num-5-dora.png" alt="Number 5 Dora" />
+        {[6,7,8,9,10].map(n => (
           <TileImg key={n} src={`/assets/tiles/tile-num-${n}.png`} alt={`Number ${n}`} />
         ))}
       </div>
@@ -245,18 +249,19 @@ const Step3Section: React.FC = () => {
     gsap.set([kongTiles, mjTiles], { opacity: 0, scale: 0.7 });
     gsap.set(labels, { opacity: 0, scale: 0.7, rotation: -6, transformOrigin: 'center bottom' });
 
+    // Animation: tiles appear first, then their label pops beside them
     const tl = gsap.timeline({ delay: 0.8 });
-    tl.to(labels[0],  { opacity: 1, scale: 1, rotation: -6, duration: 0.35, ease: 'back.out(1.7)' })
-      .to(kongTiles,  { opacity: 1, scale: 1, duration: 0.25, stagger: 0.06, ease: 'back.out(1.5)' }, '-=0.1')
-      .to(labels[1],  { opacity: 1, scale: 1, rotation: -6, duration: 0.35, ease: 'back.out(1.7)' }, '+=0.15')
-      .to(mjTiles,    { opacity: 1, scale: 1, duration: 0.18, stagger: 0.04, ease: 'back.out(1.5)' }, '-=0.1');
+    tl.to(kongTiles,  { opacity: 1, scale: 1, duration: 0.35, stagger: 0.1,  ease: 'back.out(1.5)' })
+      .to(labels[0],  { opacity: 1, scale: 1, rotation: -6, duration: 0.4, ease: 'back.out(1.7)' }, '-=0.1')
+      .to(mjTiles,    { opacity: 1, scale: 1, duration: 0.25, stagger: 0.06, ease: 'back.out(1.5)' }, '+=0.2')
+      .to(labels[1],  { opacity: 1, scale: 1, rotation: -6, duration: 0.4, ease: 'back.out(1.7)' }, '-=0.1');
 
     return () => { tl.kill(); };
   }, []);
 
   const T: React.FC<{ src: string; alt: string; extra: string }> = ({ src, alt, extra }) => (
     <img src={src} alt={alt}
-      className={`mahjong-tile w-[26px] h-[35px] md:w-[52px] md:h-[69px] object-contain drop-shadow ${extra}`} />
+      className={`mahjong-tile w-[36px] h-[48px] md:w-[66px] md:h-[88px] object-contain drop-shadow ${extra}`} />
   );
 
   // Kong: 4× Pin1 (circles 1)
@@ -282,23 +287,29 @@ const Step3Section: React.FC = () => {
 
   return (
     <div ref={sectionRef} className="select-none pointer-events-none">
-      {/* KONG! label — rotated chat-bubble above kong tiles */}
-      <div className="mb-[10px] md:mb-[16px]"><CalloutLabel text="KONG!" /></div>
-      {/* Kong: 4× Pin1 (circles 1) */}
-      <div className="flex gap-[1px] md:gap-[2px] mb-[16px] md:mb-[26px]">
-        {[0,1,2,3].map(i => (
-          <T key={i} src="/assets/tiles/tile-num-1.png" alt="Kong" extra="kong-tile" />
-        ))}
+      {/* Row 1: Kong tiles + KONG! label on the right */}
+      <div className="flex items-center gap-3 md:gap-5 mb-4 md:mb-6">
+        <div className="flex gap-[1px] md:gap-[2px]">
+          {[0,1,2,3].map(i => (
+            <T key={i} src="/assets/tiles/tile-num-1.png" alt="Kong" extra="kong-tile" />
+          ))}
+        </div>
+        <CalloutLabel text="KONG!" />
       </div>
-      {/* MAHJONG! label — rotated chat-bubble above winning hand */}
-      <div className="mb-[10px] md:mb-[16px]"><CalloutLabel text="MAHJONG!" /></div>
-      {/* Winning hand row 1: 8 tiles (Nan×2, man6×3, pin8×3) */}
-      <div className="flex gap-[1px] md:gap-[2px] mb-[1px] md:mb-[2px]">
-        {ROW1.map(([src,alt],i) => <T key={i} src={src} alt={alt} extra="mj-tile" />)}
-      </div>
-      {/* Winning hand row 2: 6 tiles (sou4×3, sou1×3) */}
-      <div className="flex gap-[1px] md:gap-[2px]">
-        {ROW2.map(([src,alt],i) => <T key={i} src={src} alt={alt} extra="mj-tile" />)}
+
+      {/* Row 2: MAHJONG! label on the left + winning hand tiles */}
+      <div className="flex items-start gap-3 md:gap-5">
+        <div className="pt-2 md:pt-4"><CalloutLabel text="MAHJONG!" /></div>
+        <div>
+          {/* Winning hand row 1: 8 tiles (Nan×2, man6×3, pin8×3) */}
+          <div className="flex gap-[1px] md:gap-[2px] mb-[1px] md:mb-[2px]">
+            {ROW1.map(([src,alt],i) => <T key={i} src={src} alt={alt} extra="mj-tile" />)}
+          </div>
+          {/* Winning hand row 2: 6 tiles (sou4×3, sou1×3) */}
+          <div className="flex gap-[1px] md:gap-[2px]">
+            {ROW2.map(([src,alt],i) => <T key={i} src={src} alt={alt} extra="mj-tile" />)}
+          </div>
+        </div>
       </div>
     </div>
   );
