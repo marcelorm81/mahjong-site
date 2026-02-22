@@ -20,7 +20,16 @@ const STEPS: TutorialStep[] = [
     videoDesktop: '/assets/talking_loop_desktop.mp4',
     videoMobile:  '/assets/talking_loop_mobile.mp4',
   },
-  { text: ['Pick your tiles wisely.', 'Match, strategize, and win!'] },
+  {
+    text: [
+      'You win the game and earn',
+      'StarPoints by: Making Kongs',
+      'during the hand and going',
+      'Mahjong to win the hand!',
+    ],
+    videoDesktop: '/assets/talking_loop_desktop.mp4',
+    videoMobile:  '/assets/talking_loop_mobile.mp4',
+  },
   { text: ['Ready to play?', 'Let\'s jump into a game!'] },
 ];
 
@@ -100,6 +109,89 @@ const TileSection: React.FC = () => {
         {(['zhong','fa','bai'] as const).map(d => (
           <TileImg key={d} src={`/assets/tiles/tile-dragon-${d}.png`} alt={`Dragon ${d}`} />
         ))}
+      </div>
+    </div>
+  );
+};
+
+/* ── Compact callout label (KONG! / MAHJONG!) ────────────────────── */
+/** Compact callout label — used for KONG! / MAHJONG! on step 3 */
+const CalloutBubble: React.FC<{ text: string }> = ({ text }) => (
+  <div
+    className="callout-bubble inline-block rounded-[14px] px-5 py-2 border-[3px] border-white"
+    style={{ background: '#620000', filter: 'drop-shadow(4px 4px 0px #4A0000)' }}
+  >
+    <span className="text-white font-bold uppercase italic tracking-tight text-[20px] md:text-[28px] drop-shadow">
+      {text}
+    </span>
+  </div>
+);
+
+/* ── Step 3 tile layout (Kong + Mahjong winning hand) ────────────── */
+const Step3Section: React.FC = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const callouts  = el.querySelectorAll('.callout-bubble');
+    const kongTiles = el.querySelectorAll('.kong-tile');
+    const mjTiles   = el.querySelectorAll('.mj-tile');
+
+    gsap.set([callouts, kongTiles, mjTiles], { opacity: 0, scale: 0.7 });
+
+    const tl = gsap.timeline({ delay: 0.8 });
+    tl.to(callouts[0], { opacity: 1, scale: 1, duration: 0.3,  ease: 'back.out(1.5)' })
+      .to(kongTiles,   { opacity: 1, scale: 1, duration: 0.25, stagger: 0.06, ease: 'back.out(1.5)' }, '-=0.1')
+      .to(callouts[1], { opacity: 1, scale: 1, duration: 0.3,  ease: 'back.out(1.5)' }, '+=0.1')
+      .to(mjTiles,     { opacity: 1, scale: 1, duration: 0.18, stagger: 0.04, ease: 'back.out(1.5)' }, '-=0.1');
+
+    return () => { tl.kill(); };
+  }, []);
+
+  const T: React.FC<{ src: string; alt: string; extra: string }> = ({ src, alt, extra }) => (
+    <img src={src} alt={alt}
+      className={`mahjong-tile w-[26px] h-[35px] md:w-[52px] md:h-[69px] object-contain drop-shadow ${extra}`} />
+  );
+
+  const ROW1: [string, string][] = [
+    ['/assets/tiles/tile-wind-east.png', 'East'],
+    ['/assets/tiles/tile-wind-east.png', 'East'],
+    ['/assets/tiles/tile-man-6.png',     'Man 6'],
+    ['/assets/tiles/tile-man-6.png',     'Man 6'],
+    ['/assets/tiles/tile-sou-1.png',     'Sou 1'],
+    ['/assets/tiles/tile-sou-1.png',     'Sou 1'],
+    ['/assets/tiles/tile-sou-4.png',     'Sou 4'],
+    ['/assets/tiles/tile-sou-4.png',     'Sou 4'],
+  ];
+  const ROW2: [string, string][] = [
+    ['/assets/tiles/tile-sou-1.png', 'Sou 1'],
+    ['/assets/tiles/tile-sou-1.png', 'Sou 1'],
+    ['/assets/tiles/tile-sou-1.png', 'Sou 1'],
+    ['/assets/tiles/tile-sou-4.png', 'Sou 4'],
+    ['/assets/tiles/tile-sou-4.png', 'Sou 4'],
+    ['/assets/tiles/tile-sou-4.png', 'Sou 4'],
+  ];
+
+  return (
+    <div ref={sectionRef} className="select-none pointer-events-none">
+      {/* KONG! callout */}
+      <div className="mb-[5px] md:mb-[8px]"><CalloutBubble text="KONG!" /></div>
+      {/* Kong: 4× pin6 */}
+      <div className="flex gap-[1px] md:gap-[2px] mb-[10px] md:mb-[18px]">
+        {[0,1,2,3].map(i => (
+          <T key={i} src="/assets/tiles/tile-num-6.png" alt="Kong" extra="kong-tile" />
+        ))}
+      </div>
+      {/* MAHJONG! callout */}
+      <div className="mb-[5px] md:mb-[8px]"><CalloutBubble text="MAHJONG!" /></div>
+      {/* Winning hand row 1: 8 tiles */}
+      <div className="flex gap-[1px] md:gap-[2px] mb-[1px] md:mb-[2px]">
+        {ROW1.map(([src,alt],i) => <T key={i} src={src} alt={alt} extra="mj-tile" />)}
+      </div>
+      {/* Winning hand row 2: 6 tiles */}
+      <div className="flex gap-[1px] md:gap-[2px]">
+        {ROW2.map(([src,alt],i) => <T key={i} src={src} alt={alt} extra="mj-tile" />)}
       </div>
     </div>
   );
@@ -444,11 +536,26 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
         </div>
       )}
 
+      {/* ── Kong + Mahjong layout — step 3 only ── */}
+      {step === 2 && (
+        <div className="absolute z-10 left-[4vw] top-[18vh] md:left-[5%] md:top-[18vh]">
+          <Step3Section key="step3" />
+        </div>
+      )}
+
       {/* ── Chat bubble ── */}
       {/* vh-based top keeps the tail near the character's face at any screen height:
           mobile  ≈ 22 vh  (portrait — face is high up in the frame)
           desktop ≈ 30 vh  (landscape — character is more centred)          */}
-      <div className={`absolute z-20 left-4 ${step === 1 ? 'md:left-[calc(18%+500px)]' : 'md:left-[18%]'} top-[calc(22vh+350px)] md:top-[calc(30vh-130px)] w-[min(82vw,48vh)] max-w-[260px] md:w-[min(28vw,45vh)] md:max-w-[340px] overflow-visible`}>
+      <div className={`absolute z-20 left-4 ${
+        step === 1 ? 'md:left-[calc(18%+500px)]' :
+        step === 2 ? 'md:left-[42%]' :
+        'md:left-[18%]'
+      } ${
+        step === 2
+          ? 'top-[calc(22vh+350px)] md:top-[18vh]'
+          : 'top-[calc(22vh+350px)] md:top-[calc(30vh-130px)]'
+      } w-[min(82vw,48vh)] max-w-[260px] md:w-[min(28vw,45vh)] md:max-w-[340px] overflow-visible`}>
         <ChatBubble
           key={step}
           lines={currentStep.text}
