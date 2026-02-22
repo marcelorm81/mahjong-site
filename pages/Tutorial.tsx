@@ -473,8 +473,9 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
   const currentStep = STEPS[step];
   // Multi-phrase steps use `phrases`; single-phrase steps fall back to `text`
   const currentPhrases = currentStep.phrases ?? [currentStep.text];
-  const currentLines   = currentPhrases[phraseIdx];
-  const isLastPhrase   = phraseIdx >= currentPhrases.length - 1;
+  const safeIdx        = Math.min(phraseIdx, currentPhrases.length - 1);
+  const currentLines   = currentPhrases[safeIdx];
+  const isLastPhrase   = safeIdx >= currentPhrases.length - 1;
 
   // Reset phrase position whenever the step changes
   useEffect(() => {
@@ -508,6 +509,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
     gsap.killTweensOf(bubbleWrapRef.current);
     if (step < TOTAL_STEPS - 1) {
       setTextComplete(false);
+      setPhraseIdx(0); // reset before step change so phraseIdx is never out-of-bounds on next step
       pulseAnimRef.current?.kill();
       if (nextBtnRef.current) gsap.set(nextBtnRef.current, { scale: 1 });
       setStep(step + 1);
