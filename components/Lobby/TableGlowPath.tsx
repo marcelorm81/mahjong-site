@@ -77,17 +77,17 @@ export const TableGlowPath: React.FC = () => {
         <defs>
           {/* Wide blur for the outer halo */}
           <filter id={blurWideId} x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="20" />
+            <feGaussianBlur stdDeviation="25" />
           </filter>
 
           {/* Core blur — medium diffusion */}
           <filter id={blurCoreId} x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="10" />
+            <feGaussianBlur stdDeviation="15" />
           </filter>
 
           {/* Head blur — light softening */}
-          <filter id={blurHeadId} x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur stdDeviation="6" />
+          <filter id={blurHeadId} x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="10" />
           </filter>
         </defs>
 
