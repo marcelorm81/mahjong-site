@@ -60,31 +60,31 @@ export const TableGlowPath: React.FC<TableGlowPathProps> = ({ isHovered = false 
     const totalLen = path.getTotalLength();
 
     intervalRef.current = window.setInterval(() => {
-      const count = Math.random() > 0.6 ? 2 : 1;
+      const count = 1 + (Math.random() > 0.5 ? 1 : 0);
       for (let i = 0; i < count; i++) {
         const dist = Math.random() * totalLen;
         const pt = path.getPointAtLength(dist);
         const color = PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)];
-        const size = 2 + Math.random() * 3;
+        const size = 3 + Math.random() * 5;
 
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         circle.setAttribute('cx', String(pt.x));
         circle.setAttribute('cy', String(pt.y));
         circle.setAttribute('r', String(size));
         circle.setAttribute('fill', color);
-        circle.setAttribute('opacity', '0.9');
+        circle.setAttribute('opacity', '1.0');
         circle.style.filter = `url(#${blurParticleId})`;
         svg.appendChild(circle);
 
         gsap.to(circle, {
-          attr: { cy: pt.y - 25 - Math.random() * 35, r: 0 },
+          attr: { cy: pt.y - 30 - Math.random() * 40, r: 0 },
           opacity: 0,
-          duration: 0.7 + Math.random() * 0.5,
+          duration: 0.9 + Math.random() * 0.6,
           ease: 'power2.out',
           onComplete: () => circle.remove(),
         });
       }
-    }, 180);
+    }, 140);
 
     return () => {
       if (intervalRef.current) {
@@ -150,7 +150,7 @@ export const TableGlowPath: React.FC<TableGlowPathProps> = ({ isHovered = false 
 
           {/* Particle glow blur */}
           <filter id={blurParticleId} x="-100%" y="-100%" width="300%" height="300%">
-            <feGaussianBlur stdDeviation="3" />
+            <feGaussianBlur stdDeviation="4" />
           </filter>
         </defs>
 

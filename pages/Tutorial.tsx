@@ -286,7 +286,7 @@ const fireMiniParticles = (container: HTMLElement) => {
 };
 
 /* ── Callout label — chat-bubble shape, Clash Display Bold ─────── */
-const CalloutLabel: React.FC<{ text: string; tailUp?: boolean }> = ({ text, tailUp }) => {
+const CalloutLabel: React.FC<{ text: string; tailUp?: boolean; flipX?: boolean }> = ({ text, tailUp, flipX }) => {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
 
@@ -309,6 +309,7 @@ const CalloutLabel: React.FC<{ text: string; tailUp?: boolean }> = ({ text, tail
   const svgW = size.w;
   const svgH = size.h + TAIL_H;
   const path = buildBubblePath(svgW, size.h);
+  const svgTransform = [tailUp && 'scaleY(-1)', flipX && 'scaleX(-1)'].filter(Boolean).join(' ') || undefined;
 
   return (
     <div className="callout-label inline-block">
@@ -316,7 +317,7 @@ const CalloutLabel: React.FC<{ text: string; tailUp?: boolean }> = ({ text, tail
         {svgW > 0 && (
           <svg xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${svgW} ${svgH}`} fill="none"
             className="absolute left-0 pointer-events-none" width={svgW} height={svgH}
-            style={tailUp ? { bottom: 0, transform: 'scaleY(-1)' } : { top: 0 }}>
+            style={tailUp ? { bottom: 0, transform: svgTransform } : { top: 0, transform: svgTransform }}>
             <path d={path} fill="#620000" stroke="white" strokeWidth="4" />
           </svg>
         )}
@@ -400,8 +401,8 @@ const Step3Section: React.FC = () => {
             ))}
           </div>
         </div>
-        <div className="mj-label relative z-20 mt-3 md:mt-4" style={{ transform: 'rotate(-4deg)', whiteSpace: 'nowrap' }}>
-          <CalloutLabel text="MAHJONG!" tailUp />
+        <div className="mj-label relative z-20 mt-3 md:mt-4" style={{ transform: 'translate(140px, -70px) rotate(-4deg)', whiteSpace: 'nowrap' }}>
+          <CalloutLabel text="MAHJONG!" tailUp flipX />
           <div ref={mjParticlesRef} className="absolute inset-0 z-30 pointer-events-none flex items-center justify-center" />
         </div>
       </div>
@@ -461,7 +462,7 @@ const Step4TableSection: React.FC = () => {
     <div ref={sectionRef} className="select-none pointer-events-none flex justify-center md:justify-start">
       <div className="relative">
         {/* Real TableCard from Lobby — centered mobile, 40% bigger desktop */}
-        <div className="table-card-wrap w-[min(75vw,272px)] md:w-[420px]">
+        <div className="table-card-wrap w-[min(64vw,231px)] md:w-[420px]">
           <TableCard table={MOCK_TABLES[0]} onJoin={() => {}} />
         </div>
 
@@ -924,8 +925,9 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
   /* ── Bubble position helpers ── */
   const bubbleTop =
     step === 0 ? 'top-[22vh] md:top-[calc(30vh-130px)]'
-    : step === 3 ? 'top-[calc(22vh+320px)] md:top-[calc(30vh-130px)]'
-    : step === 2 || step === 4 || step === 5
+    : step === 3 ? 'top-[calc(22vh+280px)] md:top-[calc(30vh-130px)]'
+    : step === 5 ? 'top-[calc(22vh+190px)] md:top-[18vh]'
+    : step === 2 || step === 4
       ? 'top-[calc(22vh+240px)] md:top-[18vh]'
     : 'top-[calc(22vh+210px)] md:top-[calc(30vh-130px)]';
 
@@ -1029,7 +1031,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
 
       {/* ── Step 5 — Mahjong tiles only ── */}
       {step === 5 && (
-        <div className="absolute z-10 left-[4vw] top-[14vh] md:left-[5%] md:top-[16vh]">
+        <div className="absolute z-10 left-[4vw] top-[calc(14vh+30px)] md:left-[5%] md:top-[16vh]">
           <Step6MahjongSection key="step6" />
         </div>
       )}
