@@ -128,7 +128,7 @@ export const TableCard: React.FC<TableCardProps> = ({ table, onJoin }) => {
             <motion.button 
               whileTap={{ scale: 0.96 }}
               onClick={() => onJoin(table.id)}
-              className="flex-1 h-9 sm:h-10 rounded-[6px] bg-[#D00501] shadow-[0_2px_0_0_#4A0000] flex items-center justify-between px-2 sm:px-3 transition-all min-w-0 border-t border-white/20 active:shadow-none active:translate-y-[2px]"
+              className="btn-shimmer flex-1 h-9 sm:h-10 rounded-[6px] bg-[#D00501] shadow-[0_2px_0_0_#4A0000] flex items-center justify-between px-2 sm:px-3 transition-all min-w-0 border-t border-white/20 active:shadow-none active:translate-y-[2px]"
             >
               <div className="flex items-center gap-1 min-w-0">
                 <img 

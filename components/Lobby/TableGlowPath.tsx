@@ -96,7 +96,7 @@ export const TableGlowPath: React.FC = () => {
           className="table-glow-path"
           d={TABLE_PATH_D}
           stroke="#FFA500"
-          strokeWidth="28"
+          strokeWidth="30"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeOpacity="0.5"
@@ -110,7 +110,7 @@ export const TableGlowPath: React.FC = () => {
           className="table-glow-path"
           d={TABLE_PATH_D}
           stroke="#FFD700"
-          strokeWidth="10"
+          strokeWidth="12"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeOpacity="0.7"
@@ -124,7 +124,7 @@ export const TableGlowPath: React.FC = () => {
           className="table-glow-path"
           d={TABLE_PATH_D}
           stroke="#FFFBE6"
-          strokeWidth="3"
+          strokeWidth="5"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeOpacity="0.85"

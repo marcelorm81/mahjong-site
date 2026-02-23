@@ -63,6 +63,27 @@ main {
   100% { background-position: -200% 0; }
 }
 
+/* ── Shimmer ticker on red JOIN button ── */
+@keyframes btn-shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.22) 50%, transparent 70%);
+  pointer-events: none;
+  animation: btn-shimmer 1.2s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
 /* ── Traveling glow around table card on hover ── */
 @keyframes table-glow-travel {
   0%   { stroke-dashoffset: 0; }
