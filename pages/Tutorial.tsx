@@ -924,10 +924,10 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
   /* ── Bubble position helpers ── */
   const bubbleTop =
     step === 0 ? 'top-[22vh] md:top-[calc(30vh-130px)]'
-    : step === 3 ? 'top-[calc(22vh+360px)] md:top-[calc(30vh-130px)]'
+    : step === 3 ? 'top-[calc(22vh+320px)] md:top-[calc(30vh-130px)]'
     : step === 2 || step === 4 || step === 5
-      ? 'top-[calc(22vh+280px)] md:top-[18vh]'
-    : 'top-[calc(22vh+250px)] md:top-[calc(30vh-130px)]';
+      ? 'top-[calc(22vh+240px)] md:top-[18vh]'
+    : 'top-[calc(22vh+210px)] md:top-[calc(30vh-130px)]';
 
   const bubbleLeft =
     step === 1 ? 'md:left-[calc(18%+500px)]'
@@ -1008,7 +1008,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
 
       {/* ── Step 2 — Kong + Mahjong with stickers ── */}
       {step === 2 && (
-        <div className="absolute z-10 left-[4vw] top-[18vh] md:left-[5%] md:top-[18vh]">
+        <div className="absolute z-10 left-[4vw] top-[calc(18vh-30px)] md:left-[5%] md:top-[18vh]">
           <Step3Section key="step3" />
         </div>
       )}
