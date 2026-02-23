@@ -62,3 +62,12 @@ main {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+/* ── Traveling glow around table card on hover ── */
+@keyframes table-glow-travel {
+  0%   { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -2600; }
+}
+.group:hover .table-glow-path {
+  animation-play-state: running;
+}

@@ -2,6 +2,7 @@ import React from 'react';
 import { Users, Eye, Star, Lock, Clock } from 'lucide-react';
 import { TableItem } from '../../types';
 import { motion } from 'framer-motion';
+import { TableGlowPath } from './TableGlowPath';
 
 interface TableCardProps {
   table: TableItem;
@@ -33,6 +34,9 @@ export const TableCard: React.FC<TableCardProps> = ({ table, onJoin }) => {
     >
       {/* Decorative radial glow */}
       <div className="absolute inset-0 bg-radial-gradient from-brand-red/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+      {/* Traveling glow path around the table outline */}
+      <TableGlowPath />
 
       {/* Header Elements (Absolute Overlay) */}
       <div className="absolute top-3 left-3 right-3 flex items-center justify-between text-white/80 z-20 pointer-events-none">
