@@ -43,10 +43,10 @@ const STEPS: TutorialStep[] = [
   // Step 1 — Tiles showcase
   {
     phrases: [
-      ['Mahjong is played with tiles, not cards.', 'Matching tiles are used to build sets.'],
-      ['Bang Bang is the most fun', 'and easiest Mahjong rule to learn.'],
+      ['Mahjong is played with tiles, not cards. Matching tiles are used to build sets.'],
+      ['Bang Bang is the most fun and easiest Mahjong rule to learn.'],
     ],
-    text: ['Bang Bang is the most fun', 'and easiest Mahjong rule to learn.'],
+    text: ['Bang Bang is the most fun and easiest Mahjong rule to learn.'],
     videoDesktop: '/assets/talking_loop_desktop.mp4',
     videoMobile:  '/assets/talking_loop_mobile.mp4',
   },
@@ -429,6 +429,31 @@ const Step4TableSection: React.FC = () => {
     // Bouncing hand loop
     gsap.to(hand, { y: -6, duration: 0.5, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 1.2 });
 
+    // Shiny ticker on the JOIN button — elegant diagonal sweep
+    const joinBtn = el.querySelector('button');
+    if (joinBtn) {
+      const shimmer = document.createElement('div');
+      Object.assign(shimmer.style, {
+        position: 'absolute',
+        top: '0', left: '-100%',
+        width: '60%', height: '100%',
+        background: 'linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.25) 50%, transparent 70%)',
+        pointerEvents: 'none',
+        zIndex: '10',
+      });
+      joinBtn.style.position = 'relative';
+      joinBtn.style.overflow = 'hidden';
+      joinBtn.appendChild(shimmer);
+      gsap.to(shimmer, {
+        left: '150%',
+        duration: 2,
+        ease: 'power1.inOut',
+        repeat: -1,
+        repeatDelay: 2.5,
+        delay: 1.5,
+      });
+    }
+
     return () => { tl.kill(); gsap.killTweensOf(hand); };
   }, []);
 
@@ -453,27 +478,64 @@ const Step4TableSection: React.FC = () => {
 };
 
 /* ── Step 5 (index 4): Kong tiles + Profiles getting paid ────────── */
+const CheckmarkSVG: React.FC = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 41 41" fill="none" className="md:w-5 md:h-5">
+    <path d="M20.0922 2.50586C16.6149 2.50586 13.2157 3.53699 10.3245 5.46886C7.43321 7.40074 5.17975 10.1466 3.84906 13.3592C2.51836 16.5717 2.17019 20.1068 2.84857 23.5172C3.52696 26.9277 5.20142 30.0604 7.66023 32.5192C10.119 34.978 13.2517 36.6525 16.6622 37.3309C20.0727 38.0093 23.6077 37.6611 26.8203 36.3304C30.0329 34.9997 32.7787 32.7462 34.7106 29.855C36.6425 26.9637 37.6736 23.5646 37.6736 20.0873C37.6736 15.4244 35.8213 10.9525 32.5241 7.65534C29.227 4.35818 24.7551 2.50586 20.0922 2.50586ZM17.5805 27.1073L11.3015 20.8282L13.2982 18.8315L17.5805 23.1138L26.8861 13.8082L28.8904 15.7999L17.5805 27.1073Z" fill="#2AD858"/>
+  </svg>
+);
+
 const Step5KongSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const particlesRef = useRef<HTMLDivElement>(null);
+  const counter1Ref = useRef<HTMLSpanElement>(null);
+  const counter2Ref = useRef<HTMLSpanElement>(null);
+  const coin1Ref = useRef<HTMLImageElement>(null);
+  const coin2Ref = useRef<HTMLImageElement>(null);
+  const badge1Ref = useRef<HTMLDivElement>(null);
+  const badge2Ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
     const label     = el.querySelector('.kong-label');
     const tiles     = el.querySelectorAll('.kong-tile');
-    const profiles  = el.querySelectorAll('.player-profile');
+    const profile1  = el.querySelectorAll('.player-profile')[0];
+    const profile2  = el.querySelectorAll('.player-profile')[1];
 
     gsap.set(label, { opacity: 0, scale: 0.7, transformOrigin: 'center bottom' });
     gsap.set(tiles, { opacity: 0, scale: 0.7 });
-    gsap.set(profiles, { opacity: 0, y: 15 });
+    gsap.set([profile1, profile2], { opacity: 0, y: 15 });
+    gsap.set([badge1Ref.current, badge2Ref.current], { opacity: 0, scale: 0 });
 
     const tl = gsap.timeline({ delay: 0.5 });
-    // Tiles first → particles → KONG label (matching step 2 pattern)
-    tl.to(tiles, { opacity: 1, scale: 1, duration: 0.35, stagger: 0.1, ease: 'back.out(1.5)' })
+
+    // 1. Tiles enter one by one
+    tl.to(tiles, { opacity: 1, scale: 1, duration: 0.3, stagger: 0.15, ease: 'back.out(1.5)' })
+    // 2. KONG bubble + particles
       .call(() => { if (particlesRef.current) fireMiniParticles(particlesRef.current); })
       .to(label, { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.7)' }, '-=0.1')
-      .to(profiles, { opacity: 1, y: 0, duration: 0.4, stagger: 0.15, ease: 'power2.out' }, '+=0.3');
+    // 3. Profile 1 appears
+      .to(profile1, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, '+=0.4')
+    // 4. Badge 1 pops in
+      .to(badge1Ref.current, { opacity: 1, scale: 1, duration: 0.3, ease: 'back.out(2)' }, '+=0.15')
+    // 5. Counter 1: 0 → +100
+      .to({ val: 0 }, {
+        val: 100, duration: 0.8, ease: 'power2.out',
+        onUpdate() { if (counter1Ref.current) counter1Ref.current.textContent = `+${Math.round((this as any).targets()[0].val)}`; },
+      }, '-=0.15')
+    // 6. Coin 1 pulse
+      .to(coin1Ref.current, { scale: 1.4, duration: 0.15, ease: 'power2.out', yoyo: true, repeat: 1 }, '-=0.3')
+    // 7. Profile 2 appears
+      .to(profile2, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }, '+=0.3')
+    // 8. Badge 2 pops in
+      .to(badge2Ref.current, { opacity: 1, scale: 1, duration: 0.3, ease: 'back.out(2)' }, '+=0.15')
+    // 9. Counter 2: 0 → -100
+      .to({ val: 0 }, {
+        val: 100, duration: 0.8, ease: 'power2.out',
+        onUpdate() { if (counter2Ref.current) counter2Ref.current.textContent = `-${Math.round((this as any).targets()[0].val)}`; },
+      }, '-=0.15')
+    // 10. Coin 2 pulse
+      .to(coin2Ref.current, { scale: 1.4, duration: 0.15, ease: 'power2.out', yoyo: true, repeat: 1 }, '-=0.3');
 
     return () => { tl.kill(); };
   }, []);
@@ -505,16 +567,14 @@ const Step5KongSection: React.FC = () => {
                 className="w-full h-full object-cover"
                 style={{ objectFit: 'cover', objectPosition: 'center top', transform: 'translateY(8px)' }} />
             </div>
-            <div className="absolute -top-2.5 -right-4 px-2 py-1 rounded-full text-xs md:text-sm font-bold text-white flex items-center gap-0.5"
+            <div ref={badge1Ref} className="absolute -top-2.5 -right-4 px-2 py-1 rounded-full text-xs md:text-sm font-bold text-white flex items-center gap-0.5"
               style={{ background: '#22c55e', boxShadow: '0 2px 6px rgba(34,197,94,0.4)' }}>
-              +100<img src="/assets/topbar-coin.webp" alt="SP" className="inline w-4 h-4 md:w-5 md:h-5 ml-0.5" />
+              <span ref={counter1Ref}>+0</span><img ref={coin1Ref} src="/assets/topbar-coin.webp" alt="SP" className="inline w-4 h-4 md:w-5 md:h-5 ml-0.5" />
             </div>
           </div>
           <span className="flex items-center gap-1 text-white text-xs md:text-sm font-bold uppercase tracking-wide">
             Player 1
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 41 41" fill="none" className="md:w-5 md:h-5">
-              <path d="M20.0922 2.50586C16.6149 2.50586 13.2157 3.53699 10.3245 5.46886C7.43321 7.40074 5.17975 10.1466 3.84906 13.3592C2.51836 16.5717 2.17019 20.1068 2.84857 23.5172C3.52696 26.9277 5.20142 30.0604 7.66023 32.5192C10.119 34.978 13.2517 36.6525 16.6622 37.3309C20.0727 38.0093 23.6077 37.6611 26.8203 36.3304C30.0329 34.9997 32.7787 32.7462 34.7106 29.855C36.6425 26.9637 37.6736 23.5646 37.6736 20.0873C37.6736 15.4244 35.8213 10.9525 32.5241 7.65534C29.227 4.35818 24.7551 2.50586 20.0922 2.50586ZM17.5805 27.1073L11.3015 20.8282L13.2982 18.8315L17.5805 23.1138L26.8861 13.8082L28.8904 15.7999L17.5805 27.1073Z" fill="#2AD858"/>
-            </svg>
+            <CheckmarkSVG />
           </span>
         </div>
 
@@ -526,16 +586,14 @@ const Step5KongSection: React.FC = () => {
                 className="w-full h-full object-cover"
                 style={{ objectFit: 'cover', objectPosition: 'center top', transform: 'translateY(8px)' }} />
             </div>
-            <div className="absolute -top-2.5 -right-4 px-2 py-1 rounded-full text-xs md:text-sm font-bold text-white flex items-center gap-0.5"
+            <div ref={badge2Ref} className="absolute -top-2.5 -right-4 px-2 py-1 rounded-full text-xs md:text-sm font-bold text-white flex items-center gap-0.5"
               style={{ background: '#ef4444', boxShadow: '0 2px 6px rgba(239,68,68,0.4)' }}>
-              -100<img src="/assets/topbar-coin.webp" alt="SP" className="inline w-4 h-4 md:w-5 md:h-5 ml-0.5" />
+              <span ref={counter2Ref}>-0</span><img ref={coin2Ref} src="/assets/topbar-coin.webp" alt="SP" className="inline w-4 h-4 md:w-5 md:h-5 ml-0.5" />
             </div>
           </div>
           <span className="flex items-center gap-1 text-white text-xs md:text-sm font-bold uppercase tracking-wide">
             Player 2
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 41 41" fill="none" className="md:w-5 md:h-5">
-              <path d="M20.0922 2.50586C16.6149 2.50586 13.2157 3.53699 10.3245 5.46886C7.43321 7.40074 5.17975 10.1466 3.84906 13.3592C2.51836 16.5717 2.17019 20.1068 2.84857 23.5172C3.52696 26.9277 5.20142 30.0604 7.66023 32.5192C10.119 34.978 13.2517 36.6525 16.6622 37.3309C20.0727 38.0093 23.6077 37.6611 26.8203 36.3304C30.0329 34.9997 32.7787 32.7462 34.7106 29.855C36.6425 26.9637 37.6736 23.5646 37.6736 20.0873C37.6736 15.4244 35.8213 10.9525 32.5241 7.65534C29.227 4.35818 24.7551 2.50586 20.0922 2.50586ZM17.5805 27.1073L11.3015 20.8282L13.2982 18.8315L17.5805 23.1138L26.8861 13.8082L28.8904 15.7999L17.5805 27.1073Z" fill="#2AD858"/>
-            </svg>
+            <CheckmarkSVG />
           </span>
         </div>
       </div>
