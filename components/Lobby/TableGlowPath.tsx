@@ -6,28 +6,55 @@ const TABLE_PATH_D =
 
 /* Hard-coded from manual segment-length calculation */
 const TOTAL_LENGTH = 2600;
-const SEGMENT_FRACTION = 0.27;
-const SEGMENT_LENGTH = TOTAL_LENGTH * SEGMENT_FRACTION; // ~702
-const GAP_LENGTH = TOTAL_LENGTH - SEGMENT_LENGTH;        // ~1898
+
+/* Layer 1 — wide diffuse halo (35% visible) */
+const HALO_SEG = TOTAL_LENGTH * 0.35;           // 910
+const HALO_GAP = TOTAL_LENGTH - HALO_SEG;       // 1690
+
+/* Layer 2 — core glow body (30% visible) */
+const CORE_SEG = TOTAL_LENGTH * 0.30;           // 780
+const CORE_GAP = TOTAL_LENGTH - CORE_SEG;       // 1820
+
+/* Layer 3 — bright leading head (15% visible) */
+const HEAD_SEG = TOTAL_LENGTH * 0.15;           // 390
+const HEAD_GAP = TOTAL_LENGTH - HEAD_SEG;       // 2210
 
 /**
- * Dual-layer traveling glow that circulates around the table outline on hover.
- * Layer 1 (blur): wide diffuse halo with gradient stroke
- * Layer 2 (core): thin bright center line
+ * Three-layer traveling glow that circulates the table outline on hover.
+ *   1. Wide halo  — warm orange, heavy blur, 35% segment
+ *   2. Core glow  — golden, medium blur, 30% segment
+ *   3. Bright head — warm white, no blur, 15% segment
  *
- * Renders at z-[5] so it sits behind the card image (z-10) but above the background.
- * Visibility is driven by the parent's `group` / `group-hover` classes.
- * Animation is paused by default — CSS `.group:hover .table-glow-path` starts it.
+ * All layers share the same CSS keyframe animation so they move in sync.
+ * The shorter head segment naturally leads the wider halo, giving a
+ * bright-leading / soft-trailing falloff without needing a gradient.
+ *
+ * z-[5] → behind card image (z-10), above background.
+ * Paused by default — CSS .group:hover .table-glow-path starts it.
  */
 export const TableGlowPath: React.FC = () => {
   const uid = useId();
-  const blurId = `tgb${uid}`;
-  const gradId = `tgg${uid}`;
+  const blurWideId = `tgw${uid}`;
+  const blurCoreId = `tgc${uid}`;
 
-  const dashStyle: React.CSSProperties = {
-    strokeDasharray: `${SEGMENT_LENGTH} ${GAP_LENGTH}`,
+  const haloStyle: React.CSSProperties = {
+    strokeDasharray: `${HALO_SEG} ${HALO_GAP}`,
     strokeDashoffset: 0,
-    animation: `table-glow-travel 4s linear infinite`,
+    animation: 'table-glow-travel 4s linear infinite',
+    mixBlendMode: 'screen',
+  };
+
+  const coreStyle: React.CSSProperties = {
+    strokeDasharray: `${CORE_SEG} ${CORE_GAP}`,
+    strokeDashoffset: 0,
+    animation: 'table-glow-travel 4s linear infinite',
+    mixBlendMode: 'screen',
+  };
+
+  const headStyle: React.CSSProperties = {
+    strokeDasharray: `${HEAD_SEG} ${HEAD_GAP}`,
+    strokeDashoffset: 0,
+    animation: 'table-glow-travel 4s linear infinite',
   };
 
   return (
@@ -46,43 +73,56 @@ export const TableGlowPath: React.FC = () => {
         preserveAspectRatio="xMidYMid meet"
       >
         <defs>
-          {/* Gaussian blur for the diffuse halo */}
-          <filter id={blurId} x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="12" />
+          {/* Wide blur for the outer halo */}
+          <filter id={blurWideId} x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="20" />
           </filter>
 
-          {/* Gradient: yellow → red → transparent (trailing edge fades) */}
-          <linearGradient id={gradId} x1="366" y1="302" x2="128" y2="86" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stopColor="#FBFF0C" stopOpacity="0.9" />
-            <stop offset="0.5" stopColor="#FF1313" stopOpacity="0.45" />
-            <stop offset="1" stopColor="white" stopOpacity="0" />
-          </linearGradient>
+          {/* Tighter blur for the core glow */}
+          <filter id={blurCoreId} x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="6" />
+          </filter>
         </defs>
 
-        {/* Layer 1 — diffuse glow halo */}
+        {/* Layer 1 — wide diffuse orange halo */}
         <path
           className="table-glow-path"
           d={TABLE_PATH_D}
-          stroke={`url(#${gradId})`}
-          strokeWidth="20"
+          stroke="#FFA500"
+          strokeWidth="28"
           strokeLinecap="round"
           strokeLinejoin="round"
+          strokeOpacity="0.5"
           fill="none"
-          filter={`url(#${blurId})`}
-          style={{ ...dashStyle, mixBlendMode: 'screen' }}
+          filter={`url(#${blurWideId})`}
+          style={haloStyle}
         />
 
-        {/* Layer 2 — bright sharp core */}
+        {/* Layer 2 — core golden glow */}
         <path
           className="table-glow-path"
           d={TABLE_PATH_D}
-          stroke="#FFEE88"
-          strokeWidth="3"
+          stroke="#FFD700"
+          strokeWidth="10"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeOpacity="0.7"
           fill="none"
-          style={dashStyle}
+          filter={`url(#${blurCoreId})`}
+          style={coreStyle}
+        />
+
+        {/* Layer 3 — sharp bright leading edge */}
+        <path
+          className="table-glow-path"
+          d={TABLE_PATH_D}
+          stroke="#FFFBE6"
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeOpacity="0.85"
+          fill="none"
+          style={headStyle}
         />
       </svg>
     </div>
