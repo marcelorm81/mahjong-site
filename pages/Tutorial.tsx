@@ -249,11 +249,11 @@ const Step3Section: React.FC = () => {
     gsap.set([kongTiles, mjTiles], { opacity: 0, scale: 0.7 });
     gsap.set(stickers, { opacity: 0, scale: 0.7, transformOrigin: 'center bottom' });
 
-    // Animation: mahjong tiles first → MAHJONG! sticker → kong tiles → KONG! sticker
+    // Animation: kong tiles first → KONG! sticker → mahjong tiles → MAHJONG! sticker
     const tl = gsap.timeline({ delay: 0.8 });
-    tl.to(mjTiles,     { opacity: 1, scale: 1, duration: 0.25, stagger: 0.06, ease: 'back.out(1.5)' })
+    tl.to(kongTiles,   { opacity: 1, scale: 1, duration: 0.35, stagger: 0.1, ease: 'back.out(1.5)' })
       .to(stickers[0], { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.7)' }, '-=0.1')
-      .to(kongTiles,   { opacity: 1, scale: 1, duration: 0.35, stagger: 0.1, ease: 'back.out(1.5)' }, '+=0.2')
+      .to(mjTiles,     { opacity: 1, scale: 1, duration: 0.25, stagger: 0.06, ease: 'back.out(1.5)' }, '+=0.2')
       .to(stickers[1], { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.7)' }, '-=0.1');
 
     return () => { tl.kill(); };
@@ -287,8 +287,15 @@ const Step3Section: React.FC = () => {
   return (
     <div ref={sectionRef} className="select-none pointer-events-none">
       <div className="relative inline-block">
-        {/* Mahjong winning hand tiles on top */}
-        <div className="mb-3 md:mb-4">
+        {/* Kong tiles on top (4× Pin1) */}
+        <div className="flex gap-[1px] md:gap-[2px] mb-3 md:mb-4">
+          {[0, 1, 2, 3].map(i => (
+            <T key={`k-${i}`} src="/assets/tiles/tile-num-1.webp" alt="Kong" extra="kong-tile" />
+          ))}
+        </div>
+
+        {/* Mahjong winning hand below */}
+        <div>
           {/* Row 1: 8 tiles (Nan×2, man6×3, pin8×3) */}
           <div className="flex gap-[1px] md:gap-[2px] mb-[1px] md:mb-[2px]">
             {ROW1.map(([src, alt], i) => (
@@ -303,25 +310,18 @@ const Step3Section: React.FC = () => {
           </div>
         </div>
 
-        {/* Kong tiles below (4× Pin1) */}
-        <div className="flex gap-[1px] md:gap-[2px]">
-          {[0, 1, 2, 3].map(i => (
-            <T key={`k-${i}`} src="/assets/tiles/tile-num-1.webp" alt="Kong" extra="kong-tile" />
-          ))}
-        </div>
-
         {/* Overlaid sticker labels */}
         <div
           className="sticker-overlay absolute -top-4 -right-2 md:-top-5 md:-right-3 z-20"
           style={{ transform: 'rotate(6deg)' }}
         >
-          <CalloutLabel text="MAHJONG!" />
+          <CalloutLabel text="KONG!" />
         </div>
         <div
           className="sticker-overlay absolute -bottom-6 -left-2 md:-bottom-8 md:-left-3 z-20"
           style={{ transform: 'rotate(-6deg)' }}
         >
-          <CalloutLabel text="KONG!" />
+          <CalloutLabel text="MAHJONG!" />
         </div>
       </div>
     </div>
@@ -666,8 +666,8 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
         step === 0
           ? 'top-[22vh] md:top-[calc(30vh-130px)]'
           : step === 2
-            ? 'top-[calc(22vh+350px)] md:top-[18vh]'
-            : 'top-[calc(22vh+350px)] md:top-[calc(30vh-130px)]'
+            ? 'top-[calc(22vh+200px)] md:top-[18vh]'
+            : 'top-[calc(22vh+200px)] md:top-[calc(30vh-130px)]'
       } w-[min(82vw,48vh)] max-w-[260px] md:w-[min(28vw,45vh)] md:max-w-[340px] overflow-visible`}>
         <ChatBubble
           key={`${step}-${phraseIdx}`}

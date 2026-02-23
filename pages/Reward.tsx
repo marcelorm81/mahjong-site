@@ -133,16 +133,14 @@ export const Reward: React.FC<RewardProps> = ({ onClose, onRedeem }) => {
       opacity: 0, duration: 0.3,
     }, '-=0.1')
 
-    // 6. Fade glows
+    // 6. Fade glows + card emerges early (overlapping — feels like it's inside the box)
     .to([whiteGlowRef.current, goldGlowRef.current], {
       opacity: 0, duration: 0.35,
     })
-
-    // 7. Prize card emerges from halo center — starts tiny, scales up
     .to(cardRef.current, {
       opacity: 1, scale: 1,
       duration: 0.6, ease: 'back.out(1.4)',
-    }, '-=0.10');
+    }, '-=0.35');
 
     return () => { tl.kill(); };
   }, []);
