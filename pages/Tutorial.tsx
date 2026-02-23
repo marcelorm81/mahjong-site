@@ -328,7 +328,7 @@ const CalloutLabel: React.FC<{ text: string; tailUp?: boolean }> = ({ text, tail
             fontSize: 'clamp(20px, min(4.5vw, 4vh), 38px)',
             letterSpacing: '-0.02em',
             textShadow: '1px 1px 0 rgba(0,0,0,0.4)',
-            ...(tailUp ? { paddingBottom: `${TAIL_H}px` } : {}),
+            ...(tailUp ? { paddingTop: `${TAIL_H}px` } : {}),
           }}>
           {text}
         </div>
