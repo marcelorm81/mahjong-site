@@ -328,7 +328,6 @@ const CalloutLabel: React.FC<{ text: string; tailUp?: boolean }> = ({ text, tail
             fontSize: 'clamp(20px, min(4.5vw, 4vh), 38px)',
             letterSpacing: '-0.02em',
             textShadow: '1px 1px 0 rgba(0,0,0,0.4)',
-            ...(tailUp ? {} : {}),
           }}>
           {text}
         </div>
@@ -369,26 +368,26 @@ const Step3Section: React.FC = () => {
 
   return (
     <div ref={sectionRef} className="select-none pointer-events-none">
-      {/* KONG! label — normal flow, overlaps tiles below via negative margin */}
-      <div className="kong-label relative z-20 mb-[-18px] md:mb-[-22px]" style={{ transform: 'rotate(-4deg)' }}>
+      {/* KONG! label — normal flow, particles centered on label */}
+      <div className="kong-label relative z-20" style={{ transform: 'rotate(-4deg)' }}>
         <CalloutLabel text="KONG!" />
+        <div ref={kongParticlesRef} className="absolute inset-0 z-30 pointer-events-none flex items-center justify-center" />
       </div>
 
-      {/* Kong tiles — sit below the label, partially overlapped */}
-      <div className="relative">
+      {/* Kong tiles — pushed down for breathing room */}
+      <div className="relative mt-3 md:mt-4">
         <div className="flex gap-[1px] md:gap-[2px]">
           {[0, 1, 2, 3].map(i => (
             <Tile key={`k-${i}`} src="/assets/tiles/tile-num-1.webp" alt="Kong" extra="kong-tile" />
           ))}
         </div>
-        <div ref={kongParticlesRef} className="absolute inset-0 pointer-events-none flex items-center justify-center" />
       </div>
 
       {/* Spacer */}
       <div className="h-8 md:h-10" />
 
-      {/* Mahjong tiles with MAHJONG! label below (tail pointing up) */}
-      <div className="relative">
+      {/* Mahjong tiles with MAHJONG! label below */}
+      <div>
         <div>
           <div className="flex gap-[1px] md:gap-[2px] mb-[1px] md:mb-[2px]">
             {MJ_ROW1.map(([src, alt], i) => (
@@ -401,10 +400,10 @@ const Step3Section: React.FC = () => {
             ))}
           </div>
         </div>
-        <div className="mj-label relative z-20 mt-[-14px] md:mt-[-18px]" style={{ transform: 'rotate(-4deg)', whiteSpace: 'nowrap' }}>
+        <div className="mj-label relative z-20 mt-3 md:mt-4" style={{ transform: 'rotate(-4deg)', whiteSpace: 'nowrap' }}>
           <CalloutLabel text="MAHJONG!" tailUp />
+          <div ref={mjParticlesRef} className="absolute inset-0 z-30 pointer-events-none flex items-center justify-center" />
         </div>
-        <div ref={mjParticlesRef} className="absolute inset-0 pointer-events-none flex items-center justify-center" />
       </div>
     </div>
   );
@@ -481,19 +480,19 @@ const Step5KongSection: React.FC = () => {
 
   return (
     <div ref={sectionRef} className="select-none pointer-events-none">
-      {/* KONG! label — normal flow, overlaps tiles below via negative margin */}
-      <div className="kong-label relative z-20 mb-[-18px] md:mb-[-22px]" style={{ transform: 'rotate(-4deg)' }}>
+      {/* KONG! label — normal flow, particles centered on label */}
+      <div className="kong-label relative z-20" style={{ transform: 'rotate(-4deg)' }}>
         <CalloutLabel text="KONG!" />
+        <div ref={particlesRef} className="absolute inset-0 z-30 pointer-events-none flex items-center justify-center" />
       </div>
 
-      {/* 4 Kong tiles below the label, partially overlapped */}
-      <div className="relative mb-6 md:mb-8">
+      {/* 4 Kong tiles — pushed down for breathing room */}
+      <div className="relative mt-3 md:mt-4 mb-6 md:mb-8">
         <div className="flex gap-[2px] md:gap-[3px]">
           {[0, 1, 2, 3].map(i => (
             <Tile key={`k-${i}`} src="/assets/tiles/tile-num-1.webp" alt="Kong" extra="kong-tile" />
           ))}
         </div>
-        <div ref={particlesRef} className="absolute inset-0 pointer-events-none flex items-center justify-center" />
       </div>
 
       {/* Player profiles — square container, head-visible crop */}
@@ -569,24 +568,24 @@ const Step6MahjongSection: React.FC = () => {
 
   return (
     <div ref={sectionRef} className="select-none pointer-events-none">
-      {/* Mahjong winning hand with MAHJONG! label overlaid */}
-      <div className="relative">
-        <div>
-          <div className="flex gap-[1px] md:gap-[2px] mb-[1px] md:mb-[2px]">
-            {MJ_ROW1.map(([src, alt], i) => (
-              <Tile key={`r1-${i}`} src={src} alt={alt} extra="mj-tile" />
-            ))}
-          </div>
-          <div className="flex gap-[1px] md:gap-[2px]">
-            {MJ_ROW2.map(([src, alt], i) => (
-              <Tile key={`r2-${i}`} src={src} alt={alt} extra="mj-tile" />
-            ))}
-          </div>
+      {/* MAHJONG! label — normal flow at top, particles centered on label */}
+      <div className="mj-label relative z-20" style={{ transform: 'rotate(-4deg)', whiteSpace: 'nowrap' }}>
+        <CalloutLabel text="MAHJONG!" />
+        <div ref={particlesRef} className="absolute inset-0 z-30 pointer-events-none flex items-center justify-center" />
+      </div>
+
+      {/* Tiles pushed way down for lots of breathing room */}
+      <div className="mt-10 md:mt-16">
+        <div className="flex gap-[1px] md:gap-[2px] mb-[1px] md:mb-[2px]">
+          {MJ_ROW1.map(([src, alt], i) => (
+            <Tile key={`r1-${i}`} src={src} alt={alt} extra="mj-tile" />
+          ))}
         </div>
-        <div className="mj-label absolute -top-5 left-1/2 -translate-x-1/2 z-20" style={{ transform: 'rotate(-4deg) translateX(-50%)' }}>
-          <CalloutLabel text="MAHJONG!" />
+        <div className="flex gap-[1px] md:gap-[2px]">
+          {MJ_ROW2.map(([src, alt], i) => (
+            <Tile key={`r2-${i}`} src={src} alt={alt} extra="mj-tile" />
+          ))}
         </div>
-        <div ref={particlesRef} className="absolute inset-0 pointer-events-none flex items-center justify-center" />
       </div>
     </div>
   );
@@ -850,7 +849,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
       const el = bubbleWrapRef.current;
       if (el) {
         gsap.to(el, {
-          opacity: 0, y: -10, duration: 0.35, ease: 'power2.in', delay: 0.6,
+          opacity: 0, y: -10, duration: 0.35, ease: 'power2.in', delay: 1.5,
           onComplete: () => {
             gsap.set(el, { opacity: 1, y: 0 });
             setPhraseIdx(p => p + 1);
@@ -867,9 +866,9 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
   /* ── Bubble position helpers ── */
   const bubbleTop =
     step === 0 ? 'top-[22vh] md:top-[calc(30vh-130px)]'
-    : step === 3 ? 'top-[calc(22vh+320px)] md:top-[calc(30vh-130px)]'
+    : step === 3 ? 'top-[calc(22vh+360px)] md:top-[calc(30vh-130px)]'
     : step === 2 || step === 4 || step === 5
-      ? 'top-[calc(22vh+250px)] md:top-[18vh]'
+      ? 'top-[calc(22vh+280px)] md:top-[18vh]'
     : 'top-[calc(22vh+250px)] md:top-[calc(30vh-130px)]';
 
   const bubbleLeft =
