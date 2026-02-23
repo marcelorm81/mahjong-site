@@ -461,7 +461,7 @@ const Step4TableSection: React.FC = () => {
     <div ref={sectionRef} className="select-none pointer-events-none flex justify-center md:justify-start">
       <div className="relative">
         {/* Real TableCard from Lobby — centered mobile, 40% bigger desktop */}
-        <div className="table-card-wrap w-[min(88vw,320px)] md:w-[420px]">
+        <div className="table-card-wrap w-[min(75vw,272px)] md:w-[420px]">
           <TableCard table={MOCK_TABLES[0]} onJoin={() => {}} />
         </div>
 
@@ -1043,7 +1043,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
 
       {/* ── Chat bubble (hidden on noBubble steps) ── */}
       {showBubble && (
-        <div ref={bubbleWrapRef} className={`absolute z-20 left-4 ${bubbleLeft} ${bubbleTop} w-[min(82vw,48vh)] max-w-[260px] md:w-[min(28vw,45vh)] md:max-w-[340px] overflow-visible`}>
+        <div ref={bubbleWrapRef} className={`absolute z-20 left-4 ${bubbleLeft} ${bubbleTop} w-[min(74vw,43vh)] max-w-[234px] md:w-[min(28vw,45vh)] md:max-w-[340px] overflow-visible`}>
           <ChatBubble
             key={`${step}-${phraseIdx}`}
             lines={currentLines}
