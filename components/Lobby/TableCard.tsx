@@ -24,7 +24,7 @@ export const TableCard: React.FC<TableCardProps> = ({ table, onJoin }) => {
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -5 }}
+      whileHover={{ y: 0 }}
       // Updated aspect ratio to [3/4] on all sizes to keep cards tall and large even in 3-col grid
       className={`
         relative group w-full aspect-[3/4] rounded-3xl overflow-hidden
