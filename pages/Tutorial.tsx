@@ -163,7 +163,7 @@ const TileSection: React.FC = () => {
           <TileImg key={n} src={`/assets/tiles/tile-num-${n}.webp`} alt={`Number ${n}`} />
         ))}
         <TileImg key="5d" src="/assets/tiles/tile-num-5-dora.webp" alt="Number 5 Dora" />
-        {[6,7,8,9,10].map(n => (
+        {[6,7,8,9].map(n => (
           <TileImg key={n} src={`/assets/tiles/tile-num-${n}.webp`} alt={`Number ${n}`} />
         ))}
       </div>
@@ -367,30 +367,23 @@ const Step3Section: React.FC = () => {
 
   return (
     <div ref={sectionRef} className="select-none pointer-events-none">
-      {/* KONG label on top of kong tiles */}
-      <div className="kong-label mb-2" style={{ transform: 'rotate(-4deg)' }}>
-        <CalloutLabel text="KONG!" />
-      </div>
-
-      {/* Kong tiles */}
+      {/* Kong tiles with KONG! label overlaid */}
       <div className="relative">
         <div className="flex gap-[1px] md:gap-[2px]">
           {[0, 1, 2, 3].map(i => (
             <Tile key={`k-${i}`} src="/assets/tiles/tile-num-1.webp" alt="Kong" extra="kong-tile" />
           ))}
         </div>
+        <div className="kong-label absolute -top-5 left-1/2 -translate-x-1/2 z-20" style={{ transform: 'rotate(-4deg) translateX(-50%)' }}>
+          <CalloutLabel text="KONG!" />
+        </div>
         <div ref={kongParticlesRef} className="absolute inset-0 pointer-events-none flex items-center justify-center" />
       </div>
 
       {/* Spacer */}
-      <div className="h-6 md:h-8" />
+      <div className="h-8 md:h-10" />
 
-      {/* MAHJONG label on top of mahjong tiles */}
-      <div className="mj-label mb-2" style={{ transform: 'rotate(-4deg)' }}>
-        <CalloutLabel text="MAHJONG!" />
-      </div>
-
-      {/* Mahjong winning hand */}
+      {/* Mahjong tiles with MAHJONG! label overlaid */}
       <div className="relative">
         <div>
           <div className="flex gap-[1px] md:gap-[2px] mb-[1px] md:mb-[2px]">
@@ -403,6 +396,9 @@ const Step3Section: React.FC = () => {
               <Tile key={`r2-${i}`} src={src} alt={alt} extra="mj-tile" />
             ))}
           </div>
+        </div>
+        <div className="mj-label absolute -top-5 left-1/2 -translate-x-1/2 z-20" style={{ transform: 'rotate(-4deg) translateX(-50%)' }}>
+          <CalloutLabel text="MAHJONG!" />
         </div>
         <div ref={mjParticlesRef} className="absolute inset-0 pointer-events-none flex items-center justify-center" />
       </div>
@@ -434,10 +430,10 @@ const Step4TableSection: React.FC = () => {
   }, []);
 
   return (
-    <div ref={sectionRef} className="select-none pointer-events-none">
+    <div ref={sectionRef} className="select-none pointer-events-none flex justify-center md:justify-start">
       <div className="relative">
-        {/* Real TableCard from Lobby — wider on mobile */}
-        <div className="table-card-wrap w-[min(88vw,320px)] md:w-[300px]">
+        {/* Real TableCard from Lobby — centered mobile, 40% bigger desktop */}
+        <div className="table-card-wrap w-[min(88vw,320px)] md:w-[420px]">
           <TableCard table={MOCK_TABLES[0]} onJoin={() => {}} />
         </div>
 
@@ -481,49 +477,47 @@ const Step5KongSection: React.FC = () => {
 
   return (
     <div ref={sectionRef} className="select-none pointer-events-none">
-      {/* KONG! callout — on top of tiles */}
-      <div className="kong-label mb-2" style={{ transform: 'rotate(-4deg)' }}>
-        <CalloutLabel text="KONG!" />
-      </div>
-
-      {/* 4 Kong tiles */}
-      <div className="relative mb-4 md:mb-6">
+      {/* 4 Kong tiles with KONG! label overlaid */}
+      <div className="relative mb-6 md:mb-8">
         <div className="flex gap-[2px] md:gap-[3px]">
           {[0, 1, 2, 3].map(i => (
             <Tile key={`k-${i}`} src="/assets/tiles/tile-num-1.webp" alt="Kong" extra="kong-tile" />
           ))}
         </div>
+        <div className="kong-label absolute -top-5 left-1/2 -translate-x-1/2 z-20" style={{ transform: 'rotate(-4deg) translateX(-50%)' }}>
+          <CalloutLabel text="KONG!" />
+        </div>
         <div ref={particlesRef} className="absolute inset-0 pointer-events-none flex items-center justify-center" />
       </div>
 
-      {/* Player profiles — bigger */}
-      <div className="flex gap-5 md:gap-8">
+      {/* Player profiles — 60% bigger */}
+      <div className="flex gap-6 md:gap-10">
         {/* Player 1 — gets paid */}
         <div className="player-profile flex flex-col items-center">
-          <div className="relative mb-1.5">
+          <div className="relative mb-2">
             <img src="/assets/profile-bubbletea.webp" alt="Player 1"
-              className="w-16 h-16 md:w-20 md:h-20 rounded-lg object-cover border-2 border-white/20" />
-            <div className="absolute -top-2 -right-3 px-1.5 py-0.5 rounded-full text-[10px] md:text-xs font-bold text-white flex items-center gap-0.5"
+              className="w-[104px] h-[104px] md:w-32 md:h-32 rounded-xl object-cover border-2 border-white/20" />
+            <div className="absolute -top-2.5 -right-4 px-2 py-1 rounded-full text-xs md:text-sm font-bold text-white flex items-center gap-0.5"
               style={{ background: '#22c55e', boxShadow: '0 2px 6px rgba(34,197,94,0.4)' }}>
-              +100<img src="/assets/topbar-coin.webp" alt="SP" className="inline w-3.5 h-3.5 ml-0.5" />
+              +100<img src="/assets/topbar-coin.webp" alt="SP" className="inline w-4 h-4 md:w-5 md:h-5 ml-0.5" />
             </div>
           </div>
-          <span className="text-white text-[10px] md:text-xs font-bold uppercase tracking-wide">Player 1</span>
-          <span className="text-green-400 text-[10px]">&#x2705;</span>
+          <span className="text-white text-xs md:text-sm font-bold uppercase tracking-wide">Player 1</span>
+          <span className="text-green-400 text-xs">&#x2705;</span>
         </div>
 
         {/* Player 2 — pays */}
         <div className="player-profile flex flex-col items-center">
-          <div className="relative mb-1.5">
+          <div className="relative mb-2">
             <img src="/assets/profile-busy.webp" alt="Player 2"
-              className="w-16 h-16 md:w-20 md:h-20 rounded-lg object-cover border-2 border-white/20" />
-            <div className="absolute -top-2 -right-3 px-1.5 py-0.5 rounded-full text-[10px] md:text-xs font-bold text-white flex items-center gap-0.5"
+              className="w-[104px] h-[104px] md:w-32 md:h-32 rounded-xl object-cover border-2 border-white/20" />
+            <div className="absolute -top-2.5 -right-4 px-2 py-1 rounded-full text-xs md:text-sm font-bold text-white flex items-center gap-0.5"
               style={{ background: '#ef4444', boxShadow: '0 2px 6px rgba(239,68,68,0.4)' }}>
-              -100<img src="/assets/topbar-coin.webp" alt="SP" className="inline w-3.5 h-3.5 ml-0.5" />
+              -100<img src="/assets/topbar-coin.webp" alt="SP" className="inline w-4 h-4 md:w-5 md:h-5 ml-0.5" />
             </div>
           </div>
-          <span className="text-white text-[10px] md:text-xs font-bold uppercase tracking-wide">Player 2</span>
-          <span className="text-green-400 text-[10px]">&#x2705;</span>
+          <span className="text-white text-xs md:text-sm font-bold uppercase tracking-wide">Player 2</span>
+          <span className="text-green-400 text-xs">&#x2705;</span>
         </div>
       </div>
     </div>
@@ -555,12 +549,7 @@ const Step6MahjongSection: React.FC = () => {
 
   return (
     <div ref={sectionRef} className="select-none pointer-events-none">
-      {/* MAHJONG! callout — on top of tiles */}
-      <div className="mj-label mb-2" style={{ transform: 'rotate(-4deg)' }}>
-        <CalloutLabel text="MAHJONG!" />
-      </div>
-
-      {/* Mahjong winning hand */}
+      {/* Mahjong winning hand with MAHJONG! label overlaid */}
       <div className="relative">
         <div>
           <div className="flex gap-[1px] md:gap-[2px] mb-[1px] md:mb-[2px]">
@@ -573,6 +562,9 @@ const Step6MahjongSection: React.FC = () => {
               <Tile key={`r2-${i}`} src={src} alt={alt} extra="mj-tile" />
             ))}
           </div>
+        </div>
+        <div className="mj-label absolute -top-5 left-1/2 -translate-x-1/2 z-20" style={{ transform: 'rotate(-4deg) translateX(-50%)' }}>
+          <CalloutLabel text="MAHJONG!" />
         </div>
         <div ref={particlesRef} className="absolute inset-0 pointer-events-none flex items-center justify-center" />
       </div>
@@ -943,9 +935,9 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
         </div>
       )}
 
-      {/* ── Step 3 — Table with hand pointing ── */}
+      {/* ── Step 3 — Table with hand pointing (centered mobile, left-aligned desktop) ── */}
       {step === 3 && (
-        <div className="absolute z-10 left-[4vw] top-[14vh] md:left-[5%] md:top-[16vh]">
+        <div className="absolute z-10 inset-x-0 top-[14vh] md:left-[5%] md:right-auto md:top-[16vh] px-4 md:px-0">
           <Step4TableSection key="step4" />
         </div>
       )}
