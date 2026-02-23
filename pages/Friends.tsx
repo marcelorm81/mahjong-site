@@ -12,13 +12,13 @@ interface Friend {
 }
 
 const MOCK_FRIENDS: Friend[] = [
-  { id: 1, username: 'Uncle Cai',       level: 50, status: 'online',  avatarUrl: '/assets/avatar-uncle-cai.png' },
-  { id: 2, username: 'Anne Wan',        level: 50, status: 'online',  avatarUrl: '/assets/avatar-anne-wan.png' },
-  { id: 3, username: 'Bang Johnsson',   level: 50, status: 'online',  avatarUrl: '/assets/avatar-bang-johnsson.png' },
-  { id: 4, username: 'Mrs Chen',        level: 50, status: 'offline', avatarUrl: '/assets/avatar-mrs-chen.png' },
-  { id: 5, username: 'Pon Pon',         level: 50, status: 'offline', avatarUrl: '/assets/avatar-pon-pon.png' },
-  { id: 6, username: 'Echo Tóng',       level: 50, status: 'offline', avatarUrl: '/assets/avatar-echo-tong.png' },
-  { id: 7, username: 'Tony Kong',       level: 50, status: 'offline', avatarUrl: '/assets/avatar-tony-kong.png' },
+  { id: 1, username: 'Uncle Cai',       level: 50, status: 'online',  avatarUrl: '/assets/avatar-uncle-cai.webp' },
+  { id: 2, username: 'Anne Wan',        level: 50, status: 'online',  avatarUrl: '/assets/avatar-anne-wan.webp' },
+  { id: 3, username: 'Bang Johnsson',   level: 50, status: 'online',  avatarUrl: '/assets/avatar-bang-johnsson.webp' },
+  { id: 4, username: 'Mrs Chen',        level: 50, status: 'offline', avatarUrl: '/assets/avatar-mrs-chen.webp' },
+  { id: 5, username: 'Pon Pon',         level: 50, status: 'offline', avatarUrl: '/assets/avatar-pon-pon.webp' },
+  { id: 6, username: 'Echo Tóng',       level: 50, status: 'offline', avatarUrl: '/assets/avatar-echo-tong.webp' },
+  { id: 7, username: 'Tony Kong',       level: 50, status: 'offline', avatarUrl: '/assets/avatar-tony-kong.webp' },
 ];
 
 const STATUS_CONFIG: Record<StatusType, { label: string; color: string }> = {

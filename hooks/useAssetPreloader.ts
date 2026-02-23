@@ -187,22 +187,22 @@ const NAV_ICONS = [
 
 /** Top bar icons (local) */
 const TOPBAR_ICONS = [
-  '/assets/topbar-friends.png',
-  '/assets/topbar-table.png',
-  '/assets/topbar-calendar.png',
-  '/assets/topbar-xp.png',
-  '/assets/topbar-coin.png',
-  '/assets/topbar-settings.png',
+  '/assets/topbar-friends.webp',
+  '/assets/topbar-table.webp',
+  '/assets/topbar-calendar.webp',
+  '/assets/topbar-xp.webp',
+  '/assets/topbar-coin.webp',
+  '/assets/topbar-settings.webp',
   '/assets/topbar-add.svg',
 ];
 
 /** Lobby table character images (local) */
 const LOBBY_CHARS = [
-  '/assets/char-bubbletea.png',
-  '/assets/char-cat.png',
-  '/assets/char-executive.png',
-  '/assets/char-granny.png',
-  '/assets/char-papers.png',
+  '/assets/char-bubbletea.webp',
+  '/assets/char-cat.webp',
+  '/assets/char-executive.webp',
+  '/assets/char-granny.webp',
+  '/assets/char-papers.webp',
 ];
 
 /**
@@ -221,12 +221,12 @@ export const APP_ASSETS: AssetEntry[] = [
   // ── Background: loaded silently after critical batch ──
   ...NAV_ICONS.map((url) => ({ url, priority: 'background' as const })),
   ...LOBBY_CHARS.map((url) => ({ url, priority: 'background' as const })),
-  { url: '/assets/nav-rank.png', priority: 'background' },
-  { url: '/assets/topbar-avatar.png', priority: 'background' },
-  { url: '/assets/roof.png', priority: 'background' },
-  { url: '/assets/gold.png', priority: 'background' },
-  { url: '/assets/red.png', priority: 'background' },
-  { url: '/assets/silver.png', priority: 'background' },
+  { url: '/assets/nav-rank.webp', priority: 'background' },
+  { url: '/assets/topbar-avatar.webp', priority: 'background' },
+  { url: '/assets/roof.webp', priority: 'background' },
+  { url: '/assets/gold.webp', priority: 'background' },
+  { url: '/assets/red.webp', priority: 'background' },
+  { url: '/assets/silver.webp', priority: 'background' },
   // Tutorial videos (large - lazy background)
   { url: '/assets/waving_loop_desktop.mp4', type: 'video', priority: 'background' },
   { url: '/assets/waving_loop_mobile.mp4', type: 'video', priority: 'background' },

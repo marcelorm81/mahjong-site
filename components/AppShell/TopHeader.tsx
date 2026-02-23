@@ -2,12 +2,12 @@ import React from 'react';
 import { User, Page } from '../../types';
 
 /* ── Local assets (downloaded from Figma) ────────────────────────────── */
-const iconFriends  = '/assets/topbar-friends.png';
-const iconTable    = '/assets/topbar-table.png';
-const iconCalendar = '/assets/topbar-calendar.png';
-const iconXP       = '/assets/topbar-xp.png';
-const iconCoin     = '/assets/topbar-coin.png';
-const iconSettings = '/assets/topbar-settings.png';
+const iconFriends  = '/assets/topbar-friends.webp';
+const iconTable    = '/assets/topbar-table.webp';
+const iconCalendar = '/assets/topbar-calendar.webp';
+const iconXP       = '/assets/topbar-xp.webp';
+const iconCoin     = '/assets/topbar-coin.webp';
+const iconSettings = '/assets/topbar-settings.webp';
 const iconAdd      = '/assets/topbar-add.svg';
 
 /* ── Helpers ─────────────────────────────────────────────────────────── */

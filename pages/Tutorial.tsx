@@ -93,11 +93,11 @@ const TileSection: React.FC = () => {
       </p>
       <div className="tile-row-0 flex gap-[1px] md:gap-[2px] mb-[10px] md:mb-[16px]">
         {[1,2,3,4,5].map(n => (
-          <TileImg key={n} src={`/assets/tiles/tile-num-${n}.png`} alt={`Number ${n}`} />
+          <TileImg key={n} src={`/assets/tiles/tile-num-${n}.webp`} alt={`Number ${n}`} />
         ))}
-        <TileImg key="5d" src="/assets/tiles/tile-num-5-dora.png" alt="Number 5 Dora" />
+        <TileImg key="5d" src="/assets/tiles/tile-num-5-dora.webp" alt="Number 5 Dora" />
         {[6,7,8,9,10].map(n => (
-          <TileImg key={n} src={`/assets/tiles/tile-num-${n}.png`} alt={`Number ${n}`} />
+          <TileImg key={n} src={`/assets/tiles/tile-num-${n}.webp`} alt={`Number ${n}`} />
         ))}
       </div>
 
@@ -107,7 +107,7 @@ const TileSection: React.FC = () => {
       </p>
       <div className="tile-row-1 flex gap-[1px] md:gap-[2px] mb-[10px] md:mb-[16px]">
         {(['east','south','west','north'] as const).map(d => (
-          <TileImg key={d} src={`/assets/tiles/tile-wind-${d}.png`} alt={`Wind ${d}`} />
+          <TileImg key={d} src={`/assets/tiles/tile-wind-${d}.webp`} alt={`Wind ${d}`} />
         ))}
       </div>
 
@@ -117,7 +117,7 @@ const TileSection: React.FC = () => {
       </p>
       <div className="tile-row-2 flex gap-[1px] md:gap-[2px]">
         {(['zhong','fa','bai'] as const).map(d => (
-          <TileImg key={d} src={`/assets/tiles/tile-dragon-${d}.png`} alt={`Dragon ${d}`} />
+          <TileImg key={d} src={`/assets/tiles/tile-dragon-${d}.webp`} alt={`Dragon ${d}`} />
         ))}
       </div>
     </div>
@@ -266,22 +266,22 @@ const Step3Section: React.FC = () => {
 
   // Mahjong winning hand: Nan×2, man6×3, pin8×3, sou4×3, sou1×3 = 14 tiles
   const ROW1: [string, string][] = [
-    ['/assets/tiles/tile-wind-south.png', 'Nan'],
-    ['/assets/tiles/tile-wind-south.png', 'Nan'],
-    ['/assets/tiles/tile-man-6.png',      'Man 6'],
-    ['/assets/tiles/tile-man-6.png',      'Man 6'],
-    ['/assets/tiles/tile-man-6.png',      'Man 6'],
-    ['/assets/tiles/tile-num-8.png',      'Pin 8'],
-    ['/assets/tiles/tile-num-8.png',      'Pin 8'],
-    ['/assets/tiles/tile-num-8.png',      'Pin 8'],
+    ['/assets/tiles/tile-wind-south.webp', 'Nan'],
+    ['/assets/tiles/tile-wind-south.webp', 'Nan'],
+    ['/assets/tiles/tile-man-6.webp',      'Man 6'],
+    ['/assets/tiles/tile-man-6.webp',      'Man 6'],
+    ['/assets/tiles/tile-man-6.webp',      'Man 6'],
+    ['/assets/tiles/tile-num-8.webp',      'Pin 8'],
+    ['/assets/tiles/tile-num-8.webp',      'Pin 8'],
+    ['/assets/tiles/tile-num-8.webp',      'Pin 8'],
   ];
   const ROW2: [string, string][] = [
-    ['/assets/tiles/tile-sou-4.png', 'Sou 4'],
-    ['/assets/tiles/tile-sou-4.png', 'Sou 4'],
-    ['/assets/tiles/tile-sou-4.png', 'Sou 4'],
-    ['/assets/tiles/tile-sou-1.png', 'Sou 1'],
-    ['/assets/tiles/tile-sou-1.png', 'Sou 1'],
-    ['/assets/tiles/tile-sou-1.png', 'Sou 1'],
+    ['/assets/tiles/tile-sou-4.webp', 'Sou 4'],
+    ['/assets/tiles/tile-sou-4.webp', 'Sou 4'],
+    ['/assets/tiles/tile-sou-4.webp', 'Sou 4'],
+    ['/assets/tiles/tile-sou-1.webp', 'Sou 1'],
+    ['/assets/tiles/tile-sou-1.webp', 'Sou 1'],
+    ['/assets/tiles/tile-sou-1.webp', 'Sou 1'],
   ];
 
   return (
@@ -306,7 +306,7 @@ const Step3Section: React.FC = () => {
         {/* Kong tiles below (4× Pin1) */}
         <div className="flex gap-[1px] md:gap-[2px]">
           {[0, 1, 2, 3].map(i => (
-            <T key={`k-${i}`} src="/assets/tiles/tile-num-1.png" alt="Kong" extra="kong-tile" />
+            <T key={`k-${i}`} src="/assets/tiles/tile-num-1.webp" alt="Kong" extra="kong-tile" />
           ))}
         </div>
 

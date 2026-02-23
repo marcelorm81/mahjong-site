@@ -2,9 +2,9 @@ import React, { useLayoutEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 
 /* ── Asset paths ── */
-const LOCK_IMG     = '/assets/lock.png';
-const BASE_IMG     = '/assets/base.png';
-const COINS_IMG    = '/assets/reward-coins.png';
+const LOCK_IMG     = '/assets/lock.webp';
+const BASE_IMG     = '/assets/base.webp';
+const COINS_IMG    = '/assets/reward-coins.webp';
 const STARBURST    = '/assets/reward-starburst.svg';
 
 /* ═══════════════════════════════════════════════════════════════════════

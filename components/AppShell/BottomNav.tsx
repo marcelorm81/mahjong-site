@@ -4,8 +4,8 @@ import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 
 /* ── Reward gift PNGs (lock on top of base) ── */
-const LOCK_IMG = '/assets/lock.png';
-const BASE_IMG = '/assets/base.png';
+const LOCK_IMG = '/assets/lock.webp';
+const BASE_IMG = '/assets/base.webp';
 
 interface BottomNavProps {
   currentPage: Page;
@@ -55,7 +55,7 @@ const NAV_ITEMS: NavItem[] = [
   {
     id: Page.RANK,
     label: 'Rank',
-    iconUrl: '/assets/nav-rank.png'
+    iconUrl: '/assets/nav-rank.webp'
   },
   {
     id: Page.TUTORIAL,

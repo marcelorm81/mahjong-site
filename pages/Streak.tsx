@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { gsap } from 'gsap';
 
 // Figma assets (valid for 7 days from design fetch)
-const STREAK_HERO = '/assets/streak-hero.png';
+const STREAK_HERO = '/assets/streak-hero.webp';
 const DAY_CHECKED = '/assets/streak-day-checked.svg';
 const DAY_RING    = '/assets/streak-day-ring.svg';
 

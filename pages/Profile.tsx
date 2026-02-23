@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { User, Page } from '../types';
 
 // ── Local assets ──────────────────────────────────────────────────────────────
-const imgJenny      = '/assets/profile-jenny.png';
-const imgBusy       = '/assets/profile-busy.png';
-const imgBubbleTea  = '/assets/profile-bubbletea.png';
+const imgJenny      = '/assets/profile-jenny.webp';
+const imgBusy       = '/assets/profile-busy.webp';
+const imgBubbleTea  = '/assets/profile-bubbletea.webp';
 const imgLight      = '/assets/profile-light.svg';
 const imgShadow     = '/assets/profile-shadow.svg';
 const imgAddMore    = '/assets/profile-add-more.svg';
@@ -214,7 +214,7 @@ const LevelBars: React.FC<{ user: User; mobile?: boolean }> = ({ user, mobile })
         </div>
         <div className="flex items-center">
           <img
-            src="/assets/topbar-xp.png"
+            src="/assets/topbar-xp.webp"
             alt="XP"
             className="object-contain relative z-10 flex-shrink-0"
             style={{ width: barH + 6, height: barH + 6, marginRight: -(barH / 2) }}

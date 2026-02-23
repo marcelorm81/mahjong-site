@@ -3,23 +3,23 @@ import { motion } from 'framer-motion';
 
 // ── Local assets (public/assets/) ────────────────────────────────────────────
 // Characters — real PNG files from /assets/ folder
-const imgGranny    = "/assets/char-granny.png";
-const imgExecutive = "/assets/char-executive.png";
-const imgBubbleTea = "/assets/char-bubbletea.png";
+const imgGranny    = "/assets/char-granny.webp";
+const imgExecutive = "/assets/char-executive.webp";
+const imgBubbleTea = "/assets/char-bubbletea.webp";
 // Floating props — separate layers, rendered BEHIND character
-const imgCat       = "/assets/char-cat.png";
-const imgPapers    = "/assets/char-papers.png";
+const imgCat       = "/assets/char-cat.webp";
+const imgPapers    = "/assets/char-papers.webp";
 
-const imgCoin1000   = "/assets/shop-coin-1000.png";
-const imgCoin5000   = "/assets/shop-coin-5000.png";
-const imgCoin10000  = "/assets/shop-coin-10000.png";
-const imgCoin20000  = "/assets/shop-coin-20000.png";
-const imgCoin50000  = "/assets/shop-coin-50000.png";
-const imgCoin100000 = "/assets/shop-coin-100000.png";
+const imgCoin1000   = "/assets/shop-coin-1000.webp";
+const imgCoin5000   = "/assets/shop-coin-5000.webp";
+const imgCoin10000  = "/assets/shop-coin-10000.webp";
+const imgCoin20000  = "/assets/shop-coin-20000.webp";
+const imgCoin50000  = "/assets/shop-coin-50000.webp";
+const imgCoin100000 = "/assets/shop-coin-100000.webp";
 
-const imgTicketGold   = "/assets/gold.png";
-const imgTicketSilver = "/assets/silver.png";
-const imgTicketRed    = "/assets/red.png";
+const imgTicketGold   = "/assets/gold.webp";
+const imgTicketSilver = "/assets/silver.webp";
+const imgTicketRed    = "/assets/red.webp";
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 interface CharLayout {
@@ -143,7 +143,7 @@ const CharCard: React.FC<{ item: CharItem; index: number }> = ({ item, index }) 
 
       <div className="flex-1 h-[30px] flex items-center gap-1 px-1.5 rounded-[5px]
                       bg-[#4a0303] relative overflow-hidden">
-        <img src="/assets/shop-coin-1000.png" alt="" className="w-[22px] h-[22px] object-contain shrink-0" />
+        <img src="/assets/shop-coin-1000.webp" alt="" className="w-[22px] h-[22px] object-contain shrink-0" />
         <span className="flex-1 text-white font-semibold text-[11px] md:text-sm text-center uppercase">
           {item.price}
         </span>
@@ -248,7 +248,7 @@ const VoucherCard: React.FC<{ item: VoucherItem; index: number }> = ({ item, ind
   </motion.div>
 );
 
-// ── Awning — roof.png tiled, true full-viewport bleed, no gaps ────────────
+// ── Awning — roof.webp tiled, true full-viewport bleed, no gaps ────────────
 // Tile: 262×217px. Contains 2 scallop arches; bottom ~30px is transparent shadow.
 // Mobile: 80px tall. Desktop: 140px tall. Width scaled proportionally.
 const TILE_NATURAL_W = 262;
@@ -268,7 +268,7 @@ const Awning: React.FC = () => (
         marginRight: 'calc(-50vw + 50%)',
         width:       '100vw',
         height:      DISPLAY_H_MOBILE,
-        backgroundImage:    'url(/assets/roof.png)',
+        backgroundImage:    'url(/assets/roof.webp)',
         backgroundRepeat:   'repeat-x',
         backgroundSize:     `${DISPLAY_W_MOBILE}px ${DISPLAY_H_MOBILE}px`,
         backgroundPosition: 'top left',
@@ -282,7 +282,7 @@ const Awning: React.FC = () => (
         marginRight: 'calc(-50vw + 50%)',
         width:       '100vw',
         height:      DISPLAY_H_DESKTOP,
-        backgroundImage:    'url(/assets/roof.png)',
+        backgroundImage:    'url(/assets/roof.webp)',
         backgroundRepeat:   'repeat-x',
         backgroundSize:     `${DISPLAY_W_DESKTOP}px ${DISPLAY_H_DESKTOP}px`,
         backgroundPosition: 'top left',

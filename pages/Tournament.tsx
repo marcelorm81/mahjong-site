@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 
 // ── Local tournament assets ──────────────────────────────────────────────────
-const imgTurbo      = '/assets/tournament-turbo.png';
-const imgMarathon   = '/assets/tournament-marathon.png';
-const imgWarrior    = '/assets/tournament-warrior.png';
-const imgComingSoon = '/assets/tournament-comingsoon.png';
-const imgCoin       = '/assets/tournament-coin.png';
+const imgTurbo      = '/assets/tournament-turbo.webp';
+const imgMarathon   = '/assets/tournament-marathon.webp';
+const imgWarrior    = '/assets/tournament-warrior.webp';
+const imgComingSoon = '/assets/tournament-comingsoon.webp';
+const imgCoin       = '/assets/tournament-coin.webp';
 const imgPrize      = '/assets/tournament-prize.svg';
 const imgClock      = '/assets/tournament-clock.svg';
 const imgBadge      = '/assets/tournament-badge.svg';

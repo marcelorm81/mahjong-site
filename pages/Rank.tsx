@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
 // ── Local avatar assets (public/assets/) ─────────────────────────────────────
-const avatarUncleCai     = "/assets/avatar-uncle-cai.png";
-const avatarAnneWan      = "/assets/avatar-anne-wan.png";
-const avatarBangJohnsson = "/assets/avatar-bang-johnsson.png";
-const avatarMrsChen      = "/assets/avatar-mrs-chen.png";
-const avatarPonPon       = "/assets/avatar-pon-pon.png";
-const avatarEchoTong     = "/assets/avatar-echo-tong.png";
-const avatarTonyKong     = "/assets/avatar-tony-kong.png";
-const avatarMasterZendo  = "/assets/avatar-master-zendo.png";
-const avatarMrWon        = "/assets/avatar-mr-won.png";
-const avatarRacheal      = "/assets/avatar-racheal.png";
+const avatarUncleCai     = "/assets/avatar-uncle-cai.webp";
+const avatarAnneWan      = "/assets/avatar-anne-wan.webp";
+const avatarBangJohnsson = "/assets/avatar-bang-johnsson.webp";
+const avatarMrsChen      = "/assets/avatar-mrs-chen.webp";
+const avatarPonPon       = "/assets/avatar-pon-pon.webp";
+const avatarEchoTong     = "/assets/avatar-echo-tong.webp";
+const avatarTonyKong     = "/assets/avatar-tony-kong.webp";
+const avatarMasterZendo  = "/assets/avatar-master-zendo.webp";
+const avatarMrWon        = "/assets/avatar-mr-won.webp";
+const avatarRacheal      = "/assets/avatar-racheal.webp";
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 interface RankEntry {
