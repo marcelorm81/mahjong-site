@@ -1,42 +1,51 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Page, NavItem } from '../../types';
 import { motion } from 'framer-motion';
+import { gsap } from 'gsap';
+
+/* ── Reward gift PNGs (lock on top of base) ── */
+const LOCK_IMG = '/assets/lock.png';
+const BASE_IMG = '/assets/base.png';
 
 interface BottomNavProps {
   currentPage: Page;
   onNavigate: (page: Page) => void;
+  /** When true, the reward icon is invisible (during lift animation) */
+  hideRewardIcon?: boolean;
+  /** When true, the reward slot is fully hidden (after redeem) */
+  rewardRedeemed?: boolean;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { 
-    id: Page.LOBBY, 
-    label: 'Lobby', 
-    iconUrl: 'https://raw.githubusercontent.com/marcelorm81/Mahjongtest/8c67fd0165c919a3b0e220a3511528ee6a78dd52/img%20-%20Gift.webp' 
+  {
+    id: Page.LOBBY,
+    label: 'Lobby',
+    iconUrl: 'https://raw.githubusercontent.com/marcelorm81/Mahjongtest/8c67fd0165c919a3b0e220a3511528ee6a78dd52/img%20-%20Gift.webp'
   },
-  { 
-    id: Page.TOURNAMENT, 
-    label: 'Tournament', 
-    iconUrl: 'https://raw.githubusercontent.com/marcelorm81/Mahjongtest/8c67fd0165c919a3b0e220a3511528ee6a78dd52/img%20-%20Tournament.webp' 
+  {
+    id: Page.TOURNAMENT,
+    label: 'Tournament',
+    iconUrl: 'https://raw.githubusercontent.com/marcelorm81/Mahjongtest/8c67fd0165c919a3b0e220a3511528ee6a78dd52/img%20-%20Tournament.webp'
   },
-  { 
-    id: Page.REWARD, 
-    label: 'Reward', 
-    iconUrl: 'https://raw.githubusercontent.com/marcelorm81/Mahjongtest/8c67fd0165c919a3b0e220a3511528ee6a78dd52/img%20-%20Reward.webp' 
+  {
+    id: Page.REWARD,
+    label: 'Reward',
+    iconUrl: 'https://raw.githubusercontent.com/marcelorm81/Mahjongtest/8c67fd0165c919a3b0e220a3511528ee6a78dd52/img%20-%20Reward.webp'
   },
-  { 
-    id: Page.STREAK, 
-    label: 'Streak', 
-    iconUrl: 'https://raw.githubusercontent.com/marcelorm81/Mahjongtest/8c67fd0165c919a3b0e220a3511528ee6a78dd52/img%20-%20Streak.webp' 
+  {
+    id: Page.STREAK,
+    label: 'Streak',
+    iconUrl: 'https://raw.githubusercontent.com/marcelorm81/Mahjongtest/8c67fd0165c919a3b0e220a3511528ee6a78dd52/img%20-%20Streak.webp'
   },
-  { 
-    id: Page.SHOP, 
-    label: 'Shop', 
-    iconUrl: 'https://raw.githubusercontent.com/marcelorm81/Mahjongtest/8c67fd0165c919a3b0e220a3511528ee6a78dd52/img%20-%20Shop.webp' 
+  {
+    id: Page.SHOP,
+    label: 'Shop',
+    iconUrl: 'https://raw.githubusercontent.com/marcelorm81/Mahjongtest/8c67fd0165c919a3b0e220a3511528ee6a78dd52/img%20-%20Shop.webp'
   },
-  { 
-    id: Page.FRIENDS, 
-    label: 'Friends', 
-    iconUrl: 'https://raw.githubusercontent.com/marcelorm81/Mahjongtest/8c67fd0165c919a3b0e220a3511528ee6a78dd52/img%20-%20Friends.webp' 
+  {
+    id: Page.FRIENDS,
+    label: 'Friends',
+    iconUrl: 'https://raw.githubusercontent.com/marcelorm81/Mahjongtest/8c67fd0165c919a3b0e220a3511528ee6a78dd52/img%20-%20Friends.webp'
   },
   {
     id: Page.HISTORY,
@@ -55,32 +64,58 @@ const NAV_ITEMS: NavItem[] = [
   },
 ];
 
-export const BottomNav: React.FC<BottomNavProps> = ({ currentPage, onNavigate }) => {
+export const BottomNav: React.FC<BottomNavProps> = ({
+  currentPage, onNavigate, hideRewardIcon, rewardRedeemed,
+}) => {
   const navRef = useRef<HTMLDivElement>(null);
+  const lockRef = useRef<HTMLImageElement>(null);
+  const baseRef = useRef<HTMLImageElement>(null);
+  const shakeRef = useRef<gsap.core.Timeline | null>(null);
+
+  // ── Counter-rotation shake for the reward gift icon ──
+  useEffect(() => {
+    if (rewardRedeemed || hideRewardIcon) {
+      shakeRef.current?.kill();
+      return;
+    }
+    const lock = lockRef.current;
+    const base = baseRef.current;
+    if (!lock || !base) return;
+
+    // Reset rotation
+    gsap.set([lock, base], { rotation: 0 });
+
+    // Counter-rotation: lock and base always rotate in opposite directions
+    const shake = gsap.timeline({ repeat: -1 });
+    shake
+      .to(lock, { rotation: 5,  duration: 0.09, ease: 'power1.inOut' }, 0)
+      .to(base, { rotation: -5, duration: 0.09, ease: 'power1.inOut' }, 0)
+      .to(lock, { rotation: -5, duration: 0.09, ease: 'power1.inOut' })
+      .to(base, { rotation: 5,  duration: 0.09, ease: 'power1.inOut' }, '<')
+      .to(lock, { rotation: 3,  duration: 0.07, ease: 'power1.inOut' })
+      .to(base, { rotation: -3, duration: 0.07, ease: 'power1.inOut' }, '<')
+      .to(lock, { rotation: -4, duration: 0.08, ease: 'power1.inOut' })
+      .to(base, { rotation: 4,  duration: 0.08, ease: 'power1.inOut' }, '<')
+      .to(lock, { rotation: 0,  duration: 0.06, ease: 'power1.inOut' })
+      .to(base, { rotation: 0,  duration: 0.06, ease: 'power1.inOut' }, '<');
+    shakeRef.current = shake;
+
+    return () => { shake.kill(); };
+  }, [rewardRedeemed, hideRewardIcon]);
 
   const handleNavClick = (page: Page, e: React.MouseEvent<HTMLButtonElement>) => {
-    // 1. Perform navigation
     onNavigate(page);
 
-    // 2. Smoothly scroll container to center the clicked item
     if (navRef.current) {
       const container = navRef.current;
       const target = e.currentTarget;
-
       const containerRect = container.getBoundingClientRect();
       const targetRect = target.getBoundingClientRect();
-
-      // Calculate where the item is currently relative to the viewport center of the container
       const currentScroll = container.scrollLeft;
       const targetCenter = targetRect.left + targetRect.width / 2;
       const containerCenter = containerRect.left + containerRect.width / 2;
-      
       const offset = targetCenter - containerCenter;
-
-      container.scrollTo({
-        left: currentScroll + offset,
-        behavior: 'smooth'
-      });
+      container.scrollTo({ left: currentScroll + offset, behavior: 'smooth' });
     }
   };
 
@@ -93,12 +128,14 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentPage, onNavigate })
         <div className="flex gap-1 min-w-max mx-auto px-4 short:px-12">
           {NAV_ITEMS.map((item) => {
             const isActive = currentPage === item.id;
+            const isReward = item.id === Page.REWARD;
 
             return (
               <motion.button
                 key={item.id}
                 onClick={(e) => handleNavClick(item.id, e)}
-                className="relative flex flex-col items-center justify-center w-[72px] compact:w-[64px] h-16 compact:h-[52px] short:h-12 rounded-xl snap-center group"
+                className={`relative flex flex-col items-center justify-center w-[72px] compact:w-[64px] h-16 compact:h-[52px] short:h-12 rounded-xl snap-center group
+                  ${isReward && rewardRedeemed ? 'opacity-0 pointer-events-none' : ''}`}
                 whileTap={{ scale: 0.9 }}
               >
                 {/* Yellow Glow on Hover/Active */}
@@ -109,17 +146,47 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentPage, onNavigate })
                   `}
                 />
 
-                {/* Icon Image */}
-                <div className={`
-                  relative z-10 transition-transform duration-300 w-10 h-10 compact:w-8 compact:h-8 short:w-6 short:h-6
-                  ${isActive ? 'scale-110 -translate-y-1 compact:-translate-y-0.5 short:-translate-y-0.5' : 'group-hover:scale-105'}
-                `}>
-                  <img
-                    src={item.iconUrl}
-                    alt={item.label}
-                    className="w-full h-full object-contain drop-shadow-md"
-                  />
-                </div>
+                {/* Icon */}
+                {isReward && !rewardRedeemed ? (
+                  /* ── Reward: stacked lock + base PNGs with counter-rotation ── */
+                  <div
+                    data-reward-icon
+                    className={`
+                      relative z-10 transition-transform duration-300 w-10 h-10 compact:w-8 compact:h-8 short:w-6 short:h-6
+                      ${isActive ? 'scale-110 -translate-y-1 compact:-translate-y-0.5 short:-translate-y-0.5' : 'group-hover:scale-105'}
+                    `}
+                    style={{ opacity: hideRewardIcon ? 0 : 1 }}
+                  >
+                    <img
+                      ref={baseRef}
+                      src={BASE_IMG}
+                      alt=""
+                      className="absolute inset-0 w-full h-full object-contain drop-shadow-md"
+                    />
+                    <img
+                      ref={lockRef}
+                      src={LOCK_IMG}
+                      alt=""
+                      className="absolute inset-0 w-full h-full object-contain drop-shadow-md"
+                    />
+                    {/* Soft radial glow behind icon */}
+                    <div className="absolute inset-[-50%] rounded-full pointer-events-none"
+                      style={{ background: 'radial-gradient(circle, rgba(255,200,50,0.15) 0%, transparent 60%)' }}
+                    />
+                  </div>
+                ) : (
+                  /* ── Standard nav icon ── */
+                  <div className={`
+                    relative z-10 transition-transform duration-300 w-10 h-10 compact:w-8 compact:h-8 short:w-6 short:h-6
+                    ${isActive ? 'scale-110 -translate-y-1 compact:-translate-y-0.5 short:-translate-y-0.5' : 'group-hover:scale-105'}
+                  `}>
+                    <img
+                      src={item.iconUrl}
+                      alt={item.label}
+                      className="w-full h-full object-contain drop-shadow-md"
+                    />
+                  </div>
+                )}
 
                 {/* Label */}
                 <span className={`

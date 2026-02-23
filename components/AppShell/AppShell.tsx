@@ -15,6 +15,10 @@ interface AppShellProps {
   showHeader?: boolean;
   /** Optional key override for AnimatePresence (e.g. when overlays change content) */
   contentKey?: string;
+  /** Hide the reward icon during lift animation */
+  hideRewardIcon?: boolean;
+  /** Reward has been redeemed — remove gift from nav */
+  rewardRedeemed?: boolean;
 }
 
 export const AppShell: React.FC<AppShellProps> = ({
@@ -27,6 +31,8 @@ export const AppShell: React.FC<AppShellProps> = ({
   showNav = true,
   showHeader = true,
   contentKey,
+  hideRewardIcon,
+  rewardRedeemed,
 }) => {
   const mainRef = useRef<HTMLElement>(null);
 
@@ -104,7 +110,12 @@ export const AppShell: React.FC<AppShellProps> = ({
 
       {/* Bottom Nav */}
       {showNav && (
-        <BottomNav currentPage={currentPage} onNavigate={onNavigate} />
+        <BottomNav
+          currentPage={currentPage}
+          onNavigate={onNavigate}
+          hideRewardIcon={hideRewardIcon}
+          rewardRedeemed={rewardRedeemed}
+        />
       )}
     </div>
   );

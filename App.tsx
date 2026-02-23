@@ -49,6 +49,10 @@ const App: React.FC = () => {
   // When plus (+) is tapped, navigate to Shop and scroll to Star Points
   const [scrollToStarPoints, setScrollToStarPoints] = useState(false);
 
+  // Reward animation state
+  const [hideRewardIcon, setHideRewardIcon] = useState(false);
+  const [rewardRedeemed, setRewardRedeemed] = useState(false);
+
   const handleLogin = (username: string) => {
     setUser(prev => ({ ...prev, username }));
     setCurrentPage(Page.LOBBY);
@@ -62,11 +66,31 @@ const App: React.FC = () => {
     setShowSettings(false);
     setSettingsTab(null);
     if (OVERLAY_PAGES.has(page)) {
-      setOverlay(prev => (prev === page ? null : page));
+      if (page === Page.REWARD) {
+        // Reward overlay manages its own animation — hide the nav icon immediately
+        setOverlay(prev => (prev === page ? null : page));
+        if (overlay !== page) setHideRewardIcon(true);
+        else setHideRewardIcon(false);
+      } else {
+        setOverlay(prev => (prev === page ? null : page));
+      }
     } else {
       setOverlay(null);
       setCurrentPage(page);
     }
+  };
+
+  // Reward dismiss — reverse animation finished, restore nav icon
+  const handleRewardDismiss = () => {
+    setOverlay(null);
+    setHideRewardIcon(false);
+  };
+
+  // Reward redeem — overlay closes, nav icon stays hidden permanently
+  const handleRewardRedeem = () => {
+    setOverlay(null);
+    setHideRewardIcon(false);
+    setRewardRedeemed(true);
   };
 
   const handleAddCoins = () => {
@@ -146,8 +170,7 @@ const App: React.FC = () => {
     switch (overlay) {
       case Page.STREAK:
         return <Streak onClose={() => setOverlay(null)} />;
-      case Page.REWARD:
-        return <Reward onClose={() => setOverlay(null)} />;
+      // Reward is rendered in its own portal below — not here
       default:
         return null;
     }
@@ -166,14 +189,16 @@ const App: React.FC = () => {
         showNav={!isFullscreenPage}
         showHeader={!isFullscreenPage}
         contentKey={settingsTab ? `settings-${settingsTab}` : undefined}
+        hideRewardIcon={hideRewardIcon}
+        rewardRedeemed={rewardRedeemed}
       >
         {renderContent()}
       </AppShell>
 
-      {/* ── Page overlays (Streak, Reward) — portal at body level ── */}
+      {/* ── Standard overlays (Streak) — portal at body level ── */}
       {createPortal(
         <AnimatePresence>
-          {overlay && (
+          {overlay && overlay !== Page.REWARD && (
             <motion.div
               key={overlay}
               initial={{ opacity: 0 }}
@@ -216,6 +241,12 @@ const App: React.FC = () => {
             </motion.div>
           )}
         </AnimatePresence>,
+        document.body
+      )}
+
+      {/* ── Reward overlay — own portal, manages its own backdrop/animation ── */}
+      {overlay === Page.REWARD && createPortal(
+        <Reward onClose={handleRewardDismiss} onRedeem={handleRewardRedeem} />,
         document.body
       )}
 
