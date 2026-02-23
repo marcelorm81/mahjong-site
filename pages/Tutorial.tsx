@@ -1,6 +1,8 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Page } from '../types';
 import gsap from 'gsap';
+import { TableCard } from '../components/Lobby/TableCard';
+import { MOCK_TABLES } from '../constants';
 
 /* ── Default video assets ───────────────────────────────────────────── */
 const DEFAULT_VIDEO_DESKTOP = '/assets/waving_loop_desktop.mp4';
@@ -62,10 +64,10 @@ const STEPS: TutorialStep[] = [
   // Step 3 — Table (draw/discard rules)
   {
     phrases: [
-      ['Every turn is simple:', 'Draw one tile, Discard one tile', "That's how the game flows."],
-      ['You cannot take discarded tiles', 'to build sets. You may only take', 'a discard to win (Mahjong).', 'This keeps Bang Bang fast and fair.'],
+      ['Every turn is simple: Draw one tile, Discard one tile. That\'s how the game flows.'],
+      ['You cannot take discarded tiles to build sets. You may only take a discard to win (Mahjong). This keeps Bang Bang fast and fair.'],
     ],
-    text: ['You cannot take discarded tiles', 'to build sets. You may only take', 'a discard to win (Mahjong).', 'This keeps Bang Bang fast and fair.'],
+    text: ['You cannot take discarded tiles to build sets. You may only take a discard to win (Mahjong). This keeps Bang Bang fast and fair.'],
     videoDesktop: '/assets/talking_loop_desktop.mp4',
     videoMobile:  '/assets/talking_loop_mobile.mp4',
   },
@@ -83,10 +85,7 @@ const STEPS: TutorialStep[] = [
   // Step 5 — Mahjong winning (mahjong tiles only)
   {
     text: [
-      'When your hand is complete press',
-      'Mahjong to win.',
-      'Play more, win more, climb',
-      'the leaderboards',
+      'When your hand is complete press Mahjong to win. Play more, win more, climb the leaderboards!',
     ],
     videoDesktop: '/assets/talking_loop_desktop.mp4',
     videoMobile:  '/assets/talking_loop_mobile.mp4',
@@ -239,6 +238,53 @@ const buildBubblePath = (W: number, bodyH: number): string => {
 
 const TAIL_H = 27;
 
+/* ── Mini particle explosion (tutorial label reveals) ──────────── */
+const MINI_PARTICLE_COLORS = [
+  'rgba(255,220,60,1)',
+  'rgba(255,200,40,0.95)',
+  'rgba(255,180,30,0.95)',
+  'rgba(255,240,100,0.9)',
+  'rgba(255,160,20,0.9)',
+];
+
+const fireMiniParticles = (container: HTMLElement) => {
+  const count = 10;
+  for (let i = 0; i < count; i++) {
+    const dot = document.createElement('div');
+    const size = 4 + Math.random() * 6;
+    const blur = 0.5 + Math.random() * 1.5;
+    const color = MINI_PARTICLE_COLORS[Math.floor(Math.random() * MINI_PARTICLE_COLORS.length)];
+
+    Object.assign(dot.style, {
+      position: 'absolute',
+      left: '50%',
+      top: '50%',
+      width: `${size}px`,
+      height: `${size}px`,
+      borderRadius: '50%',
+      background: color,
+      filter: `blur(${blur}px)`,
+      pointerEvents: 'none',
+      transform: 'translate(-50%, -50%)',
+    });
+    container.appendChild(dot);
+
+    const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.4;
+    const dist = 30 + Math.random() * 50;
+    const dx = Math.cos(angle) * dist;
+    const dy = Math.sin(angle) * dist;
+
+    gsap.to(dot, {
+      x: dx, y: dy,
+      opacity: 0,
+      scale: 0.3 + Math.random() * 0.4,
+      duration: 0.5 + Math.random() * 0.3,
+      ease: 'power2.out',
+      onComplete: () => { dot.remove(); },
+    });
+  }
+};
+
 /* ── Callout label — chat-bubble shape, Clash Display Bold ─────── */
 const CalloutLabel: React.FC<{ text: string }> = ({ text }) => {
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -292,37 +338,60 @@ const CalloutLabel: React.FC<{ text: string }> = ({ text }) => {
 /* ── Step 3 (index 2): Kong + Mahjong tiles with sticker overlays ── */
 const Step3Section: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const kongParticlesRef = useRef<HTMLDivElement>(null);
+  const mjParticlesRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    const stickers  = el.querySelectorAll('.sticker-overlay');
+    const kongLabel = el.querySelector('.kong-label');
+    const mjLabel   = el.querySelector('.mj-label');
     const kongTiles = el.querySelectorAll('.kong-tile');
     const mjTiles   = el.querySelectorAll('.mj-tile');
 
+    gsap.set([kongLabel, mjLabel], { opacity: 0, scale: 0.7, transformOrigin: 'center bottom' });
     gsap.set([kongTiles, mjTiles], { opacity: 0, scale: 0.7 });
-    gsap.set(stickers, { opacity: 0, scale: 0.7, transformOrigin: 'center bottom' });
 
     const tl = gsap.timeline({ delay: 0.8 });
-    tl.to(kongTiles,   { opacity: 1, scale: 1, duration: 0.35, stagger: 0.1, ease: 'back.out(1.5)' })
-      .to(stickers[0], { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.7)' }, '-=0.1')
-      .to(mjTiles,     { opacity: 1, scale: 1, duration: 0.25, stagger: 0.06, ease: 'back.out(1.5)' }, '+=0.2')
-      .to(stickers[1], { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.7)' }, '-=0.1');
+    // Kong tiles appear → particles → KONG label
+    tl.to(kongTiles, { opacity: 1, scale: 1, duration: 0.35, stagger: 0.1, ease: 'back.out(1.5)' })
+      .call(() => { if (kongParticlesRef.current) fireMiniParticles(kongParticlesRef.current); })
+      .to(kongLabel, { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.7)' }, '-=0.1')
+    // Mahjong tiles appear → particles → MAHJONG label
+      .to(mjTiles, { opacity: 1, scale: 1, duration: 0.25, stagger: 0.06, ease: 'back.out(1.5)' }, '+=0.3')
+      .call(() => { if (mjParticlesRef.current) fireMiniParticles(mjParticlesRef.current); })
+      .to(mjLabel, { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.7)' }, '-=0.1');
 
     return () => { tl.kill(); };
   }, []);
 
   return (
     <div ref={sectionRef} className="select-none pointer-events-none">
-      <div className="relative inline-block">
-        {/* Kong tiles on top (4x Pin1) */}
-        <div className="flex gap-[1px] md:gap-[2px] mb-4 md:mb-5">
+      {/* KONG label on top of kong tiles */}
+      <div className="kong-label mb-2" style={{ transform: 'rotate(-4deg)' }}>
+        <CalloutLabel text="KONG!" />
+      </div>
+
+      {/* Kong tiles */}
+      <div className="relative">
+        <div className="flex gap-[1px] md:gap-[2px]">
           {[0, 1, 2, 3].map(i => (
             <Tile key={`k-${i}`} src="/assets/tiles/tile-num-1.webp" alt="Kong" extra="kong-tile" />
           ))}
         </div>
+        <div ref={kongParticlesRef} className="absolute inset-0 pointer-events-none flex items-center justify-center" />
+      </div>
 
-        {/* Mahjong winning hand below */}
+      {/* Spacer */}
+      <div className="h-6 md:h-8" />
+
+      {/* MAHJONG label on top of mahjong tiles */}
+      <div className="mj-label mb-2" style={{ transform: 'rotate(-4deg)' }}>
+        <CalloutLabel text="MAHJONG!" />
+      </div>
+
+      {/* Mahjong winning hand */}
+      <div className="relative">
         <div>
           <div className="flex gap-[1px] md:gap-[2px] mb-[1px] md:mb-[2px]">
             {MJ_ROW1.map(([src, alt], i) => (
@@ -335,20 +404,7 @@ const Step3Section: React.FC = () => {
             ))}
           </div>
         </div>
-
-        {/* Overlaid sticker labels */}
-        <div
-          className="sticker-overlay absolute -top-4 -right-6 md:-top-5 md:-right-8 z-20"
-          style={{ transform: 'rotate(6deg)' }}
-        >
-          <CalloutLabel text="KONG!" />
-        </div>
-        <div
-          className="sticker-overlay absolute -bottom-10 -left-2 md:-bottom-12 md:-left-3 z-20"
-          style={{ transform: 'rotate(-6deg)' }}
-        >
-          <CalloutLabel text="MAHJONG!" />
-        </div>
+        <div ref={mjParticlesRef} className="absolute inset-0 pointer-events-none flex items-center justify-center" />
       </div>
     </div>
   );
@@ -361,7 +417,7 @@ const Step4TableSection: React.FC = () => {
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    const card = el.querySelector('.table-card');
+    const card = el.querySelector('.table-card-wrap');
     const hand = el.querySelector('.hand-pointer');
 
     gsap.set(card, { opacity: 0, y: 20, scale: 0.9 });
@@ -379,59 +435,19 @@ const Step4TableSection: React.FC = () => {
 
   return (
     <div ref={sectionRef} className="select-none pointer-events-none">
-      <div className="table-card w-[min(72vw,280px)] md:w-[300px] rounded-2xl overflow-hidden border border-white/20"
-        style={{ background: 'linear-gradient(180deg, rgba(40,0,0,0.95) 0%, rgba(80,0,0,0.95) 100%)', boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}>
-        {/* Header */}
-        <div className="px-3 pt-3 pb-1">
-          <div className="flex items-center justify-between mb-1">
-            <div className="flex items-center gap-1.5 bg-black/40 px-2 py-0.5 rounded-md">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="white" opacity="0.8"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="white" opacity="0.8"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="white" opacity="0.5"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2z"/></svg>
-              <span className="text-white/80 text-[10px] font-bold">2/3</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="bg-black/40 p-1 rounded-md">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="white" opacity="0.7"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-              </div>
-              <div className="bg-black/40 p-1 rounded-md">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="#E6A23C" opacity="0.9"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-              </div>
-            </div>
-          </div>
-          <h3 className="text-white font-bold text-center text-sm md:text-base" style={{ fontFamily: "'Clash Display', sans-serif" }}>
-            Entry Table
-          </h3>
-          <p className="text-white/60 text-center text-[10px] font-semibold tracking-wide">5-8 MINS</p>
+      <div className="relative">
+        {/* Real TableCard from Lobby — wider on mobile */}
+        <div className="table-card-wrap w-[min(88vw,320px)] md:w-[300px]">
+          <TableCard table={MOCK_TABLES[0]} onJoin={() => {}} />
         </div>
 
-        {/* Table image */}
-        <div className="relative flex justify-center py-2 px-4">
-          <img src="/assets/topbar-table.webp" alt="Mahjong Table" className="w-[70%] object-contain drop-shadow-xl" />
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[50%] h-4 bg-black/40 blur-xl rounded-full" />
-        </div>
-
-        {/* Footer: WIN + JOIN */}
-        <div className="relative px-3 pb-3 pt-1">
-          <div className="flex items-center gap-2">
-            <div className="flex-1 h-8 rounded-md bg-[#4A0000] flex items-center justify-center border border-white/5">
-              <span className="text-[10px] text-white/90 font-bold uppercase tracking-wide">
-                <span className="mr-1">&#x1FA99;</span>WIN 5,000
-              </span>
-            </div>
-            <div className="flex-1 h-8 rounded-md flex items-center justify-between px-2"
-              style={{ background: '#D00501', boxShadow: '0 2px 0 #4A0000' }}>
-              <span className="text-[10px] text-white font-bold">
-                <span className="mr-0.5">&#x1FA99;</span>2,000
-              </span>
-              <span className="text-[10px] text-white font-black uppercase tracking-wide">JOIN</span>
-            </div>
-          </div>
-          {/* Hand pointer */}
-          <span className="hand-pointer absolute -bottom-1 right-1 text-3xl md:text-4xl" style={{ filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.4))' }}>
-            &#x1F446;
-          </span>
-        </div>
+        {/* Hand pointer — rotated diagonal */}
+        <span
+          className="hand-pointer absolute -bottom-1 right-1 text-3xl md:text-4xl"
+          style={{ filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.4))', transform: 'rotate(-30deg)' }}
+        >
+          &#x1F446;
+        </span>
       </div>
     </div>
   );
@@ -440,6 +456,7 @@ const Step4TableSection: React.FC = () => {
 /* ── Step 5 (index 4): Kong tiles + Profiles getting paid ────────── */
 const Step5KongSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const particlesRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -453,8 +470,10 @@ const Step5KongSection: React.FC = () => {
     gsap.set(profiles, { opacity: 0, y: 15 });
 
     const tl = gsap.timeline({ delay: 0.5 });
-    tl.to(label,    { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.7)' })
-      .to(tiles,    { opacity: 1, scale: 1, duration: 0.35, stagger: 0.1, ease: 'back.out(1.5)' }, '-=0.1')
+    // Tiles first → particles → KONG label (matching step 2 pattern)
+    tl.to(tiles, { opacity: 1, scale: 1, duration: 0.35, stagger: 0.1, ease: 'back.out(1.5)' })
+      .call(() => { if (particlesRef.current) fireMiniParticles(particlesRef.current); })
+      .to(label, { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.7)' }, '-=0.1')
       .to(profiles, { opacity: 1, y: 0, duration: 0.4, stagger: 0.15, ease: 'power2.out' }, '+=0.3');
 
     return () => { tl.kill(); };
@@ -462,28 +481,31 @@ const Step5KongSection: React.FC = () => {
 
   return (
     <div ref={sectionRef} className="select-none pointer-events-none">
-      {/* KONG! callout */}
+      {/* KONG! callout — on top of tiles */}
       <div className="kong-label mb-2" style={{ transform: 'rotate(-4deg)' }}>
         <CalloutLabel text="KONG!" />
       </div>
 
       {/* 4 Kong tiles */}
-      <div className="flex gap-[2px] md:gap-[3px] mb-4 md:mb-6">
-        {[0, 1, 2, 3].map(i => (
-          <Tile key={`k-${i}`} src="/assets/tiles/tile-num-1.webp" alt="Kong" extra="kong-tile" />
-        ))}
+      <div className="relative mb-4 md:mb-6">
+        <div className="flex gap-[2px] md:gap-[3px]">
+          {[0, 1, 2, 3].map(i => (
+            <Tile key={`k-${i}`} src="/assets/tiles/tile-num-1.webp" alt="Kong" extra="kong-tile" />
+          ))}
+        </div>
+        <div ref={particlesRef} className="absolute inset-0 pointer-events-none flex items-center justify-center" />
       </div>
 
-      {/* Player profiles */}
-      <div className="flex gap-4 md:gap-6">
+      {/* Player profiles — bigger */}
+      <div className="flex gap-5 md:gap-8">
         {/* Player 1 — gets paid */}
         <div className="player-profile flex flex-col items-center">
-          <div className="relative mb-1">
+          <div className="relative mb-1.5">
             <img src="/assets/profile-bubbletea.webp" alt="Player 1"
-              className="w-12 h-12 md:w-16 md:h-16 rounded-lg object-cover border-2 border-white/20" />
-            <div className="absolute -top-2 -right-2 px-1.5 py-0.5 rounded-full text-[10px] md:text-xs font-bold text-white flex items-center gap-0.5"
+              className="w-16 h-16 md:w-20 md:h-20 rounded-lg object-cover border-2 border-white/20" />
+            <div className="absolute -top-2 -right-3 px-1.5 py-0.5 rounded-full text-[10px] md:text-xs font-bold text-white flex items-center gap-0.5"
               style={{ background: '#22c55e', boxShadow: '0 2px 6px rgba(34,197,94,0.4)' }}>
-              +100<span className="text-[9px]">&#x1FA99;</span>
+              +100<img src="/assets/topbar-coin.webp" alt="SP" className="inline w-3.5 h-3.5 ml-0.5" />
             </div>
           </div>
           <span className="text-white text-[10px] md:text-xs font-bold uppercase tracking-wide">Player 1</span>
@@ -492,12 +514,12 @@ const Step5KongSection: React.FC = () => {
 
         {/* Player 2 — pays */}
         <div className="player-profile flex flex-col items-center">
-          <div className="relative mb-1">
+          <div className="relative mb-1.5">
             <img src="/assets/profile-busy.webp" alt="Player 2"
-              className="w-12 h-12 md:w-16 md:h-16 rounded-lg object-cover border-2 border-white/20" />
-            <div className="absolute -top-2 -right-2 px-1.5 py-0.5 rounded-full text-[10px] md:text-xs font-bold text-white flex items-center gap-0.5"
+              className="w-16 h-16 md:w-20 md:h-20 rounded-lg object-cover border-2 border-white/20" />
+            <div className="absolute -top-2 -right-3 px-1.5 py-0.5 rounded-full text-[10px] md:text-xs font-bold text-white flex items-center gap-0.5"
               style={{ background: '#ef4444', boxShadow: '0 2px 6px rgba(239,68,68,0.4)' }}>
-              -100<span className="text-[9px]">&#x1FA99;</span>
+              -100<img src="/assets/topbar-coin.webp" alt="SP" className="inline w-3.5 h-3.5 ml-0.5" />
             </div>
           </div>
           <span className="text-white text-[10px] md:text-xs font-bold uppercase tracking-wide">Player 2</span>
@@ -511,6 +533,7 @@ const Step5KongSection: React.FC = () => {
 /* ── Step 6 (index 5): Mahjong tiles only with MAHJONG! callout ── */
 const Step6MahjongSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const particlesRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -522,31 +545,36 @@ const Step6MahjongSection: React.FC = () => {
     gsap.set(tiles, { opacity: 0, scale: 0.7 });
 
     const tl = gsap.timeline({ delay: 0.5 });
-    tl.to(label, { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.7)' })
-      .to(tiles, { opacity: 1, scale: 1, duration: 0.25, stagger: 0.05, ease: 'back.out(1.5)' }, '-=0.1');
+    // Tiles first → particles → MAHJONG label (matching pattern)
+    tl.to(tiles, { opacity: 1, scale: 1, duration: 0.25, stagger: 0.05, ease: 'back.out(1.5)' })
+      .call(() => { if (particlesRef.current) fireMiniParticles(particlesRef.current); })
+      .to(label, { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.7)' }, '-=0.1');
 
     return () => { tl.kill(); };
   }, []);
 
   return (
     <div ref={sectionRef} className="select-none pointer-events-none">
-      {/* MAHJONG! callout */}
+      {/* MAHJONG! callout — on top of tiles */}
       <div className="mj-label mb-2" style={{ transform: 'rotate(-4deg)' }}>
         <CalloutLabel text="MAHJONG!" />
       </div>
 
       {/* Mahjong winning hand */}
-      <div>
-        <div className="flex gap-[1px] md:gap-[2px] mb-[1px] md:mb-[2px]">
-          {MJ_ROW1.map(([src, alt], i) => (
-            <Tile key={`r1-${i}`} src={src} alt={alt} extra="mj-tile" />
-          ))}
+      <div className="relative">
+        <div>
+          <div className="flex gap-[1px] md:gap-[2px] mb-[1px] md:mb-[2px]">
+            {MJ_ROW1.map(([src, alt], i) => (
+              <Tile key={`r1-${i}`} src={src} alt={alt} extra="mj-tile" />
+            ))}
+          </div>
+          <div className="flex gap-[1px] md:gap-[2px]">
+            {MJ_ROW2.map(([src, alt], i) => (
+              <Tile key={`r2-${i}`} src={src} alt={alt} extra="mj-tile" />
+            ))}
+          </div>
         </div>
-        <div className="flex gap-[1px] md:gap-[2px]">
-          {MJ_ROW2.map(([src, alt], i) => (
-            <Tile key={`r2-${i}`} src={src} alt={alt} extra="mj-tile" />
-          ))}
-        </div>
+        <div ref={particlesRef} className="absolute inset-0 pointer-events-none flex items-center justify-center" />
       </div>
     </div>
   );
