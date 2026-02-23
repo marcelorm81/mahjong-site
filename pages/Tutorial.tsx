@@ -480,7 +480,7 @@ const Step5KongSection: React.FC = () => {
   return (
     <div ref={sectionRef} className="select-none pointer-events-none">
       {/* 4 Kong tiles with KONG! label overlaid — extra top margin so bubble sits higher */}
-      <div className="relative mt-8 md:mt-10 mb-6 md:mb-8">
+      <div className="relative mt-8 md:mt-10 pt-8 md:pt-10 mb-6 md:mb-8">
         <div className="flex gap-[2px] md:gap-[3px]">
           {[0, 1, 2, 3].map(i => (
             <Tile key={`k-${i}`} src="/assets/tiles/tile-num-1.webp" alt="Kong" extra="kong-tile" />
@@ -499,7 +499,7 @@ const Step5KongSection: React.FC = () => {
           <div className="relative mb-2">
             <div className="w-[120px] h-[120px] md:w-[160px] md:h-[160px] rounded-xl overflow-hidden border-2 border-white/20">
               <img src="/assets/profile-bubbletea.webp" alt="Player 1"
-                className="w-full h-full object-cover object-bottom" />
+                className="w-full h-full object-cover object-top" />
             </div>
             <div className="absolute -top-2.5 -right-4 px-2 py-1 rounded-full text-xs md:text-sm font-bold text-white flex items-center gap-0.5"
               style={{ background: '#22c55e', boxShadow: '0 2px 6px rgba(34,197,94,0.4)' }}>
@@ -519,7 +519,7 @@ const Step5KongSection: React.FC = () => {
           <div className="relative mb-2">
             <div className="w-[120px] h-[120px] md:w-[160px] md:h-[160px] rounded-xl overflow-hidden border-2 border-white/20">
               <img src="/assets/profile-busy.webp" alt="Player 2"
-                className="w-full h-full object-cover object-bottom" />
+                className="w-full h-full object-cover object-top" />
             </div>
             <div className="absolute -top-2.5 -right-4 px-2 py-1 rounded-full text-xs md:text-sm font-bold text-white flex items-center gap-0.5"
               style={{ background: '#ef4444', boxShadow: '0 2px 6px rgba(239,68,68,0.4)' }}>
