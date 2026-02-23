@@ -286,7 +286,7 @@ const fireMiniParticles = (container: HTMLElement) => {
 };
 
 /* ── Callout label — chat-bubble shape, Clash Display Bold ─────── */
-const CalloutLabel: React.FC<{ text: string }> = ({ text }) => {
+const CalloutLabel: React.FC<{ text: string; tailUp?: boolean }> = ({ text, tailUp }) => {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
 
@@ -315,7 +315,8 @@ const CalloutLabel: React.FC<{ text: string }> = ({ text }) => {
       <div ref={wrapRef} className="relative" style={{ filter: 'drop-shadow(4px 4px 0px #4A0000)' }}>
         {svgW > 0 && (
           <svg xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${svgW} ${svgH}`} fill="none"
-            className="absolute top-0 left-0 pointer-events-none" width={svgW} height={svgH}>
+            className="absolute left-0 pointer-events-none" width={svgW} height={svgH}
+            style={tailUp ? { bottom: 0, transform: 'scaleY(-1)' } : { top: 0 }}>
             <path d={path} fill="#620000" stroke="white" strokeWidth="4" />
           </svg>
         )}
@@ -327,6 +328,7 @@ const CalloutLabel: React.FC<{ text: string }> = ({ text }) => {
             fontSize: 'clamp(20px, min(4.5vw, 4vh), 38px)',
             letterSpacing: '-0.02em',
             textShadow: '1px 1px 0 rgba(0,0,0,0.4)',
+            ...(tailUp ? { paddingBottom: `${TAIL_H + 12}px` } : {}),
           }}>
           {text}
         </div>
@@ -383,7 +385,7 @@ const Step3Section: React.FC = () => {
       {/* Spacer */}
       <div className="h-8 md:h-10" />
 
-      {/* Mahjong tiles with MAHJONG! label overlaid */}
+      {/* Mahjong tiles with MAHJONG! label below (tail pointing up) */}
       <div className="relative">
         <div>
           <div className="flex gap-[1px] md:gap-[2px] mb-[1px] md:mb-[2px]">
@@ -397,8 +399,8 @@ const Step3Section: React.FC = () => {
             ))}
           </div>
         </div>
-        <div className="mj-label absolute -top-5 left-1/2 -translate-x-1/2 z-20" style={{ transform: 'rotate(-4deg) translateX(-50%)' }}>
-          <CalloutLabel text="MAHJONG!" />
+        <div className="mj-label absolute -bottom-8 left-1/2 z-20" style={{ transform: 'rotate(-4deg) translateX(-50%)' }}>
+          <CalloutLabel text="MAHJONG!" tailUp />
         </div>
         <div ref={mjParticlesRef} className="absolute inset-0 pointer-events-none flex items-center justify-center" />
       </div>
@@ -477,8 +479,8 @@ const Step5KongSection: React.FC = () => {
 
   return (
     <div ref={sectionRef} className="select-none pointer-events-none">
-      {/* 4 Kong tiles with KONG! label overlaid */}
-      <div className="relative mb-6 md:mb-8">
+      {/* 4 Kong tiles with KONG! label overlaid — pushed down for breathing room */}
+      <div className="relative mt-4 md:mt-6 mb-6 md:mb-8">
         <div className="flex gap-[2px] md:gap-[3px]">
           {[0, 1, 2, 3].map(i => (
             <Tile key={`k-${i}`} src="/assets/tiles/tile-num-1.webp" alt="Kong" extra="kong-tile" />
@@ -490,13 +492,15 @@ const Step5KongSection: React.FC = () => {
         <div ref={particlesRef} className="absolute inset-0 pointer-events-none flex items-center justify-center" />
       </div>
 
-      {/* Player profiles — 60% bigger */}
-      <div className="flex gap-6 md:gap-10">
+      {/* Player profiles — waist-up crop, face fully visible */}
+      <div className="flex gap-6 md:gap-10 justify-center">
         {/* Player 1 — gets paid */}
         <div className="player-profile flex flex-col items-center">
           <div className="relative mb-2">
-            <img src="/assets/profile-bubbletea.webp" alt="Player 1"
-              className="w-[104px] h-[104px] md:w-32 md:h-32 rounded-xl object-cover border-2 border-white/20" />
+            <div className="w-[110px] h-[140px] md:w-[140px] md:h-[180px] rounded-xl overflow-hidden border-2 border-white/20">
+              <img src="/assets/profile-bubbletea.webp" alt="Player 1"
+                className="w-full h-full object-cover object-top" />
+            </div>
             <div className="absolute -top-2.5 -right-4 px-2 py-1 rounded-full text-xs md:text-sm font-bold text-white flex items-center gap-0.5"
               style={{ background: '#22c55e', boxShadow: '0 2px 6px rgba(34,197,94,0.4)' }}>
               +100<img src="/assets/topbar-coin.webp" alt="SP" className="inline w-4 h-4 md:w-5 md:h-5 ml-0.5" />
@@ -509,8 +513,10 @@ const Step5KongSection: React.FC = () => {
         {/* Player 2 — pays */}
         <div className="player-profile flex flex-col items-center">
           <div className="relative mb-2">
-            <img src="/assets/profile-busy.webp" alt="Player 2"
-              className="w-[104px] h-[104px] md:w-32 md:h-32 rounded-xl object-cover border-2 border-white/20" />
+            <div className="w-[110px] h-[140px] md:w-[140px] md:h-[180px] rounded-xl overflow-hidden border-2 border-white/20">
+              <img src="/assets/profile-busy.webp" alt="Player 2"
+                className="w-full h-full object-cover object-top" />
+            </div>
             <div className="absolute -top-2.5 -right-4 px-2 py-1 rounded-full text-xs md:text-sm font-bold text-white flex items-center gap-0.5"
               style={{ background: '#ef4444', boxShadow: '0 2px 6px rgba(239,68,68,0.4)' }}>
               -100<img src="/assets/topbar-coin.webp" alt="SP" className="inline w-4 h-4 md:w-5 md:h-5 ml-0.5" />
