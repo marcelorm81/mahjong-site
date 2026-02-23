@@ -327,8 +327,8 @@ export const Reward: React.FC<RewardProps> = ({ onClose, onRedeem }) => {
         </svg>
       </button>
 
-      {/* ── Particle explosion container (centered, z-28 — between glow and card) ── */}
-      <div className="absolute inset-0 z-[28] pointer-events-none flex items-center justify-center">
+      {/* ── Particle explosion container (centered, z-40 — on top of gift and card) ── */}
+      <div className="absolute inset-0 z-40 pointer-events-none flex items-center justify-center">
         <div ref={particlesRef} className="relative w-0 h-0" />
       </div>
 
