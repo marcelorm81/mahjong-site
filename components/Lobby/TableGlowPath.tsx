@@ -28,7 +28,6 @@ export const TableGlowPath: React.FC = () => {
     strokeDasharray: `${SEGMENT_LENGTH} ${GAP_LENGTH}`,
     strokeDashoffset: 0,
     animation: `table-glow-travel 4s linear infinite`,
-    animationPlayState: 'paused',
   };
 
   return (

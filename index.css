@@ -68,6 +68,9 @@ main {
   0%   { stroke-dashoffset: 0; }
   100% { stroke-dashoffset: -2600; }
 }
+.table-glow-path {
+  animation-play-state: paused;
+}
 .group:hover .table-glow-path {
   animation-play-state: running;
 }
