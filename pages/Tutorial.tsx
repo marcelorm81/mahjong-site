@@ -321,7 +321,7 @@ const CalloutLabel: React.FC<{ text: string; tailUp?: boolean; flipX?: boolean }
             <path d={path} fill="#620000" stroke="white" strokeWidth="4" />
           </svg>
         )}
-        <div className="relative z-10 px-7 py-3 md:px-9 md:py-4"
+        <div className="callout-label-text relative z-10 px-7 py-3 md:px-9 md:py-4"
           style={{
             fontFamily: "'Clash Display'",
             fontWeight: 700,
@@ -385,7 +385,7 @@ const Step3Section: React.FC = () => {
       </div>
 
       {/* Spacer */}
-      <div className="h-8 md:h-10" />
+      <div className="h-8 md:h-10 tut-spacer" />
 
       {/* Mahjong tiles with MAHJONG! label below */}
       <div>
@@ -401,7 +401,7 @@ const Step3Section: React.FC = () => {
             ))}
           </div>
         </div>
-        <div className="mj-label relative z-20 mt-3 md:mt-4" style={{ transform: 'translate(140px, -70px) rotate(-4deg)', whiteSpace: 'nowrap' }}>
+        <div className="mj-label mj-label-step3 relative z-20 mt-3 md:mt-4" style={{ transform: 'translate(140px, -70px) rotate(-4deg)', whiteSpace: 'nowrap' }}>
           <CalloutLabel text="MAHJONG!" tailUp flipX />
           <div ref={mjParticlesRef} className="absolute inset-0 z-30 pointer-events-none flex items-center justify-center" />
         </div>
@@ -550,7 +550,7 @@ const Step5KongSection: React.FC = () => {
       </div>
 
       {/* 4 Kong tiles — pushed down for breathing room */}
-      <div className="relative mt-3 md:mt-4 mb-6 md:mb-8">
+      <div className="relative mt-3 md:mt-4 mb-6 md:mb-8 tut-mt-kong tut-mb-kong">
         <div className="flex gap-[2px] md:gap-[3px]">
           {[0, 1, 2, 3].map(i => (
             <Tile key={`k-${i}`} src="/assets/tiles/tile-num-1.webp" alt="Kong" extra="kong-tile" />
@@ -559,11 +559,11 @@ const Step5KongSection: React.FC = () => {
       </div>
 
       {/* Player profiles — square container, head-visible crop */}
-      <div className="flex gap-6 md:gap-10 justify-center">
+      <div className="flex gap-6 md:gap-10 justify-center tut-profiles">
         {/* Player 1 — gets paid */}
         <div className="player-profile flex flex-col items-center">
           <div className="relative mb-2">
-            <div className="w-[120px] h-[120px] md:w-[160px] md:h-[160px] rounded-xl overflow-hidden border-2 border-white/20">
+            <div className="profile-img-wrap w-[120px] h-[120px] md:w-[160px] md:h-[160px] rounded-xl overflow-hidden border-2 border-white/20">
               <img src="/assets/profile-bubbletea.webp" alt="Player 1"
                 className="w-full h-full object-cover"
                 style={{ objectFit: 'cover', objectPosition: 'center top', transform: 'translateY(8px)' }} />
@@ -582,7 +582,7 @@ const Step5KongSection: React.FC = () => {
         {/* Player 2 — pays */}
         <div className="player-profile flex flex-col items-center">
           <div className="relative mb-2">
-            <div className="w-[120px] h-[120px] md:w-[160px] md:h-[160px] rounded-xl overflow-hidden border-2 border-white/20">
+            <div className="profile-img-wrap w-[120px] h-[120px] md:w-[160px] md:h-[160px] rounded-xl overflow-hidden border-2 border-white/20">
               <img src="/assets/profile-busy.webp" alt="Player 2"
                 className="w-full h-full object-cover"
                 style={{ objectFit: 'cover', objectPosition: 'center top', transform: 'translateY(8px)' }} />
@@ -634,7 +634,7 @@ const Step6MahjongSection: React.FC = () => {
       </div>
 
       {/* Tiles pushed way down for lots of breathing room */}
-      <div className="mt-10 md:mt-16">
+      <div className="mt-10 md:mt-16 tut-mt-tiles">
         <div className="flex gap-[1px] md:gap-[2px] mb-[1px] md:mb-[2px]">
           {MJ_ROW1.map(([src, alt], i) => (
             <Tile key={`r1-${i}`} src={src} alt={alt} extra="mj-tile" />
@@ -674,7 +674,7 @@ const CelebrationTitle: React.FC = () => {
   return (
     <h1
       ref={titleRef}
-      className="text-white text-5xl md:text-7xl font-bold text-center"
+      className="text-white text-5xl short:text-2xl md:text-7xl font-bold text-center"
       style={{
         fontFamily: "'Clash Display', sans-serif",
         textShadow: '0 4px 20px rgba(0,0,0,0.5), 0 0 40px rgba(255,200,50,0.3)',
@@ -820,7 +820,7 @@ const ChatBubble: React.FC<{
 
         <div
           ref={textRef}
-          className="relative z-10 font-semibold text-white leading-snug px-7 py-5 md:px-9 md:py-6"
+          className="tut-bubble-text relative z-10 font-semibold text-white leading-snug px-7 py-5 md:px-9 md:py-6"
           style={{
             fontSize: 'clamp(10px, min(3.5vw, 2.5vh), 22px)',
             letterSpacing: '-0.02em',
@@ -845,6 +845,16 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
   const pulseAnimRef = useRef<gsap.core.Tween | null>(null);
   const phraseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const bubbleWrapRef = useRef<HTMLDivElement>(null);
+
+  /* Detect mobile-landscape for layout adjustments */
+  const [isLandMobile, setIsLandMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(orientation: landscape) and (max-height: 600px)');
+    const handler = (e: MediaQueryListEvent | MediaQueryList) => setIsLandMobile(e.matches);
+    handler(mq);
+    mq.addEventListener('change', handler as any);
+    return () => mq.removeEventListener('change', handler as any);
+  }, []);
 
   const currentStep = STEPS[step];
   const showBubble = !currentStep.noBubble;
@@ -923,13 +933,18 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
   }, [isLastPhrase]);
 
   /* ── Bubble position helpers ── */
-  const bubbleTop =
-    step === 0 ? 'top-[22vh] md:top-[calc(30vh-130px)]'
-    : step === 3 ? 'top-[calc(22vh+280px)] md:top-[calc(30vh-130px)]'
-    : step === 5 ? 'top-[calc(22vh+190px)] md:top-[18vh]'
-    : step === 2 || step === 4
-      ? 'top-[calc(22vh+240px)] md:top-[18vh]'
-    : 'top-[calc(22vh+210px)] md:top-[calc(30vh-130px)]';
+  const bubbleTop = isLandMobile
+    ? (step === 0 ? 'top-[52vh]'
+      : step === 3 ? 'top-[56vh]'
+      : step === 5 ? 'top-[52vh]'
+      : step === 2 || step === 4 ? 'top-[55vh]'
+      : 'top-[52vh]')
+    : (step === 0 ? 'top-[22vh] md:top-[calc(30vh-130px)]'
+      : step === 3 ? 'top-[calc(22vh+280px)] md:top-[calc(30vh-130px)]'
+      : step === 5 ? 'top-[calc(22vh+190px)] md:top-[18vh]'
+      : step === 2 || step === 4
+        ? 'top-[calc(22vh+240px)] md:top-[18vh]'
+      : 'top-[calc(22vh+210px)] md:top-[calc(30vh-130px)]');
 
   const bubbleLeft =
     step === 1 ? 'md:left-[calc(18%+500px)]'
@@ -958,7 +973,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
 
       {/* ── Top gradient overlay ── */}
       <div
-        className="absolute top-0 left-0 right-0 h-[120px] md:h-[135px] z-10"
+        className="absolute top-0 left-0 right-0 h-[120px] short:h-[55px] md:h-[135px] z-10"
         style={{
           background: 'linear-gradient(180deg, rgba(80,0,0,1) 0%, rgba(80,0,0,0) 100%)',
           backdropFilter: 'blur(10px)',
@@ -966,10 +981,10 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
       />
 
       {/* ── Top bar: Skip / Title / Next ── */}
-      <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-[20px] pt-[20px]">
+      <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-[20px] pt-[20px] short:pt-[10px]">
         <button
           onClick={handleSkip}
-          className="border border-white rounded-[6px] px-8 md:px-[60px] py-2.5 md:h-[45px] md:flex md:items-center text-white font-semibold text-sm md:text-base uppercase tracking-tight hover:bg-white/10 active:scale-95 transition-all"
+          className="border border-white rounded-[6px] px-8 short:px-3 md:px-[60px] py-2.5 short:py-1 md:h-[45px] md:flex md:items-center text-white font-semibold text-sm short:text-xs md:text-base uppercase tracking-tight hover:bg-white/10 active:scale-95 transition-all"
           style={{
             background: 'radial-gradient(ellipse at center, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 100%)',
           }}
@@ -978,7 +993,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
         </button>
 
         <span
-          className="text-white font-semibold text-lg md:text-2xl uppercase tracking-tight"
+          className="text-white font-semibold text-lg short:text-sm md:text-2xl uppercase tracking-tight"
           style={{ letterSpacing: '-0.6px' }}
         >
           Tutorial
@@ -987,7 +1002,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
         <button
           ref={nextBtnRef}
           onClick={handleNext}
-          className="border border-white rounded-[6px] px-8 md:px-[60px] py-2.5 md:h-[45px] md:flex md:items-center text-white font-semibold text-sm md:text-base uppercase tracking-tight hover:brightness-110 active:scale-95 transition-all"
+          className="border border-white rounded-[6px] px-8 short:px-3 md:px-[60px] py-2.5 short:py-1 md:h-[45px] md:flex md:items-center text-white font-semibold text-sm short:text-xs md:text-base uppercase tracking-tight hover:brightness-110 active:scale-95 transition-all"
           style={{
             background: 'linear-gradient(181deg, rgba(255,255,255,0) 9%, rgba(230,162,60,0.6) 98%)',
           }}
@@ -997,55 +1012,55 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
       </div>
 
       {/* ── Page dots ── */}
-      <div className="absolute z-20 left-1/2 -translate-x-1/2 top-[72px] md:top-[80px]">
+      <div className="absolute z-20 left-1/2 -translate-x-1/2 top-[72px] short:top-[38px] md:top-[80px]">
         <PageDots current={step} total={TOTAL_STEPS} />
       </div>
 
       {/* ── Step 1 — Tile showcase ── */}
       {step === 1 && (
-        <div className="absolute z-10 left-[4vw] top-[18vh] md:left-[5%] md:top-[26vh]">
+        <div className={`absolute z-10 left-[4vw] ${isLandMobile ? 'top-[17vh]' : 'top-[18vh]'} md:left-[5%] md:top-[26vh]`}>
           <TileSection key="tiles" />
         </div>
       )}
 
       {/* ── Step 2 — Kong + Mahjong with stickers ── */}
       {step === 2 && (
-        <div className="absolute z-10 left-[4vw] top-[calc(18vh-30px)] md:left-[5%] md:top-[18vh]">
+        <div className={`absolute z-10 left-[4vw] ${isLandMobile ? 'top-[17vh]' : 'top-[calc(18vh-30px)]'} md:left-[5%] md:top-[18vh]`}>
           <Step3Section key="step3" />
         </div>
       )}
 
       {/* ── Step 3 — Table with hand pointing (centered mobile, left-aligned desktop) ── */}
       {step === 3 && (
-        <div className="absolute z-10 inset-x-0 top-[14vh] md:left-[5%] md:right-auto md:top-[16vh] px-4 md:px-0">
+        <div className={`absolute z-10 inset-x-0 ${isLandMobile ? 'top-[17vh]' : 'top-[14vh]'} md:left-[5%] md:right-auto md:top-[16vh] px-4 md:px-0`}>
           <Step4TableSection key="step4" />
         </div>
       )}
 
       {/* ── Step 4 — Kong + Profiles ── */}
       {step === 4 && (
-        <div className="absolute z-10 left-[4vw] top-[14vh] md:left-[5%] md:top-[16vh]">
+        <div className={`absolute z-10 left-[4vw] ${isLandMobile ? 'top-[17vh]' : 'top-[14vh]'} md:left-[5%] md:top-[16vh]`}>
           <Step5KongSection key="step5" />
         </div>
       )}
 
       {/* ── Step 5 — Mahjong tiles only ── */}
       {step === 5 && (
-        <div className="absolute z-10 left-[4vw] top-[calc(14vh+30px)] md:left-[5%] md:top-[16vh]">
+        <div className={`absolute z-10 left-[4vw] ${isLandMobile ? 'top-[18vh]' : 'top-[calc(14vh+30px)]'} md:left-[5%] md:top-[16vh]`}>
           <Step6MahjongSection key="step6" />
         </div>
       )}
 
       {/* ── Step 6 — Celebration title ── */}
       {step === 6 && (
-        <div className="absolute z-20 inset-x-0 top-[14vh] md:top-[12vh] flex justify-center">
+        <div className={`absolute z-20 inset-x-0 ${isLandMobile ? 'top-[17vh]' : 'top-[14vh]'} md:top-[12vh] flex justify-center`}>
           <CelebrationTitle key="celebration" />
         </div>
       )}
 
       {/* ── Chat bubble (hidden on noBubble steps) ── */}
       {showBubble && (
-        <div ref={bubbleWrapRef} className={`absolute z-20 left-4 ${bubbleLeft} ${bubbleTop} w-[min(74vw,43vh)] max-w-[234px] md:w-[min(28vw,45vh)] md:max-w-[340px] overflow-visible`}>
+        <div ref={bubbleWrapRef} className={`absolute z-20 left-4 ${bubbleLeft} ${bubbleTop} w-[min(74vw,43vh)] max-w-[234px] short:w-[min(40vw,45vh)] short:max-w-[220px] md:w-[min(28vw,45vh)] md:max-w-[340px] overflow-visible`}>
           <ChatBubble
             key={`${step}-${phraseIdx}`}
             lines={currentLines}

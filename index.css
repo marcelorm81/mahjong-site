@@ -95,3 +95,39 @@ main {
 .group:hover .table-glow-path {
   animation-play-state: running;
 }
+
+/* ── Tutorial: mobile landscape overrides ─────────────────────────── */
+@media (orientation: landscape) and (max-height: 600px) {
+  /* Tiles: 36×48 → 22×30 */
+  .mahjong-tile { width: 22px !important; height: 30px !important; }
+
+  /* Table card: cap at 180px */
+  .table-card-wrap { width: min(45vh, 180px) !important; }
+
+  /* CalloutLabel inner text: smaller font + tighter padding */
+  .callout-label-text { font-size: 14px !important; padding: 4px 12px !important; }
+
+  /* Profile images: 120 → 70px */
+  .player-profile .profile-img-wrap { width: 70px !important; height: 70px !important; }
+
+  /* Spacers & margins: compress vertical space */
+  .tut-spacer { height: 4px !important; }
+  .tut-mt-tiles { margin-top: 6px !important; }
+  .tut-mb-kong { margin-bottom: 6px !important; }
+  .tut-mt-kong { margin-top: 2px !important; }
+
+  /* Chat bubble text: tighter padding */
+  .tut-bubble-text { padding: 6px 12px !important; }
+
+  /* Profile section: tighter gap */
+  .tut-profiles { gap: 16px !important; }
+
+  /* Tile row labels: slightly smaller */
+  .tile-label { font-size: 9px !important; margin-bottom: 2px !important; }
+
+  /* Tile row bottom margins */
+  .tile-row-0, .tile-row-1 { margin-bottom: 4px !important; }
+
+  /* Step3 mj-label: reduce translate for smaller tiles */
+  .mj-label-step3 { transform: translate(80px, -35px) rotate(-4deg) !important; }
+}
