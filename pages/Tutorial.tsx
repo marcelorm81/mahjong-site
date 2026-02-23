@@ -47,7 +47,7 @@ const TileImg: React.FC<{ src: string; alt: string }> = ({ src, alt }) => (
   <img
     src={src}
     alt={alt}
-    className="mahjong-tile w-[36px] h-[48px] md:w-[66px] md:h-[88px] object-contain drop-shadow"
+    className="mahjong-tile w-[min(36px,7.8vw)] h-[min(48px,10.4vw)] md:w-[66px] md:h-[88px] object-contain drop-shadow"
   />
 );
 
@@ -234,37 +234,36 @@ const CalloutLabel: React.FC<{ text: string }> = ({ text }) => {
   );
 };
 
-/* ── Step 3 tile layout (Kong + Mahjong winning hand) ────────────── */
+/* ── Step 3 tile layout (Mahjong hand on top, Kong below, stickers overlay) ── */
 const Step3Section: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    const labels    = el.querySelectorAll('.callout-label');
+    const stickers  = el.querySelectorAll('.sticker-overlay');
     const kongTiles = el.querySelectorAll('.kong-tile');
     const mjTiles   = el.querySelectorAll('.mj-tile');
 
-    // GSAP owns ALL transforms — no CSS transform on .callout-label to avoid React conflict
+    // GSAP owns ALL transforms
     gsap.set([kongTiles, mjTiles], { opacity: 0, scale: 0.7 });
-    gsap.set(labels, { opacity: 0, scale: 0.7, rotation: -6, transformOrigin: 'center bottom' });
+    gsap.set(stickers, { opacity: 0, scale: 0.7, transformOrigin: 'center bottom' });
 
-    // Animation: tiles appear first, then their label pops beside them
+    // Animation: mahjong tiles first → MAHJONG! sticker → kong tiles → KONG! sticker
     const tl = gsap.timeline({ delay: 0.8 });
-    tl.to(kongTiles,  { opacity: 1, scale: 1, duration: 0.35, stagger: 0.1,  ease: 'back.out(1.5)' })
-      .to(labels[0],  { opacity: 1, scale: 1, rotation: -6, duration: 0.4, ease: 'back.out(1.7)' }, '-=0.1')
-      .to(mjTiles,    { opacity: 1, scale: 1, duration: 0.25, stagger: 0.06, ease: 'back.out(1.5)' }, '+=0.2')
-      .to(labels[1],  { opacity: 1, scale: 1, rotation: -6, duration: 0.4, ease: 'back.out(1.7)' }, '-=0.1');
+    tl.to(mjTiles,     { opacity: 1, scale: 1, duration: 0.25, stagger: 0.06, ease: 'back.out(1.5)' })
+      .to(stickers[0], { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.7)' }, '-=0.1')
+      .to(kongTiles,   { opacity: 1, scale: 1, duration: 0.35, stagger: 0.1, ease: 'back.out(1.5)' }, '+=0.2')
+      .to(stickers[1], { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.7)' }, '-=0.1');
 
     return () => { tl.kill(); };
   }, []);
 
   const T: React.FC<{ src: string; alt: string; extra: string }> = ({ src, alt, extra }) => (
     <img src={src} alt={alt}
-      className={`mahjong-tile w-[36px] h-[48px] md:w-[66px] md:h-[88px] object-contain drop-shadow ${extra}`} />
+      className={`mahjong-tile w-[min(36px,7.8vw)] h-[min(48px,10.4vw)] md:w-[66px] md:h-[88px] object-contain drop-shadow ${extra}`} />
   );
 
-  // Kong: 4× Pin1 (circles 1)
   // Mahjong winning hand: Nan×2, man6×3, pin8×3, sou4×3, sou1×3 = 14 tiles
   const ROW1: [string, string][] = [
     ['/assets/tiles/tile-wind-south.png', 'Nan'],
@@ -287,28 +286,42 @@ const Step3Section: React.FC = () => {
 
   return (
     <div ref={sectionRef} className="select-none pointer-events-none">
-      {/* Row 1: Kong tiles + KONG! label on the right */}
-      <div className="flex items-center gap-3 md:gap-5 mb-4 md:mb-6">
+      <div className="relative inline-block">
+        {/* Mahjong winning hand tiles on top */}
+        <div className="mb-3 md:mb-4">
+          {/* Row 1: 8 tiles (Nan×2, man6×3, pin8×3) */}
+          <div className="flex gap-[1px] md:gap-[2px] mb-[1px] md:mb-[2px]">
+            {ROW1.map(([src, alt], i) => (
+              <T key={`r1-${i}`} src={src} alt={alt} extra="mj-tile" />
+            ))}
+          </div>
+          {/* Row 2: 6 tiles (sou4×3, sou1×3) */}
+          <div className="flex gap-[1px] md:gap-[2px]">
+            {ROW2.map(([src, alt], i) => (
+              <T key={`r2-${i}`} src={src} alt={alt} extra="mj-tile" />
+            ))}
+          </div>
+        </div>
+
+        {/* Kong tiles below (4× Pin1) */}
         <div className="flex gap-[1px] md:gap-[2px]">
-          {[0,1,2,3].map(i => (
-            <T key={i} src="/assets/tiles/tile-num-1.png" alt="Kong" extra="kong-tile" />
+          {[0, 1, 2, 3].map(i => (
+            <T key={`k-${i}`} src="/assets/tiles/tile-num-1.png" alt="Kong" extra="kong-tile" />
           ))}
         </div>
-        <CalloutLabel text="KONG!" />
-      </div>
 
-      {/* Row 2: MAHJONG! label on the left + winning hand tiles */}
-      <div className="flex items-start gap-3 md:gap-5">
-        <div className="pt-2 md:pt-4"><CalloutLabel text="MAHJONG!" /></div>
-        <div>
-          {/* Winning hand row 1: 8 tiles (Nan×2, man6×3, pin8×3) */}
-          <div className="flex gap-[1px] md:gap-[2px] mb-[1px] md:mb-[2px]">
-            {ROW1.map(([src,alt],i) => <T key={i} src={src} alt={alt} extra="mj-tile" />)}
-          </div>
-          {/* Winning hand row 2: 6 tiles (sou4×3, sou1×3) */}
-          <div className="flex gap-[1px] md:gap-[2px]">
-            {ROW2.map(([src,alt],i) => <T key={i} src={src} alt={alt} extra="mj-tile" />)}
-          </div>
+        {/* Overlaid sticker labels */}
+        <div
+          className="sticker-overlay absolute -top-4 -right-2 md:-top-5 md:-right-3 z-20"
+          style={{ transform: 'rotate(6deg)' }}
+        >
+          <CalloutLabel text="MAHJONG!" />
+        </div>
+        <div
+          className="sticker-overlay absolute -bottom-6 -left-2 md:-bottom-8 md:-left-3 z-20"
+          style={{ transform: 'rotate(-6deg)' }}
+        >
+          <CalloutLabel text="KONG!" />
         </div>
       </div>
     </div>
@@ -650,9 +663,11 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
         step === 2 ? 'md:left-[42%]' :
         'md:left-[18%]'
       } ${
-        step === 2
-          ? 'top-[calc(22vh+350px)] md:top-[18vh]'
-          : 'top-[calc(22vh+350px)] md:top-[calc(30vh-130px)]'
+        step === 0
+          ? 'top-[22vh] md:top-[calc(30vh-130px)]'
+          : step === 2
+            ? 'top-[calc(22vh+350px)] md:top-[18vh]'
+            : 'top-[calc(22vh+350px)] md:top-[calc(30vh-130px)]'
       } w-[min(82vw,48vh)] max-w-[260px] md:w-[min(28vw,45vh)] md:max-w-[340px] overflow-visible`}>
         <ChatBubble
           key={`${step}-${phraseIdx}`}

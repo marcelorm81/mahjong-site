@@ -14,10 +14,11 @@ const STARBURST    = '/assets/reward-starburst.svg';
    1. Mount → place gift at exact nav-icon position (pixel-perfect)
    2. Lift gift to viewport center while fading in backdrop
    3. Open: lock UP, base DOWN with overshoot — light spills from gap
-   4. Glow burst: white (inner) + gold (outer) radiate outward
-   5. Lock + base fade, prize card scales in
-   6. Dismiss: reverse everything → shrink back to nav → restore icon
-   7. Redeem: card + overlay fade out → nav icon stays hidden
+   4. White halo ON TOP of gift grows with the opening (magical moment)
+   5. Glow burst: gold (behind) radiates outward, white peaks
+   6. Lock + base fade, prize card emerges tiny from halo center
+   7. Dismiss: reverse everything → shrink back to nav → restore icon
+   8. Redeem: card + overlay fade out → nav icon stays hidden
    ═══════════════════════════════════════════════════════════════════════ */
 
 interface RewardProps {
@@ -71,15 +72,15 @@ export const Reward: React.FC<RewardProps> = ({ onClose, onRedeem }) => {
     startRef.current = { x: sx, y: sy, scale: ss };
 
     // ── Initial states (GSAP owns everything) ──
-    // Gift container at final CSS position, but transformed to nav icon spot
     gsap.set(giftRef.current, {
       left: centerX, top: centerY, width: targetW, height: targetH,
       x: sx, y: sy, scale: ss,
       transformOrigin: 'center center',
     });
     gsap.set(backdropRef.current, { opacity: 0 });
-    gsap.set(cardRef.current, { opacity: 0, scale: 0.5, y: 30 });
-    gsap.set([whiteGlowRef.current, goldGlowRef.current], { opacity: 0, scale: 0.3 });
+    gsap.set(cardRef.current, { opacity: 0, scale: 0.1, y: 0 });
+    gsap.set(whiteGlowRef.current, { opacity: 0, scale: 0.2 });
+    gsap.set(goldGlowRef.current, { opacity: 0, scale: 0.3 });
 
     // Hide the nav icon (so there's no duplicate)
     if (navIcon) navIcon.style.opacity = '0';
@@ -111,14 +112,20 @@ export const Reward: React.FC<RewardProps> = ({ onClose, onRedeem }) => {
       duration: 0.5, ease: 'back.out(1.4)',
     }, '<')
 
-    // 4. Glow burst from the gap (layered behind the PNGs via z-index)
+    // White halo ON TOP of gift begins growing during opening (magical moment)
     .to(whiteGlowRef.current, {
-      opacity: 0.95, scale: 2.2,
-      duration: 0.35, ease: 'power2.out',
-    }, '-=0.3')
+      opacity: 0.5, scale: 0.9,
+      duration: 0.5, ease: 'power2.out',
+    }, '<')
+
+    // 4. Glow burst — gold BEHIND expands, white ON TOP peaks
     .to(goldGlowRef.current, {
       opacity: 0.7, scale: 2.8,
       duration: 0.4, ease: 'power2.out',
+    }, '-=0.2')
+    .to(whiteGlowRef.current, {
+      opacity: 0.95, scale: 2.2,
+      duration: 0.35, ease: 'power2.out',
     }, '-=0.35')
 
     // 5. Fade lock + base
@@ -131,11 +138,11 @@ export const Reward: React.FC<RewardProps> = ({ onClose, onRedeem }) => {
       opacity: 0, duration: 0.35,
     })
 
-    // 7. Prize card reveals
+    // 7. Prize card emerges from halo center — starts tiny, scales up
     .to(cardRef.current, {
-      opacity: 1, scale: 1, y: 0,
-      duration: 0.5, ease: 'back.out(1.7)',
-    }, '-=0.25');
+      opacity: 1, scale: 1,
+      duration: 0.6, ease: 'back.out(1.4)',
+    }, '-=0.10');
 
     return () => { tl.kill(); };
   }, []);
@@ -194,6 +201,18 @@ export const Reward: React.FC<RewardProps> = ({ onClose, onRedeem }) => {
         onClick={handleDismiss}
       />
 
+      {/* ── Gold glow — BEHIND gift (z-10) ── */}
+      <div className="absolute inset-0 z-10 pointer-events-none flex items-center justify-center">
+        <div
+          ref={goldGlowRef}
+          className="absolute rounded-full"
+          style={{
+            width: 'min(85vw, 480px)', height: 'min(85vw, 480px)',
+            background: 'radial-gradient(circle, rgba(255,200,50,0.55) 0%, rgba(255,160,30,0.2) 40%, transparent 70%)',
+          }}
+        />
+      </div>
+
       {/* ── Gift container (position/transform set by GSAP) ── */}
       <div ref={giftRef} className="absolute z-20" style={{ transformOrigin: 'center center' }}>
         <img
@@ -212,16 +231,8 @@ export const Reward: React.FC<RewardProps> = ({ onClose, onRedeem }) => {
         />
       </div>
 
-      {/* ── Glow layers (centered in viewport, behind gift via z-10) ── */}
-      <div className="absolute inset-0 z-10 pointer-events-none flex items-center justify-center">
-        <div
-          ref={goldGlowRef}
-          className="absolute rounded-full"
-          style={{
-            width: 'min(85vw, 480px)', height: 'min(85vw, 480px)',
-            background: 'radial-gradient(circle, rgba(255,200,50,0.55) 0%, rgba(255,160,30,0.2) 40%, transparent 70%)',
-          }}
-        />
+      {/* ── White glow — ON TOP of gift (z-[25]), scales with opening ── */}
+      <div className="absolute inset-0 z-[25] pointer-events-none flex items-center justify-center">
         <div
           ref={whiteGlowRef}
           className="absolute rounded-full"
@@ -244,7 +255,7 @@ export const Reward: React.FC<RewardProps> = ({ onClose, onRedeem }) => {
         </svg>
       </button>
 
-      {/* ── Prize card (centered, GSAP-controlled) ── */}
+      {/* ── Prize card (centered, GSAP-controlled — emerges from halo center) ── */}
       <div className="absolute inset-0 z-30 pointer-events-none flex items-center justify-center">
         <div
           ref={cardRef}

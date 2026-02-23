@@ -56,3 +56,9 @@ main {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* ── Shimmer sweep for reward gift icon ── */
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

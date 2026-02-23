@@ -12,7 +12,7 @@ interface BottomNavProps {
   onNavigate: (page: Page) => void;
   /** When true, the reward icon is invisible (during lift animation) */
   hideRewardIcon?: boolean;
-  /** When true, the reward slot is fully hidden (after redeem) */
+  /** When true, the reward slot collapses and icons redistribute */
   rewardRedeemed?: boolean;
 }
 
@@ -70,38 +70,76 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   const navRef = useRef<HTMLDivElement>(null);
   const lockRef = useRef<HTMLImageElement>(null);
   const baseRef = useRef<HTMLImageElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
+  const rewardBtnRef = useRef<HTMLButtonElement>(null);
   const shakeRef = useRef<gsap.core.Timeline | null>(null);
+  const glowTweenRef = useRef<gsap.core.Tween | null>(null);
 
-  // ── Counter-rotation shake for the reward gift icon ──
+  // ── Burst-pause counter-rotation shake + pulsing glow ──
   useEffect(() => {
     if (rewardRedeemed || hideRewardIcon) {
       shakeRef.current?.kill();
+      glowTweenRef.current?.kill();
       return;
     }
     const lock = lockRef.current;
     const base = baseRef.current;
+    const glow = glowRef.current;
     if (!lock || !base) return;
 
     // Reset rotation
     gsap.set([lock, base], { rotation: 0 });
 
-    // Counter-rotation: lock and base always rotate in opposite directions
-    const shake = gsap.timeline({ repeat: -1 });
+    // Burst of counter-rotations, then a 1.5s pause before repeating
+    const shake = gsap.timeline({ repeat: -1, repeatDelay: 1.5 });
     shake
-      .to(lock, { rotation: 5,  duration: 0.09, ease: 'power1.inOut' }, 0)
-      .to(base, { rotation: -5, duration: 0.09, ease: 'power1.inOut' }, 0)
-      .to(lock, { rotation: -5, duration: 0.09, ease: 'power1.inOut' })
-      .to(base, { rotation: 5,  duration: 0.09, ease: 'power1.inOut' }, '<')
-      .to(lock, { rotation: 3,  duration: 0.07, ease: 'power1.inOut' })
-      .to(base, { rotation: -3, duration: 0.07, ease: 'power1.inOut' }, '<')
-      .to(lock, { rotation: -4, duration: 0.08, ease: 'power1.inOut' })
-      .to(base, { rotation: 4,  duration: 0.08, ease: 'power1.inOut' }, '<')
+      .to(lock, { rotation: 6,  duration: 0.08, ease: 'power1.inOut' }, 0)
+      .to(base, { rotation: -6, duration: 0.08, ease: 'power1.inOut' }, 0)
+      .to(lock, { rotation: -5, duration: 0.08, ease: 'power1.inOut' })
+      .to(base, { rotation: 5,  duration: 0.08, ease: 'power1.inOut' }, '<')
+      .to(lock, { rotation: 4,  duration: 0.07, ease: 'power1.inOut' })
+      .to(base, { rotation: -4, duration: 0.07, ease: 'power1.inOut' }, '<')
+      .to(lock, { rotation: -3, duration: 0.07, ease: 'power1.inOut' })
+      .to(base, { rotation: 3,  duration: 0.07, ease: 'power1.inOut' }, '<')
       .to(lock, { rotation: 0,  duration: 0.06, ease: 'power1.inOut' })
       .to(base, { rotation: 0,  duration: 0.06, ease: 'power1.inOut' }, '<');
     shakeRef.current = shake;
 
-    return () => { shake.kill(); };
+    // Pulsing glow behind icon
+    let glowTween: gsap.core.Tween | null = null;
+    if (glow) {
+      glowTween = gsap.to(glow, {
+        scale: 1.4,
+        opacity: 0.35,
+        duration: 1.0,
+        ease: 'sine.inOut',
+        yoyo: true,
+        repeat: -1,
+      });
+      glowTweenRef.current = glowTween;
+    }
+
+    return () => {
+      shake.kill();
+      glowTween?.kill();
+    };
   }, [rewardRedeemed, hideRewardIcon]);
+
+  // ── Collapse reward slot on redeem (smooth width → 0) ──
+  useEffect(() => {
+    if (rewardRedeemed && rewardBtnRef.current) {
+      gsap.to(rewardBtnRef.current, {
+        width: 0,
+        minWidth: 0,
+        opacity: 0,
+        padding: 0,
+        margin: 0,
+        overflow: 'hidden',
+        duration: 0.5,
+        ease: 'power2.inOut',
+      });
+    }
+  }, [rewardRedeemed]);
 
   const handleNavClick = (page: Page, e: React.MouseEvent<HTMLButtonElement>) => {
     onNavigate(page);
@@ -133,9 +171,10 @@ export const BottomNav: React.FC<BottomNavProps> = ({
             return (
               <motion.button
                 key={item.id}
+                ref={isReward ? rewardBtnRef : undefined}
                 onClick={(e) => handleNavClick(item.id, e)}
                 className={`relative flex flex-col items-center justify-center w-[72px] compact:w-[64px] h-16 compact:h-[52px] short:h-12 rounded-xl snap-center group
-                  ${isReward && rewardRedeemed ? 'opacity-0 pointer-events-none' : ''}`}
+                  ${isReward && rewardRedeemed ? 'pointer-events-none' : ''}`}
                 whileTap={{ scale: 0.9 }}
               >
                 {/* Yellow Glow on Hover/Active */}
@@ -148,7 +187,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
 
                 {/* Icon */}
                 {isReward && !rewardRedeemed ? (
-                  /* ── Reward: stacked lock + base PNGs with counter-rotation ── */
+                  /* ── Reward: stacked lock + base PNGs with burst-pause shake ── */
                   <div
                     data-reward-icon
                     className={`
@@ -169,9 +208,28 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                       alt=""
                       className="absolute inset-0 w-full h-full object-contain drop-shadow-md"
                     />
-                    {/* Soft radial glow behind icon */}
-                    <div className="absolute inset-[-50%] rounded-full pointer-events-none"
-                      style={{ background: 'radial-gradient(circle, rgba(255,200,50,0.15) 0%, transparent 60%)' }}
+                    {/* Shimmer sweep overlay */}
+                    <div
+                      className="absolute inset-0 pointer-events-none overflow-hidden rounded"
+                      style={{ mixBlendMode: 'overlay' as const }}
+                    >
+                      <div
+                        className="absolute inset-0"
+                        style={{
+                          background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.3) 50%, transparent 60%)',
+                          backgroundSize: '200% 100%',
+                          animation: 'shimmer 2.5s ease-in-out infinite',
+                        }}
+                      />
+                    </div>
+                    {/* Pulsing radial glow behind icon */}
+                    <div
+                      ref={glowRef}
+                      className="absolute inset-[-50%] rounded-full pointer-events-none"
+                      style={{
+                        background: 'radial-gradient(circle, rgba(255,200,50,0.15) 0%, transparent 60%)',
+                        transformOrigin: 'center center',
+                      }}
                     />
                   </div>
                 ) : (
