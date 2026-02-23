@@ -62,7 +62,7 @@ export const TableGlowPath: React.FC = () => {
     <div
       className="
         absolute z-[5] pointer-events-none
-        top-[15%] left-[12%] right-[12%] bottom-[5%]
+        top-[20%] left-[12%] right-[12%] bottom-[5%]
         opacity-0 group-hover:opacity-100
         transition-opacity duration-500
       "
