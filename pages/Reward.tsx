@@ -51,6 +51,11 @@ export const Reward: React.FC<RewardProps> = ({ onClose, onRedeem }) => {
   const goldGlowRef    = useRef<HTMLDivElement>(null);
   const cardRef        = useRef<HTMLDivElement>(null);
   const particlesRef   = useRef<HTMLDivElement>(null);
+  const starburstRef   = useRef<HTMLImageElement>(null);
+  const cardTitleRef   = useRef<HTMLDivElement>(null);
+  const cardCoinsRef   = useRef<HTMLDivElement>(null);
+  const cardBadgeRef   = useRef<HTMLDivElement>(null);
+  const cardBtnRef     = useRef<HTMLDivElement>(null);
 
   // Store starting offsets for reverse animation
   const startRef = useRef({ x: 0, y: 0, scale: 0.1 });
@@ -141,6 +146,7 @@ export const Reward: React.FC<RewardProps> = ({ onClose, onRedeem }) => {
     });
     gsap.set(backdropRef.current, { opacity: 0 });
     gsap.set(cardRef.current, { opacity: 0, scale: 0.1, y: 0 });
+    gsap.set([cardTitleRef.current, cardCoinsRef.current, cardBadgeRef.current, cardBtnRef.current], { opacity: 0, y: 20 });
     gsap.set(whiteGlowRef.current, { opacity: 0, scale: 0.2 });
     gsap.set(goldGlowRef.current, { opacity: 0, scale: 0.3 });
 
@@ -179,6 +185,7 @@ export const Reward: React.FC<RewardProps> = ({ onClose, onRedeem }) => {
     .to(lockRef.current, {
       y: -(targetH * 0.42), rotation: -10,
       duration: 0.5, ease: 'back.out(1.4)',
+      onStart: () => { fireParticles(); },
     })
     .to(baseRef.current, {
       y: targetH * 0.32, rotation: 6,
@@ -213,10 +220,20 @@ export const Reward: React.FC<RewardProps> = ({ onClose, onRedeem }) => {
     .to(cardRef.current, {
       opacity: 1, scale: 1,
       duration: 0.6, ease: 'back.out(1.4)',
-      onStart: () => { fireParticles(); },
-    }, '-=0.35');
+    }, '-=0.35')
 
-    return () => { tl.kill(); };
+    // 7. Phased card content reveal
+    .to(cardTitleRef.current, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }, '-=0.15')
+    .to(cardCoinsRef.current, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }, '-=0.2')
+    .to(cardBadgeRef.current, { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }, '-=0.2')
+    .to(cardBtnRef.current,   { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }, '-=0.15');
+
+    // Continuous starburst rotation (independent of timeline)
+    const spin = gsap.to(starburstRef.current, {
+      rotation: 360, duration: 10, repeat: -1, ease: 'none',
+    });
+
+    return () => { tl.kill(); spin.kill(); };
   }, []);
 
   /* ── Dismiss: reverse to nav ── */
@@ -343,7 +360,7 @@ export const Reward: React.FC<RewardProps> = ({ onClose, onRedeem }) => {
           }}
         >
           {/* Level title */}
-          <div className="pt-6 pb-2 md:pt-8 md:pb-3 text-center">
+          <div ref={cardTitleRef} className="pt-6 pb-2 md:pt-8 md:pb-3 text-center">
             <h2
               className="text-white font-bold text-3xl md:text-4xl"
               style={{ fontFamily: "'Clash Display', sans-serif", textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}
@@ -353,8 +370,9 @@ export const Reward: React.FC<RewardProps> = ({ onClose, onRedeem }) => {
           </div>
 
           {/* Coin stack with starburst */}
-          <div className="relative flex items-center justify-center py-4 md:py-6">
+          <div ref={cardCoinsRef} className="relative flex items-center justify-center py-4 md:py-6">
             <img
+              ref={starburstRef}
               src={STARBURST}
               alt=""
               className="absolute w-[200px] h-[200px] md:w-[260px] md:h-[260px] opacity-20 pointer-events-none"
@@ -371,7 +389,7 @@ export const Reward: React.FC<RewardProps> = ({ onClose, onRedeem }) => {
           </div>
 
           {/* Amount badge */}
-          <div className="flex justify-center pb-6 md:pb-8">
+          <div ref={cardBadgeRef} className="flex justify-center pb-6 md:pb-8">
             <div
               className="rounded-full px-6 py-1.5 md:px-8 md:py-2"
               style={{
@@ -389,7 +407,7 @@ export const Reward: React.FC<RewardProps> = ({ onClose, onRedeem }) => {
           </div>
 
           {/* Collect button */}
-          <div className="px-5 pb-5 md:px-6 md:pb-6">
+          <div ref={cardBtnRef} className="px-5 pb-5 md:px-6 md:pb-6">
             <button
               onClick={handleRedeem}
               className="w-full py-3 md:py-3.5 rounded-xl font-bold text-base md:text-lg uppercase tracking-wide
