@@ -479,27 +479,29 @@ const Step5KongSection: React.FC = () => {
 
   return (
     <div ref={sectionRef} className="select-none pointer-events-none">
-      {/* 4 Kong tiles with KONG! label overlaid — extra top margin so bubble sits higher */}
-      <div className="relative mt-8 md:mt-10 pt-8 md:pt-10 mb-6 md:mb-8">
+      {/* KONG! label — sits above tiles in normal flow */}
+      <div className="kong-label mb-3 md:mb-4" style={{ transform: 'rotate(-4deg)' }}>
+        <CalloutLabel text="KONG!" />
+      </div>
+
+      {/* 4 Kong tiles below the label */}
+      <div className="relative mb-6 md:mb-8">
         <div className="flex gap-[2px] md:gap-[3px]">
           {[0, 1, 2, 3].map(i => (
             <Tile key={`k-${i}`} src="/assets/tiles/tile-num-1.webp" alt="Kong" extra="kong-tile" />
           ))}
         </div>
-        <div className="kong-label absolute -top-5 left-1/2 -translate-x-1/2 z-20" style={{ transform: 'rotate(-4deg) translateX(-50%)' }}>
-          <CalloutLabel text="KONG!" />
-        </div>
         <div ref={particlesRef} className="absolute inset-0 pointer-events-none flex items-center justify-center" />
       </div>
 
-      {/* Player profiles — square container, face-visible crop */}
+      {/* Player profiles — square container, head-visible crop */}
       <div className="flex gap-6 md:gap-10 justify-center">
         {/* Player 1 — gets paid */}
         <div className="player-profile flex flex-col items-center">
           <div className="relative mb-2">
             <div className="w-[120px] h-[120px] md:w-[160px] md:h-[160px] rounded-xl overflow-hidden border-2 border-white/20">
               <img src="/assets/profile-bubbletea.webp" alt="Player 1"
-                className="w-full h-full object-cover object-top" />
+                className="w-full h-full object-cover" style={{ objectPosition: '50% 15%' }} />
             </div>
             <div className="absolute -top-2.5 -right-4 px-2 py-1 rounded-full text-xs md:text-sm font-bold text-white flex items-center gap-0.5"
               style={{ background: '#22c55e', boxShadow: '0 2px 6px rgba(34,197,94,0.4)' }}>
@@ -519,7 +521,7 @@ const Step5KongSection: React.FC = () => {
           <div className="relative mb-2">
             <div className="w-[120px] h-[120px] md:w-[160px] md:h-[160px] rounded-xl overflow-hidden border-2 border-white/20">
               <img src="/assets/profile-busy.webp" alt="Player 2"
-                className="w-full h-full object-cover object-top" />
+                className="w-full h-full object-cover" style={{ objectPosition: '50% 15%' }} />
             </div>
             <div className="absolute -top-2.5 -right-4 px-2 py-1 rounded-full text-xs md:text-sm font-bold text-white flex items-center gap-0.5"
               style={{ background: '#ef4444', boxShadow: '0 2px 6px rgba(239,68,68,0.4)' }}>
