@@ -369,8 +369,8 @@ const Step3Section: React.FC = () => {
 
   return (
     <div ref={sectionRef} className="select-none pointer-events-none">
-      {/* Kong tiles with KONG! label overlaid */}
-      <div className="relative">
+      {/* Kong tiles with KONG! label overlaid — extra top margin so bubble sits higher */}
+      <div className="relative mt-6 md:mt-8">
         <div className="flex gap-[1px] md:gap-[2px]">
           {[0, 1, 2, 3].map(i => (
             <Tile key={`k-${i}`} src="/assets/tiles/tile-num-1.webp" alt="Kong" extra="kong-tile" />
@@ -399,7 +399,7 @@ const Step3Section: React.FC = () => {
             ))}
           </div>
         </div>
-        <div className="mj-label absolute -bottom-8 left-1/2 z-20" style={{ transform: 'rotate(-4deg) translateX(-50%)' }}>
+        <div className="mj-label absolute -bottom-12 left-1/2 z-20" style={{ transform: 'rotate(-4deg) translateX(-50%)', whiteSpace: 'nowrap' }}>
           <CalloutLabel text="MAHJONG!" tailUp />
         </div>
         <div ref={mjParticlesRef} className="absolute inset-0 pointer-events-none flex items-center justify-center" />
@@ -479,8 +479,8 @@ const Step5KongSection: React.FC = () => {
 
   return (
     <div ref={sectionRef} className="select-none pointer-events-none">
-      {/* 4 Kong tiles with KONG! label overlaid — pushed down for breathing room */}
-      <div className="relative mt-4 md:mt-6 mb-6 md:mb-8">
+      {/* 4 Kong tiles with KONG! label overlaid — extra top margin so bubble sits higher */}
+      <div className="relative mt-8 md:mt-10 mb-6 md:mb-8">
         <div className="flex gap-[2px] md:gap-[3px]">
           {[0, 1, 2, 3].map(i => (
             <Tile key={`k-${i}`} src="/assets/tiles/tile-num-1.webp" alt="Kong" extra="kong-tile" />
@@ -492,38 +492,46 @@ const Step5KongSection: React.FC = () => {
         <div ref={particlesRef} className="absolute inset-0 pointer-events-none flex items-center justify-center" />
       </div>
 
-      {/* Player profiles — waist-up crop, face fully visible */}
+      {/* Player profiles — square container, face-visible crop */}
       <div className="flex gap-6 md:gap-10 justify-center">
         {/* Player 1 — gets paid */}
         <div className="player-profile flex flex-col items-center">
           <div className="relative mb-2">
-            <div className="w-[110px] h-[140px] md:w-[140px] md:h-[180px] rounded-xl overflow-hidden border-2 border-white/20">
+            <div className="w-[120px] h-[120px] md:w-[160px] md:h-[160px] rounded-xl overflow-hidden border-2 border-white/20">
               <img src="/assets/profile-bubbletea.webp" alt="Player 1"
-                className="w-full h-full object-cover object-top" />
+                className="w-full h-full object-cover object-bottom" />
             </div>
             <div className="absolute -top-2.5 -right-4 px-2 py-1 rounded-full text-xs md:text-sm font-bold text-white flex items-center gap-0.5"
               style={{ background: '#22c55e', boxShadow: '0 2px 6px rgba(34,197,94,0.4)' }}>
               +100<img src="/assets/topbar-coin.webp" alt="SP" className="inline w-4 h-4 md:w-5 md:h-5 ml-0.5" />
             </div>
           </div>
-          <span className="text-white text-xs md:text-sm font-bold uppercase tracking-wide">Player 1</span>
-          <span className="text-green-400 text-xs">&#x2705;</span>
+          <span className="flex items-center gap-1 text-white text-xs md:text-sm font-bold uppercase tracking-wide">
+            Player 1
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 41 41" fill="none" className="md:w-5 md:h-5">
+              <path d="M20.0922 2.50586C16.6149 2.50586 13.2157 3.53699 10.3245 5.46886C7.43321 7.40074 5.17975 10.1466 3.84906 13.3592C2.51836 16.5717 2.17019 20.1068 2.84857 23.5172C3.52696 26.9277 5.20142 30.0604 7.66023 32.5192C10.119 34.978 13.2517 36.6525 16.6622 37.3309C20.0727 38.0093 23.6077 37.6611 26.8203 36.3304C30.0329 34.9997 32.7787 32.7462 34.7106 29.855C36.6425 26.9637 37.6736 23.5646 37.6736 20.0873C37.6736 15.4244 35.8213 10.9525 32.5241 7.65534C29.227 4.35818 24.7551 2.50586 20.0922 2.50586ZM17.5805 27.1073L11.3015 20.8282L13.2982 18.8315L17.5805 23.1138L26.8861 13.8082L28.8904 15.7999L17.5805 27.1073Z" fill="#2AD858"/>
+            </svg>
+          </span>
         </div>
 
         {/* Player 2 — pays */}
         <div className="player-profile flex flex-col items-center">
           <div className="relative mb-2">
-            <div className="w-[110px] h-[140px] md:w-[140px] md:h-[180px] rounded-xl overflow-hidden border-2 border-white/20">
+            <div className="w-[120px] h-[120px] md:w-[160px] md:h-[160px] rounded-xl overflow-hidden border-2 border-white/20">
               <img src="/assets/profile-busy.webp" alt="Player 2"
-                className="w-full h-full object-cover object-top" />
+                className="w-full h-full object-cover object-bottom" />
             </div>
             <div className="absolute -top-2.5 -right-4 px-2 py-1 rounded-full text-xs md:text-sm font-bold text-white flex items-center gap-0.5"
               style={{ background: '#ef4444', boxShadow: '0 2px 6px rgba(239,68,68,0.4)' }}>
               -100<img src="/assets/topbar-coin.webp" alt="SP" className="inline w-4 h-4 md:w-5 md:h-5 ml-0.5" />
             </div>
           </div>
-          <span className="text-white text-xs md:text-sm font-bold uppercase tracking-wide">Player 2</span>
-          <span className="text-green-400 text-xs">&#x2705;</span>
+          <span className="flex items-center gap-1 text-white text-xs md:text-sm font-bold uppercase tracking-wide">
+            Player 2
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 41 41" fill="none" className="md:w-5 md:h-5">
+              <path d="M20.0922 2.50586C16.6149 2.50586 13.2157 3.53699 10.3245 5.46886C7.43321 7.40074 5.17975 10.1466 3.84906 13.3592C2.51836 16.5717 2.17019 20.1068 2.84857 23.5172C3.52696 26.9277 5.20142 30.0604 7.66023 32.5192C10.119 34.978 13.2517 36.6525 16.6622 37.3309C20.0727 38.0093 23.6077 37.6611 26.8203 36.3304C30.0329 34.9997 32.7787 32.7462 34.7106 29.855C36.6425 26.9637 37.6736 23.5646 37.6736 20.0873C37.6736 15.4244 35.8213 10.9525 32.5241 7.65534C29.227 4.35818 24.7551 2.50586 20.0922 2.50586ZM17.5805 27.1073L11.3015 20.8282L13.2982 18.8315L17.5805 23.1138L26.8861 13.8082L28.8904 15.7999L17.5805 27.1073Z" fill="#2AD858"/>
+            </svg>
+          </span>
         </div>
       </div>
     </div>
