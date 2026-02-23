@@ -1,4 +1,5 @@
-import React, { useId } from 'react';
+import React, { useId, useRef, useEffect } from 'react';
+import gsap from 'gsap';
 
 /* ── SVG path tracing the mahjong table outline (from Figma) ── */
 const TABLE_PATH_D =
@@ -19,24 +20,79 @@ const CORE_GAP = TOTAL_LENGTH - CORE_SEG;       // 1820
 const HEAD_SEG = TOTAL_LENGTH * 0.15;           // 390
 const HEAD_GAP = TOTAL_LENGTH - HEAD_SEG;       // 2210
 
+/* Particle colors — warm magical palette */
+const PARTICLE_COLORS = ['#FFD700', '#FFFBE6', '#FFA500', '#FFE066'];
+
+interface TableGlowPathProps {
+  isHovered?: boolean;
+}
+
 /**
- * Three-layer traveling glow that circulates the table outline on hover.
- *   1. Wide halo  — warm orange, heavy blur, 35% segment
- *   2. Core glow  — golden, medium blur, 30% segment
- *   3. Bright head — warm white, no blur, 15% segment
- *
- * All layers share the same CSS keyframe animation so they move in sync.
- * The shorter head segment naturally leads the wider halo, giving a
- * bright-leading / soft-trailing falloff without needing a gradient.
+ * Three-layer traveling glow that circulates the table outline on hover,
+ * plus floating glowing particles that emit from the path.
  *
  * z-[5] → behind card image (z-10), above background.
  * Paused by default — CSS .group:hover .table-glow-path starts it.
  */
-export const TableGlowPath: React.FC = () => {
+export const TableGlowPath: React.FC<TableGlowPathProps> = ({ isHovered = false }) => {
   const uid = useId();
   const blurWideId = `tgw${uid}`;
   const blurCoreId = `tgc${uid}`;
   const blurHeadId = `tgh${uid}`;
+  const blurParticleId = `tgp${uid}`;
+
+  const svgRef = useRef<SVGSVGElement>(null);
+  const pathRef = useRef<SVGPathElement>(null);
+  const intervalRef = useRef<number | null>(null);
+
+  /* ── Particle emitter ── */
+  useEffect(() => {
+    if (!isHovered || !pathRef.current || !svgRef.current) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      return;
+    }
+
+    const path = pathRef.current;
+    const svg = svgRef.current;
+    const totalLen = path.getTotalLength();
+
+    intervalRef.current = window.setInterval(() => {
+      const count = Math.random() > 0.6 ? 2 : 1;
+      for (let i = 0; i < count; i++) {
+        const dist = Math.random() * totalLen;
+        const pt = path.getPointAtLength(dist);
+        const color = PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)];
+        const size = 2 + Math.random() * 3;
+
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', String(pt.x));
+        circle.setAttribute('cy', String(pt.y));
+        circle.setAttribute('r', String(size));
+        circle.setAttribute('fill', color);
+        circle.setAttribute('opacity', '0.9');
+        circle.style.filter = `url(#${blurParticleId})`;
+        svg.appendChild(circle);
+
+        gsap.to(circle, {
+          attr: { cy: pt.y - 25 - Math.random() * 35, r: 0 },
+          opacity: 0,
+          duration: 0.7 + Math.random() * 0.5,
+          ease: 'power2.out',
+          onComplete: () => circle.remove(),
+        });
+      }
+    }, 180);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [isHovered, blurParticleId]);
 
   const haloStyle: React.CSSProperties = {
     strokeDasharray: `${HALO_SEG} ${HALO_GAP}`,
@@ -68,11 +124,13 @@ export const TableGlowPath: React.FC = () => {
       "
     >
       <svg
+        ref={svgRef}
         viewBox="0 0 761 629"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className="absolute inset-0 w-full h-full"
         preserveAspectRatio="xMidYMid meet"
+        style={{ overflow: 'visible' }}
       >
         <defs>
           {/* Wide blur for the outer halo */}
@@ -89,7 +147,15 @@ export const TableGlowPath: React.FC = () => {
           <filter id={blurHeadId} x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="10" />
           </filter>
+
+          {/* Particle glow blur */}
+          <filter id={blurParticleId} x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="3" />
+          </filter>
         </defs>
+
+        {/* Hidden path for getPointAtLength calculations */}
+        <path ref={pathRef} d={TABLE_PATH_D} fill="none" stroke="none" />
 
         {/* Layer 1 — wide diffuse orange halo */}
         <path

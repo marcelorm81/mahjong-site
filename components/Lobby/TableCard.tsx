@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Users, Eye, Star, Lock, Clock } from 'lucide-react';
 import { TableItem } from '../../types';
 import { motion } from 'framer-motion';
@@ -19,12 +19,15 @@ export const TableCard: React.FC<TableCardProps> = ({ table, onJoin }) => {
   // Determine if buttons should be hidden. 
   // We hide buttons if locked/coming soon, EXCEPT for special tables where we want them visible per request.
   const hideFooter = (isLocked || isComingSoon) && !isSpecialTable;
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: 0 }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       // Updated aspect ratio to [3/4] on all sizes to keep cards tall and large even in 3-col grid
       className={`
         relative group w-full aspect-[3/4] rounded-3xl overflow-hidden
@@ -36,7 +39,7 @@ export const TableCard: React.FC<TableCardProps> = ({ table, onJoin }) => {
       <div className="absolute inset-0 bg-radial-gradient from-brand-red/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
       {/* Traveling glow path around the table outline */}
-      <TableGlowPath />
+      <TableGlowPath isHovered={isHovered} />
 
       {/* Header Elements (Absolute Overlay) */}
       <div className="absolute top-3 left-3 right-3 flex items-center justify-between text-white/80 z-20 pointer-events-none">
