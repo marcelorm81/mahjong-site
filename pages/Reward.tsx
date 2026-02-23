@@ -7,14 +7,19 @@ const BASE_IMG     = '/assets/base.webp';
 const COINS_IMG    = '/assets/reward-coins.webp';
 const STARBURST    = '/assets/reward-starburst.svg';
 
-/* ── Particle explosion config ── */
-const PARTICLE_COUNT = 28;
+/* ── Particle explosion config (firework-style circular burst) ── */
 const PARTICLE_COLORS = [
-  'rgba(255,220,60,0.9)',   // bright gold
-  'rgba(255,200,40,0.85)',  // warm yellow
-  'rgba(255,180,30,0.8)',   // amber
-  'rgba(255,240,100,0.75)', // pale gold
-  'rgba(255,160,20,0.7)',   // deep amber
+  'rgba(255,220,60,1)',      // bright gold
+  'rgba(255,200,40,0.95)',   // warm yellow
+  'rgba(255,180,30,0.95)',   // amber
+  'rgba(255,240,100,0.9)',   // pale gold
+  'rgba(255,160,20,0.9)',    // deep amber
+  'rgba(255,255,150,0.85)',  // light yellow
+];
+/* Two concentric rings for a firework feel */
+const RINGS = [
+  { count: 20, minDist: 60,  maxDist: 150, minSize: 8,  maxSize: 18, delay: 0 },
+  { count: 28, minDist: 130, maxDist: 300, minSize: 10, maxSize: 26, delay: 0.05 },
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -52,47 +57,50 @@ export const Reward: React.FC<RewardProps> = ({ onClose, onRedeem }) => {
   const navIconRef = useRef<HTMLElement | null>(null);
   const busyRef = useRef(false);
 
-  /** Spawn blurred yellow circle particles exploding outward from center */
+  /** Spawn firework-style circular particle burst — two rings expanding outward */
   const fireParticles = () => {
     const container = particlesRef.current;
     if (!container) return;
 
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      const dot = document.createElement('div');
-      const size = 6 + Math.random() * 14;          // 6–20px
-      const blur = 2 + Math.random() * 5;            // 2–7px blur
-      const color = PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)];
+    RINGS.forEach(({ count, minDist, maxDist, minSize, maxSize, delay }) => {
+      for (let i = 0; i < count; i++) {
+        const dot = document.createElement('div');
+        const size = minSize + Math.random() * (maxSize - minSize);
+        const blur = 1 + Math.random() * 2.5;        // 1–3.5px (less blur = more visible)
+        const color = PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)];
 
-      Object.assign(dot.style, {
-        position: 'absolute',
-        left: '50%',
-        top: '50%',
-        width: `${size}px`,
-        height: `${size}px`,
-        borderRadius: '50%',
-        background: color,
-        filter: `blur(${blur}px)`,
-        pointerEvents: 'none',
-        transform: 'translate(-50%, -50%)',
-      });
-      container.appendChild(dot);
+        Object.assign(dot.style, {
+          position: 'absolute',
+          left: '50%',
+          top: '50%',
+          width: `${size}px`,
+          height: `${size}px`,
+          borderRadius: '50%',
+          background: color,
+          filter: `blur(${blur}px)`,
+          pointerEvents: 'none',
+          transform: 'translate(-50%, -50%)',
+        });
+        container.appendChild(dot);
 
-      // Random angle + distance for the burst
-      const angle = (Math.PI * 2 * i) / PARTICLE_COUNT + (Math.random() - 0.5) * 0.5;
-      const dist  = 80 + Math.random() * 160;        // 80–240px radius
-      const dx = Math.cos(angle) * dist;
-      const dy = Math.sin(angle) * dist;
+        // Even radial distribution for circular firework
+        const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.3;
+        const dist = minDist + Math.random() * (maxDist - minDist);
+        const dx = Math.cos(angle) * dist;
+        const dy = Math.sin(angle) * dist;
 
-      gsap.to(dot, {
-        x: dx,
-        y: dy,
-        opacity: 0,
-        scale: 0.2 + Math.random() * 0.4,
-        duration: 0.6 + Math.random() * 0.5,         // 0.6–1.1s
-        ease: 'power2.out',
-        onComplete: () => { dot.remove(); },
-      });
-    }
+        gsap.to(dot, {
+          x: dx,
+          y: dy,
+          opacity: 0,
+          scale: 0.3 + Math.random() * 0.4,
+          duration: 0.8 + Math.random() * 0.6,       // 0.8–1.4s (longer = more visible)
+          delay: delay + Math.random() * 0.08,
+          ease: 'power2.out',
+          onComplete: () => { dot.remove(); },
+        });
+      }
+    });
   };
 
   /* ── Forward animation (on mount) ── */
@@ -153,8 +161,19 @@ export const Reward: React.FC<RewardProps> = ({ onClose, onRedeem }) => {
       opacity: 1, duration: 0.45,
     }, '-=0.45')
 
-    // 2. Settle
-    .to({}, { duration: 0.12 })
+    // 2. Settle briefly
+    .to({}, { duration: 0.08 })
+
+    // 2b. Last excited shake at full size before opening
+    .to(lockRef.current, { rotation: 6, duration: 0.08, ease: 'sine.inOut' })
+    .to(baseRef.current, { rotation: -6, duration: 0.08, ease: 'sine.inOut' }, '<')
+    .to(lockRef.current, { rotation: -7, duration: 0.08, ease: 'sine.inOut' })
+    .to(baseRef.current, { rotation: 7, duration: 0.08, ease: 'sine.inOut' }, '<')
+    .to(lockRef.current, { rotation: 5, duration: 0.07, ease: 'sine.inOut' })
+    .to(baseRef.current, { rotation: -5, duration: 0.07, ease: 'sine.inOut' }, '<')
+    .to(lockRef.current, { rotation: -6, duration: 0.07, ease: 'sine.inOut' })
+    .to(baseRef.current, { rotation: 6, duration: 0.07, ease: 'sine.inOut' }, '<')
+    .to([lockRef.current, baseRef.current], { rotation: 0, duration: 0.06, ease: 'sine.out' })
 
     // 3. Open — lock lifts up, base drops down (both with overshoot)
     .to(lockRef.current, {

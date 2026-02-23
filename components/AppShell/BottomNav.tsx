@@ -93,17 +93,19 @@ export const BottomNav: React.FC<BottomNavProps> = ({
     gsap.set([lock, base], { rotation: 0 });
 
     // Continuous counter-rotation loop with micro variations
-    const shake = gsap.timeline({ repeat: -1 });
+    const shake = gsap.timeline({ repeat: -1, repeatDelay: 2 });
     // Each swing: lock goes one way, base the opposite, with slight amplitude jitter
+    // ~2s of shaking then 2s pause before repeating
     const swings: [number, number][] = [
-      [ 5,   0.18],   // lock angle, duration
-      [-5,   0.17],
-      [ 5.5, 0.19],
-      [-4.5, 0.16],
-      [ 5,   0.18],
-      [-5.5, 0.20],
-      [ 4,   0.15],
-      [-5,   0.18],
+      [ 5,   0.22],   // lock angle, duration
+      [-5,   0.21],
+      [ 5.5, 0.24],
+      [-4.5, 0.20],
+      [ 5,   0.23],
+      [-5.5, 0.25],
+      [ 4,   0.20],
+      [-5,   0.22],
+      [ 0,   0.23],   // settle back to rest
     ];
     swings.forEach(([angle, dur]) => {
       shake
