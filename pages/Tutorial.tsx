@@ -328,7 +328,7 @@ const CalloutLabel: React.FC<{ text: string; tailUp?: boolean }> = ({ text, tail
             fontSize: 'clamp(20px, min(4.5vw, 4vh), 38px)',
             letterSpacing: '-0.02em',
             textShadow: '1px 1px 0 rgba(0,0,0,0.4)',
-            ...(tailUp ? { paddingTop: `${TAIL_H}px` } : {}),
+            ...(tailUp ? {} : {}),
           }}>
           {text}
         </div>
@@ -369,15 +369,17 @@ const Step3Section: React.FC = () => {
 
   return (
     <div ref={sectionRef} className="select-none pointer-events-none">
-      {/* Kong tiles with KONG! label overlaid — extra top margin so bubble sits higher */}
-      <div className="relative mt-6 md:mt-8">
+      {/* KONG! label — normal flow, overlaps tiles below via negative margin */}
+      <div className="kong-label relative z-20 mb-[-18px] md:mb-[-22px]" style={{ transform: 'rotate(-4deg)' }}>
+        <CalloutLabel text="KONG!" />
+      </div>
+
+      {/* Kong tiles — sit below the label, partially overlapped */}
+      <div className="relative">
         <div className="flex gap-[1px] md:gap-[2px]">
           {[0, 1, 2, 3].map(i => (
             <Tile key={`k-${i}`} src="/assets/tiles/tile-num-1.webp" alt="Kong" extra="kong-tile" />
           ))}
-        </div>
-        <div className="kong-label absolute -top-5 left-1/2 -translate-x-1/2 z-20" style={{ transform: 'rotate(-4deg) translateX(-50%)' }}>
-          <CalloutLabel text="KONG!" />
         </div>
         <div ref={kongParticlesRef} className="absolute inset-0 pointer-events-none flex items-center justify-center" />
       </div>
@@ -399,7 +401,7 @@ const Step3Section: React.FC = () => {
             ))}
           </div>
         </div>
-        <div className="mj-label absolute -bottom-12 left-1/2 z-20" style={{ transform: 'rotate(-4deg) translateX(-50%)', whiteSpace: 'nowrap' }}>
+        <div className="mj-label relative z-20 mt-[-14px] md:mt-[-18px]" style={{ transform: 'rotate(-4deg)', whiteSpace: 'nowrap' }}>
           <CalloutLabel text="MAHJONG!" tailUp />
         </div>
         <div ref={mjParticlesRef} className="absolute inset-0 pointer-events-none flex items-center justify-center" />
@@ -479,12 +481,12 @@ const Step5KongSection: React.FC = () => {
 
   return (
     <div ref={sectionRef} className="select-none pointer-events-none">
-      {/* KONG! label — sits above tiles in normal flow */}
-      <div className="kong-label mb-3 md:mb-4" style={{ transform: 'rotate(-4deg)' }}>
+      {/* KONG! label — normal flow, overlaps tiles below via negative margin */}
+      <div className="kong-label relative z-20 mb-[-18px] md:mb-[-22px]" style={{ transform: 'rotate(-4deg)' }}>
         <CalloutLabel text="KONG!" />
       </div>
 
-      {/* 4 Kong tiles below the label */}
+      {/* 4 Kong tiles below the label, partially overlapped */}
       <div className="relative mb-6 md:mb-8">
         <div className="flex gap-[2px] md:gap-[3px]">
           {[0, 1, 2, 3].map(i => (
@@ -501,7 +503,8 @@ const Step5KongSection: React.FC = () => {
           <div className="relative mb-2">
             <div className="w-[120px] h-[120px] md:w-[160px] md:h-[160px] rounded-xl overflow-hidden border-2 border-white/20">
               <img src="/assets/profile-bubbletea.webp" alt="Player 1"
-                className="w-full h-full object-cover" style={{ objectPosition: '50% 15%' }} />
+                className="w-full h-full object-cover"
+                style={{ objectFit: 'cover', objectPosition: 'center top', transform: 'translateY(8px)' }} />
             </div>
             <div className="absolute -top-2.5 -right-4 px-2 py-1 rounded-full text-xs md:text-sm font-bold text-white flex items-center gap-0.5"
               style={{ background: '#22c55e', boxShadow: '0 2px 6px rgba(34,197,94,0.4)' }}>
@@ -521,7 +524,8 @@ const Step5KongSection: React.FC = () => {
           <div className="relative mb-2">
             <div className="w-[120px] h-[120px] md:w-[160px] md:h-[160px] rounded-xl overflow-hidden border-2 border-white/20">
               <img src="/assets/profile-busy.webp" alt="Player 2"
-                className="w-full h-full object-cover" style={{ objectPosition: '50% 15%' }} />
+                className="w-full h-full object-cover"
+                style={{ objectFit: 'cover', objectPosition: 'center top', transform: 'translateY(8px)' }} />
             </div>
             <div className="absolute -top-2.5 -right-4 px-2 py-1 rounded-full text-xs md:text-sm font-bold text-white flex items-center gap-0.5"
               style={{ background: '#ef4444', boxShadow: '0 2px 6px rgba(239,68,68,0.4)' }}>
@@ -863,6 +867,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
   /* ── Bubble position helpers ── */
   const bubbleTop =
     step === 0 ? 'top-[22vh] md:top-[calc(30vh-130px)]'
+    : step === 3 ? 'top-[calc(22vh+320px)] md:top-[calc(30vh-130px)]'
     : step === 2 || step === 4 || step === 5
       ? 'top-[calc(22vh+250px)] md:top-[18vh]'
     : 'top-[calc(22vh+250px)] md:top-[calc(30vh-130px)]';
