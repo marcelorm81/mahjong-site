@@ -60,7 +60,8 @@ export const TableGlowPath: React.FC = () => {
   return (
     <div
       className="
-        absolute inset-0 z-[5] pointer-events-none
+        absolute z-[5] pointer-events-none
+        top-[28%] left-[12%] right-[12%] bottom-[5%]
         opacity-0 group-hover:opacity-100
         transition-opacity duration-500
       "
@@ -78,9 +79,9 @@ export const TableGlowPath: React.FC = () => {
             <feGaussianBlur stdDeviation="20" />
           </filter>
 
-          {/* Tighter blur for the core glow */}
-          <filter id={blurCoreId} x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur stdDeviation="6" />
+          {/* Core blur — matches halo intensity */}
+          <filter id={blurCoreId} x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="20" />
           </filter>
         </defs>
 
