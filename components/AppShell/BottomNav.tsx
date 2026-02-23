@@ -75,7 +75,10 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   const shakeRef = useRef<gsap.core.Timeline | null>(null);
   const glowTweenRef = useRef<gsap.core.Tween | null>(null);
 
-  // ── Burst-pause counter-rotation shake + pulsing glow ──
+  // ── Continuous organic counter-rotation shake + soft glow ──
+  // Lock and base always rotate in opposite directions, creating a
+  // "something alive inside" feeling.  Micro irregularity in timing
+  // and amplitude keeps it from feeling robotic.
   useEffect(() => {
     if (rewardRedeemed || hideRewardIcon) {
       shakeRef.current?.kill();
@@ -87,31 +90,35 @@ export const BottomNav: React.FC<BottomNavProps> = ({
     const glow = glowRef.current;
     if (!lock || !base) return;
 
-    // Reset rotation
     gsap.set([lock, base], { rotation: 0 });
 
-    // Burst of counter-rotations, then a 1.5s pause before repeating
-    const shake = gsap.timeline({ repeat: -1, repeatDelay: 1.5 });
-    shake
-      .to(lock, { rotation: 6,  duration: 0.08, ease: 'power1.inOut' }, 0)
-      .to(base, { rotation: -6, duration: 0.08, ease: 'power1.inOut' }, 0)
-      .to(lock, { rotation: -5, duration: 0.08, ease: 'power1.inOut' })
-      .to(base, { rotation: 5,  duration: 0.08, ease: 'power1.inOut' }, '<')
-      .to(lock, { rotation: 4,  duration: 0.07, ease: 'power1.inOut' })
-      .to(base, { rotation: -4, duration: 0.07, ease: 'power1.inOut' }, '<')
-      .to(lock, { rotation: -3, duration: 0.07, ease: 'power1.inOut' })
-      .to(base, { rotation: 3,  duration: 0.07, ease: 'power1.inOut' }, '<')
-      .to(lock, { rotation: 0,  duration: 0.06, ease: 'power1.inOut' })
-      .to(base, { rotation: 0,  duration: 0.06, ease: 'power1.inOut' }, '<');
+    // Continuous counter-rotation loop with micro variations
+    const shake = gsap.timeline({ repeat: -1 });
+    // Each swing: lock goes one way, base the opposite, with slight amplitude jitter
+    const swings: [number, number][] = [
+      [ 5,   0.18],   // lock angle, duration
+      [-5,   0.17],
+      [ 5.5, 0.19],
+      [-4.5, 0.16],
+      [ 5,   0.18],
+      [-5.5, 0.20],
+      [ 4,   0.15],
+      [-5,   0.18],
+    ];
+    swings.forEach(([angle, dur]) => {
+      shake
+        .to(lock, { rotation: angle,  duration: dur, ease: 'sine.inOut' })
+        .to(base, { rotation: -angle, duration: dur, ease: 'sine.inOut' }, '<');
+    });
     shakeRef.current = shake;
 
-    // Pulsing glow behind icon
+    // Soft radial glow pulse behind icon
     let glowTween: gsap.core.Tween | null = null;
     if (glow) {
       glowTween = gsap.to(glow, {
-        scale: 1.4,
-        opacity: 0.35,
-        duration: 1.0,
+        scale: 1.3,
+        opacity: 0.30,
+        duration: 1.2,
         ease: 'sine.inOut',
         yoyo: true,
         repeat: -1,
@@ -208,21 +215,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
                       alt=""
                       className="absolute inset-0 w-full h-full object-contain drop-shadow-md"
                     />
-                    {/* Shimmer sweep overlay */}
-                    <div
-                      className="absolute inset-0 pointer-events-none overflow-hidden rounded"
-                      style={{ mixBlendMode: 'overlay' as const }}
-                    >
-                      <div
-                        className="absolute inset-0"
-                        style={{
-                          background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.3) 50%, transparent 60%)',
-                          backgroundSize: '200% 100%',
-                          animation: 'shimmer 2.5s ease-in-out infinite',
-                        }}
-                      />
-                    </div>
-                    {/* Pulsing radial glow behind icon */}
+                    {/* Soft radial glow behind icon */}
                     <div
                       ref={glowRef}
                       className="absolute inset-[-50%] rounded-full pointer-events-none"

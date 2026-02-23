@@ -7,6 +7,16 @@ const BASE_IMG     = '/assets/base.webp';
 const COINS_IMG    = '/assets/reward-coins.webp';
 const STARBURST    = '/assets/reward-starburst.svg';
 
+/* ── Particle explosion config ── */
+const PARTICLE_COUNT = 28;
+const PARTICLE_COLORS = [
+  'rgba(255,220,60,0.9)',   // bright gold
+  'rgba(255,200,40,0.85)',  // warm yellow
+  'rgba(255,180,30,0.8)',   // amber
+  'rgba(255,240,100,0.75)', // pale gold
+  'rgba(255,160,20,0.7)',   // deep amber
+];
+
 /* ═══════════════════════════════════════════════════════════════════════
    Reward overlay
    ─────────────────────────────────────────────────────────────────────
@@ -28,18 +38,62 @@ interface RewardProps {
 
 export const Reward: React.FC<RewardProps> = ({ onClose, onRedeem }) => {
   /* ── Refs ── */
-  const backdropRef  = useRef<HTMLDivElement>(null);
-  const giftRef      = useRef<HTMLDivElement>(null);
-  const lockRef      = useRef<HTMLImageElement>(null);
-  const baseRef      = useRef<HTMLImageElement>(null);
-  const whiteGlowRef = useRef<HTMLDivElement>(null);
-  const goldGlowRef  = useRef<HTMLDivElement>(null);
-  const cardRef      = useRef<HTMLDivElement>(null);
+  const backdropRef    = useRef<HTMLDivElement>(null);
+  const giftRef        = useRef<HTMLDivElement>(null);
+  const lockRef        = useRef<HTMLImageElement>(null);
+  const baseRef        = useRef<HTMLImageElement>(null);
+  const whiteGlowRef   = useRef<HTMLDivElement>(null);
+  const goldGlowRef    = useRef<HTMLDivElement>(null);
+  const cardRef        = useRef<HTMLDivElement>(null);
+  const particlesRef   = useRef<HTMLDivElement>(null);
 
   // Store starting offsets for reverse animation
   const startRef = useRef({ x: 0, y: 0, scale: 0.1 });
   const navIconRef = useRef<HTMLElement | null>(null);
   const busyRef = useRef(false);
+
+  /** Spawn blurred yellow circle particles exploding outward from center */
+  const fireParticles = () => {
+    const container = particlesRef.current;
+    if (!container) return;
+
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      const dot = document.createElement('div');
+      const size = 6 + Math.random() * 14;          // 6–20px
+      const blur = 2 + Math.random() * 5;            // 2–7px blur
+      const color = PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)];
+
+      Object.assign(dot.style, {
+        position: 'absolute',
+        left: '50%',
+        top: '50%',
+        width: `${size}px`,
+        height: `${size}px`,
+        borderRadius: '50%',
+        background: color,
+        filter: `blur(${blur}px)`,
+        pointerEvents: 'none',
+        transform: 'translate(-50%, -50%)',
+      });
+      container.appendChild(dot);
+
+      // Random angle + distance for the burst
+      const angle = (Math.PI * 2 * i) / PARTICLE_COUNT + (Math.random() - 0.5) * 0.5;
+      const dist  = 80 + Math.random() * 160;        // 80–240px radius
+      const dx = Math.cos(angle) * dist;
+      const dy = Math.sin(angle) * dist;
+
+      gsap.to(dot, {
+        x: dx,
+        y: dy,
+        opacity: 0,
+        scale: 0.2 + Math.random() * 0.4,
+        duration: 0.6 + Math.random() * 0.5,         // 0.6–1.1s
+        ease: 'power2.out',
+        onComplete: () => { dot.remove(); },
+      });
+    }
+  };
 
   /* ── Forward animation (on mount) ── */
   useLayoutEffect(() => {
@@ -140,6 +194,7 @@ export const Reward: React.FC<RewardProps> = ({ onClose, onRedeem }) => {
     .to(cardRef.current, {
       opacity: 1, scale: 1,
       duration: 0.6, ease: 'back.out(1.4)',
+      onStart: () => { fireParticles(); },
     }, '-=0.35');
 
     return () => { tl.kill(); };
@@ -252,6 +307,11 @@ export const Reward: React.FC<RewardProps> = ({ onClose, onRedeem }) => {
           <line x1="15" y1="5" x2="5" y2="15" />
         </svg>
       </button>
+
+      {/* ── Particle explosion container (centered, z-28 — between glow and card) ── */}
+      <div className="absolute inset-0 z-[28] pointer-events-none flex items-center justify-center">
+        <div ref={particlesRef} className="relative w-0 h-0" />
+      </div>
 
       {/* ── Prize card (centered, GSAP-controlled — emerges from halo center) ── */}
       <div className="absolute inset-0 z-30 pointer-events-none flex items-center justify-center">
