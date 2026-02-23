@@ -36,6 +36,7 @@ export const TableGlowPath: React.FC = () => {
   const uid = useId();
   const blurWideId = `tgw${uid}`;
   const blurCoreId = `tgc${uid}`;
+  const blurHeadId = `tgh${uid}`;
 
   const haloStyle: React.CSSProperties = {
     strokeDasharray: `${HALO_SEG} ${HALO_GAP}`,
@@ -79,9 +80,14 @@ export const TableGlowPath: React.FC = () => {
             <feGaussianBlur stdDeviation="20" />
           </filter>
 
-          {/* Core blur — matches halo intensity */}
+          {/* Core blur — medium diffusion */}
           <filter id={blurCoreId} x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="20" />
+            <feGaussianBlur stdDeviation="10" />
+          </filter>
+
+          {/* Head blur — light softening */}
+          <filter id={blurHeadId} x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="6" />
           </filter>
         </defs>
 
@@ -113,7 +119,7 @@ export const TableGlowPath: React.FC = () => {
           style={coreStyle}
         />
 
-        {/* Layer 3 — sharp bright leading edge */}
+        {/* Layer 3 — bright leading edge with light blur */}
         <path
           className="table-glow-path"
           d={TABLE_PATH_D}
@@ -123,6 +129,7 @@ export const TableGlowPath: React.FC = () => {
           strokeLinejoin="round"
           strokeOpacity="0.85"
           fill="none"
+          filter={`url(#${blurHeadId})`}
           style={headStyle}
         />
       </svg>
