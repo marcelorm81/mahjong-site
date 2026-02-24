@@ -77,9 +77,9 @@ export const TableGlowPath: React.FC<TableGlowPathProps> = ({ isHovered = false 
         svg.appendChild(circle);
 
         gsap.to(circle, {
-          attr: { cy: pt.y - 30 - Math.random() * 40, r: 0 },
+          attr: { cy: pt.y - 50 - Math.random() * 60, r: 0 },
           opacity: 0,
-          duration: 0.9 + Math.random() * 0.6,
+          duration: 2.0 + Math.random() * 1.5,
           ease: 'power2.out',
           onComplete: () => circle.remove(),
         });
