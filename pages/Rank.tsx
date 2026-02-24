@@ -26,12 +26,12 @@ const MOCK_RANKINGS: RankEntry[] = [
   { rank: 1,  username: 'Uncle Cai',      level: 50, score: 2000000, avatarUrl: avatarUncleCai },
   { rank: 2,  username: 'Anne Wan',       level: 50, score: 1630000, avatarUrl: avatarAnneWan },
   { rank: 3,  username: 'Bang Johnsson',  level: 50, score: 1230000, avatarUrl: avatarBangJohnsson },
-  { rank: 4,  username: 'Mrs Chen',       level: 50, score: 1100000, avatarUrl: avatarMrsChen },
+  { rank: 4,  username: 'Mrs Chen',       level: 50, score: 1100000, avatarUrl: avatarTonyKong },
   { rank: 5,  username: 'Pon Pon',        level: 50, score: 980000,  avatarUrl: avatarPonPon },
   { rank: 6,  username: 'Echo T\u00f3ng', level: 50, score: 965000,  avatarUrl: avatarEchoTong },
   { rank: 7,  username: 'Tony Kong',      level: 50, score: 900000,  avatarUrl: avatarTonyKong },
-  { rank: 8,  username: 'Master Zendo',   level: 50, score: 870000,  avatarUrl: avatarMasterZendo },
-  { rank: 9,  username: 'Mr. Won',        level: 50, score: 840000,  avatarUrl: avatarMrWon },
+  { rank: 8,  username: 'Master Zendo',   level: 50, score: 870000,  avatarUrl: avatarAnneWan },
+  { rank: 9,  username: 'Mr. Won',        level: 50, score: 840000,  avatarUrl: avatarBangJohnsson },
   { rank: 10, username: 'Racheal',        level: 50, score: 720000,  avatarUrl: avatarRacheal },
 ];
 
