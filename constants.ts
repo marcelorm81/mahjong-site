@@ -41,6 +41,7 @@ export const MOCK_TABLES: TableItem[] = [
     id: '6',
     title: 'Beach Paradise',
     imageUrl: 'https://raw.githubusercontent.com/marcelorm81/Mahjongtest/5c6ac17796838551de30890843f764167f6964a3/beach.webp',
+    videoUrl: '/assets/beach1.webm',
     winAmount: 2000,
     entryCost: 500,
     playersCurrent: 1,
