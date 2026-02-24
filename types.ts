@@ -30,6 +30,7 @@ export interface TableItem {
   title: string;
   imageUrl: string;
   videoUrl?: string;
+  videoUrlHEVC?: string;
   winAmount: number;
   entryCost: number;
   playersCurrent: number;
