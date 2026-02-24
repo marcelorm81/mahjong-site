@@ -77,13 +77,17 @@ export const TableCard: React.FC<TableCardProps> = ({ table, onJoin }) => {
             */}
             {table.videoUrl ? (
               <video
-                src={table.videoUrl}
                 autoPlay
                 loop
                 muted
                 playsInline
                 className="absolute inset-0 w-full h-full object-contain object-center drop-shadow-2xl transition-all duration-300"
-              />
+              >
+                {table.videoUrlHEVC && (
+                  <source src={table.videoUrlHEVC} type='video/mp4; codecs="hvc1"' />
+                )}
+                <source src={table.videoUrl} type="video/webm" />
+              </video>
             ) : (
               <img
                 src={table.imageUrl}
