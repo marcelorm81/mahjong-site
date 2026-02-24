@@ -401,7 +401,7 @@ const Step3Section: React.FC = () => {
             ))}
           </div>
         </div>
-        <div className="mj-label mj-label-step3 relative z-20 mt-3 md:mt-4" style={{ transform: 'translate(140px, -70px) rotate(-4deg)', whiteSpace: 'nowrap' }}>
+        <div className="mj-label mj-label-step3 relative z-20 mt-3 md:mt-4" style={{ transform: 'translate(190px, -40px) rotate(-4deg)', whiteSpace: 'nowrap' }}>
           <CalloutLabel text="MAHJONG!" tailUp flipX />
           <div ref={mjParticlesRef} className="absolute inset-0 z-30 pointer-events-none flex items-center justify-center" />
         </div>
@@ -987,7 +987,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
       <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-[20px] pt-[20px] short:pt-[10px]">
         <button
           onClick={handleSkip}
-          className="border border-white rounded-[6px] px-8 short:px-3 md:px-[60px] py-2.5 short:py-1 md:h-[45px] md:flex md:items-center text-white font-semibold text-sm short:text-xs md:text-base uppercase tracking-tight hover:bg-white/10 active:scale-95 transition-all"
+          className="tut-header-btn border border-white rounded-[6px] px-8 short:px-3 md:px-[60px] py-2.5 short:py-1 md:h-[45px] md:flex md:items-center text-white font-semibold text-sm short:text-xs md:text-base uppercase tracking-tight hover:bg-white/10 active:scale-95 transition-all"
           style={{
             background: 'radial-gradient(ellipse at center, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 100%)',
           }}
@@ -1005,7 +1005,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
         <button
           ref={nextBtnRef}
           onClick={handleNext}
-          className="border border-white rounded-[6px] px-8 short:px-3 md:px-[60px] py-2.5 short:py-1 md:h-[45px] md:flex md:items-center text-white font-semibold text-sm short:text-xs md:text-base uppercase tracking-tight hover:brightness-110 active:scale-95 transition-all"
+          className="tut-header-btn border border-white rounded-[6px] px-8 short:px-3 md:px-[60px] py-2.5 short:py-1 md:h-[45px] md:flex md:items-center text-white font-semibold text-sm short:text-xs md:text-base uppercase tracking-tight hover:brightness-110 active:scale-95 transition-all"
           style={{
             background: 'linear-gradient(181deg, rgba(255,255,255,0) 9%, rgba(230,162,60,0.6) 98%)',
           }}
@@ -1015,7 +1015,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
       </div>
 
       {/* ── Page dots ── */}
-      <div className="absolute z-20 left-1/2 -translate-x-1/2 top-[72px] short:top-[38px] md:top-[80px]">
+      <div className="tut-dots-wrap absolute z-20 left-1/2 -translate-x-1/2 top-[72px] short:top-[38px] md:top-[80px]">
         <PageDots current={step} total={TOTAL_STEPS} />
       </div>
 

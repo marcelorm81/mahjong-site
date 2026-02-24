@@ -96,8 +96,19 @@ main {
   animation-play-state: running;
 }
 
+/* ── Step 3 MAHJONG bubble: desktop override ── */
+@media (min-width: 768px) {
+  .mj-label-step3 { transform: translate(390px, -70px) rotate(-4deg) !important; }
+}
+
 /* ── Tutorial: mobile landscape overrides ─────────────────────────── */
 @media (orientation: landscape) and (max-height: 600px) {
+  /* Header buttons: double width (12px → 24px horizontal padding) */
+  .tut-header-btn { padding-left: 24px !important; padding-right: 24px !important; transition-property: color, background-color, border-color, box-shadow, transform, opacity !important; }
+
+  /* Dots: 20px below title */
+  .tut-dots-wrap { top: 63px !important; }
+
   /* Tiles: 36×48 → 29×39 (~30% smaller than portrait, not 40%) */
   .mahjong-tile { width: 29px !important; height: 39px !important; }
 
@@ -128,6 +139,6 @@ main {
   /* Tile row bottom margins */
   .tile-row-0, .tile-row-1 { margin-bottom: 5px !important; }
 
-  /* Step3 mj-label: adjust translate for bigger tiles */
-  .mj-label-step3 { transform: translate(105px, -45px) rotate(-4deg) !important; }
+  /* Step3 mj-label: adjust translate for landscape tiles */
+  .mj-label-step3 { transform: translate(140px, -45px) rotate(-4deg) !important; }
 }
