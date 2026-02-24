@@ -28,6 +28,7 @@ export const MOCK_TABLES: TableItem[] = [
     id: '2',
     title: 'Food Market',
     imageUrl: 'https://raw.githubusercontent.com/marcelorm81/Mahjongtest/3149293f5ccaff19c1a4dd0c716c9a8080a8c46f/foodmarket.webp',
+    videoUrl: '/assets/market.webm',
     winAmount: 10000,
     entryCost: 4000,
     playersCurrent: 1,

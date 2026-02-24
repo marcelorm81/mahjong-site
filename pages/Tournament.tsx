@@ -291,16 +291,61 @@ const TournamentCard: React.FC<{ t: TournamentItem; index: number }> = ({ t, ind
         </div>
       </div>
 
-      {/* ── MOBILE: Stacked layout ── */}
+      {/* ── MOBILE: Stacked layout — image first, then title + text + CTA ── */}
       <div className="md:hidden flex flex-col">
-        {/* Top: Title + Description + Meta + Buttons */}
+        {/* Top: Image */}
+        <div className="relative h-52 short:h-40 overflow-hidden rounded-lg">
+          <img
+            src={t.imageUrl}
+            alt={t.title.join(' ')}
+            className="absolute inset-0 w-full h-full object-cover object-center"
+            style={{ transform: 'scale(1.18)', transformOrigin: 'center center' }}
+          />
+          {/* Bottom fade */}
+          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/80 to-transparent" />
+
+          {/* Prize + Time overlay */}
+          {!isComingSoon && (
+            <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between z-10 text-sm">
+              <div className="flex items-center gap-1.5">
+                <span className="text-white font-bold uppercase">
+                  Prize{' '}
+                  <span className="text-[#aeff00]">{formatPrize(t.prize)}</span>
+                </span>
+                <img src={imgCoin} alt="" className="w-5 h-5 object-contain" />
+              </div>
+              <span className="text-white font-bold uppercase tabular-nums text-xs">
+                {timeDisplay}
+              </span>
+            </div>
+          )}
+
+          {/* Coming Soon overlay */}
+          {isComingSoon && (
+            <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
+              <p className="uppercase text-white text-2xl" style={{ fontFamily: "'Clash Display'", fontWeight: 700 }}>
+                COMING SOON
+              </p>
+            </div>
+          )}
+
+          {/* Live effects */}
+          {isLive && (
+            <>
+              <div className="absolute inset-0 border-2 border-[#ffc300] rounded-lg opacity-60 pointer-events-none" />
+              <LiveBadge />
+            </>
+          )}
+        </div>
+
+        {/* Bottom: Title + Description + Meta + CTA */}
         <div className="flex flex-col gap-4 py-4">
           <div>
             <h2
               className="uppercase leading-[0.9] tracking-tight"
               style={{
                 fontFamily: "'Clash Display'",
-                fontSize: 64,
+                fontSize: 51,
                 fontWeight: 700,
                 fontStyle: 'normal',
                 background: t.gradient,
@@ -358,51 +403,6 @@ const TournamentCard: React.FC<{ t: TournamentItem; index: number }> = ({ t, ind
             <button className="w-full bg-[#D00501] active:scale-95 transition-all text-white font-bold uppercase text-sm py-3 rounded-md shadow-[4px_4px_0px_0px_#4a0000]">
               STAY UPDATED
             </button>
-          )}
-        </div>
-
-        {/* Bottom: Image */}
-        <div className="relative h-52 short:h-40 overflow-hidden rounded-lg">
-          <img
-            src={t.imageUrl}
-            alt={t.title.join(' ')}
-            className="absolute inset-0 w-full h-full object-cover object-center"
-            style={{ transform: 'scale(1.18)', transformOrigin: 'center center' }}
-          />
-          {/* Bottom fade */}
-          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/80 to-transparent" />
-
-          {/* Prize + Time overlay */}
-          {!isComingSoon && (
-            <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between z-10 text-sm">
-              <div className="flex items-center gap-1.5">
-                <span className="text-white font-bold uppercase">
-                  Prize{' '}
-                  <span className="text-[#aeff00]">{formatPrize(t.prize)}</span>
-                </span>
-                <img src={imgCoin} alt="" className="w-5 h-5 object-contain" />
-              </div>
-              <span className="text-white font-bold uppercase tabular-nums text-xs">
-                {timeDisplay}
-              </span>
-            </div>
-          )}
-
-          {/* Coming Soon overlay */}
-          {isComingSoon && (
-            <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
-              <p className="uppercase text-white text-2xl" style={{ fontFamily: "'Clash Display'", fontWeight: 700 }}>
-                COMING SOON
-              </p>
-            </div>
-          )}
-
-          {/* Live effects */}
-          {isLive && (
-            <>
-              <div className="absolute inset-0 border-2 border-[#ffc300] rounded-lg opacity-60 pointer-events-none" />
-              <LiveBadge />
-            </>
           )}
         </div>
       </div>

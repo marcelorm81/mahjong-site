@@ -60,7 +60,7 @@ export const TableGlowPath: React.FC<TableGlowPathProps> = ({ isHovered = false 
     const totalLen = path.getTotalLength();
 
     intervalRef.current = window.setInterval(() => {
-      const count = 1 + (Math.random() > 0.5 ? 1 : 0);
+      const count = 2 + (Math.random() > 0.4 ? 1 : 0);
       for (let i = 0; i < count; i++) {
         const dist = Math.random() * totalLen;
         const pt = path.getPointAtLength(dist);
@@ -77,14 +77,14 @@ export const TableGlowPath: React.FC<TableGlowPathProps> = ({ isHovered = false 
         svg.appendChild(circle);
 
         gsap.to(circle, {
-          attr: { cy: pt.y - 120 - Math.random() * 100, r: 0 },
+          attr: { cy: pt.y - 150 - Math.random() * 120, r: 0 },
           opacity: 0,
-          duration: 3.0 + Math.random() * 2.0,
+          duration: 3.5 + Math.random() * 2.5,
           ease: 'power1.out',
           onComplete: () => circle.remove(),
         });
       }
-    }, 140);
+    }, 100);
 
     return () => {
       if (intervalRef.current) {

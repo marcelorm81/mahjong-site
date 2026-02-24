@@ -75,14 +75,25 @@ export const TableCard: React.FC<TableCardProps> = ({ table, onJoin }) => {
               Image is absolute inset-0 to ensure it scales within the flex-1 container 
               object-contain ensures NO CROPPING.
             */}
-            <img 
-              src={table.imageUrl} 
-              alt={table.title}
-              className={`
-                absolute inset-0 w-full h-full object-contain object-center drop-shadow-2xl transition-all duration-300
-                ${isSpecialTable ? 'brightness-0 opacity-80' : ''}
-              `}
-            />
+            {table.videoUrl ? (
+              <video
+                src={table.videoUrl}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute inset-0 w-full h-full object-contain object-center drop-shadow-2xl transition-all duration-300"
+              />
+            ) : (
+              <img
+                src={table.imageUrl}
+                alt={table.title}
+                className={`
+                  absolute inset-0 w-full h-full object-contain object-center drop-shadow-2xl transition-all duration-300
+                  ${isSpecialTable ? 'brightness-0 opacity-80' : ''}
+                `}
+              />
+            )}
             
             {/* Floor Glow */}
             <div className={`absolute bottom-2 left-1/2 -translate-x-1/2 w-[60%] h-8 bg-black/50 blur-xl rounded-full -z-10 ${isSpecialTable ? 'opacity-20' : ''}`} />
