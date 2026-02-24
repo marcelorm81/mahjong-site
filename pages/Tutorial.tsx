@@ -934,11 +934,11 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
 
   /* ── Bubble position helpers ── */
   const bubbleTop = isLandMobile
-    ? (step === 0 ? 'top-[52vh]'
-      : step === 3 ? 'top-[56vh]'
-      : step === 5 ? 'top-[52vh]'
-      : step === 2 || step === 4 ? 'top-[55vh]'
-      : 'top-[52vh]')
+    ? (step === 0 ? 'top-[18vh]'
+      : step === 3 ? 'top-[18vh]'
+      : step === 5 ? 'top-[20vh]'
+      : step === 2 || step === 4 ? 'top-[20vh]'
+      : 'top-[18vh]')
     : (step === 0 ? 'top-[22vh] md:top-[calc(30vh-130px)]'
       : step === 3 ? 'top-[calc(22vh+280px)] md:top-[calc(30vh-130px)]'
       : step === 5 ? 'top-[calc(22vh+190px)] md:top-[18vh]'
@@ -946,7 +946,10 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
         ? 'top-[calc(22vh+240px)] md:top-[18vh]'
       : 'top-[calc(22vh+210px)] md:top-[calc(30vh-130px)]');
 
-  const bubbleLeft = isLandMobile ? ''
+  const bubbleLeft = isLandMobile
+    ? (step === 1 ? 'left-[calc(18%+350px)]'
+      : step >= 2 && step <= 5 ? 'left-[42%]'
+      : 'left-[18%]')
     : step === 1 ? 'md:left-[calc(18%+500px)]'
     : step >= 2 && step <= 5 ? 'md:left-[42%]'
     : 'md:left-[18%]';
@@ -960,11 +963,11 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
         return (
           <>
             <video key={desktopSrc} autoPlay loop muted playsInline
-              className="hidden md:block short:hidden absolute inset-0 w-full h-full object-cover">
+              className="hidden md:block short:block absolute inset-0 w-full h-full object-cover">
               <source src={desktopSrc} type="video/mp4" />
             </video>
             <video key={mobileSrc} autoPlay loop muted playsInline
-              className="block md:hidden short:block absolute inset-0 w-full h-full object-cover">
+              className="block md:hidden short:hidden absolute inset-0 w-full h-full object-cover">
               <source src={mobileSrc} type="video/mp4" />
             </video>
           </>
@@ -1060,7 +1063,7 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
 
       {/* ── Chat bubble (hidden on noBubble steps) ── */}
       {showBubble && (
-        <div ref={bubbleWrapRef} className={`absolute z-20 left-4 ${bubbleLeft} ${bubbleTop} w-[min(74vw,43vh)] max-w-[234px] short:w-[min(40vw,45vh)] short:max-w-[220px] md:w-[min(28vw,45vh)] md:max-w-[340px] overflow-visible`}>
+        <div ref={bubbleWrapRef} className={`absolute z-20 left-4 ${bubbleLeft} ${bubbleTop} w-[min(74vw,43vh)] max-w-[234px] short:w-[min(30vw,50vh)] short:max-w-[320px] md:w-[min(28vw,45vh)] md:max-w-[340px] overflow-visible`}>
           <ChatBubble
             key={`${step}-${phraseIdx}`}
             lines={currentLines}

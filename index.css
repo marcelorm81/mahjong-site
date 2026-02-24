@@ -98,36 +98,36 @@ main {
 
 /* ── Tutorial: mobile landscape overrides ─────────────────────────── */
 @media (orientation: landscape) and (max-height: 600px) {
-  /* Tiles: 36×48 → 22×30 */
-  .mahjong-tile { width: 22px !important; height: 30px !important; }
+  /* Tiles: 36×48 → 29×39 (~30% smaller than portrait, not 40%) */
+  .mahjong-tile { width: 29px !important; height: 39px !important; }
 
-  /* Table card: cap at 180px */
-  .table-card-wrap { width: min(45vh, 180px) !important; }
+  /* Table card: ~30% bigger than before */
+  .table-card-wrap { width: min(58vh, 234px) !important; }
 
-  /* CalloutLabel inner text: smaller font + tighter padding */
-  .callout-label-text { font-size: 14px !important; padding: 8px 14px !important; }
+  /* CalloutLabel inner text: readable size */
+  .callout-label-text { font-size: 18px !important; padding: 10px 18px !important; }
 
-  /* Profile images: 120 → 70px */
-  .player-profile .profile-img-wrap { width: 70px !important; height: 70px !important; }
+  /* Profile images: 120 → 91px */
+  .player-profile .profile-img-wrap { width: 91px !important; height: 91px !important; }
 
-  /* Spacers & margins: compress vertical space */
-  .tut-spacer { height: 4px !important; }
-  .tut-mt-tiles { margin-top: 6px !important; }
-  .tut-mb-kong { margin-bottom: 6px !important; }
-  .tut-mt-kong { margin-top: 2px !important; }
+  /* Spacers & margins: moderate compression */
+  .tut-spacer { height: 6px !important; }
+  .tut-mt-tiles { margin-top: 8px !important; }
+  .tut-mb-kong { margin-bottom: 8px !important; }
+  .tut-mt-kong { margin-top: 3px !important; }
 
-  /* Chat bubble text: tighter padding */
-  .tut-bubble-text { padding: 6px 12px !important; }
+  /* Chat bubble text: comfortable padding */
+  .tut-bubble-text { padding: 8px 16px !important; }
 
-  /* Profile section: tighter gap */
-  .tut-profiles { gap: 16px !important; }
+  /* Profile section: moderate gap */
+  .tut-profiles { gap: 20px !important; }
 
-  /* Tile row labels: slightly smaller */
-  .tile-label { font-size: 9px !important; margin-bottom: 2px !important; }
+  /* Tile row labels */
+  .tile-label { font-size: 11px !important; margin-bottom: 3px !important; }
 
   /* Tile row bottom margins */
-  .tile-row-0, .tile-row-1 { margin-bottom: 4px !important; }
+  .tile-row-0, .tile-row-1 { margin-bottom: 5px !important; }
 
-  /* Step3 mj-label: reduce translate for smaller tiles */
-  .mj-label-step3 { transform: translate(80px, -35px) rotate(-4deg) !important; }
+  /* Step3 mj-label: adjust translate for bigger tiles */
+  .mj-label-step3 { transform: translate(105px, -45px) rotate(-4deg) !important; }
 }
