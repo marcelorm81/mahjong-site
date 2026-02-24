@@ -193,11 +193,11 @@ const TileSection: React.FC = () => {
 
 /* ── Dynamic bubble SVG path builder ─────────────────────────────── */
 const buildBubblePath = (W: number, bodyH: number): string => {
-  if (W < 60 || bodyH < 50) return '';
+  if (W < 20 || bodyH < 16) return '';
 
   const s = 2;      // stroke inset
-  const r = 22;     // corner radius
-  const k = 12.15;  // bezier handle length for r=22
+  const r = Math.min(22, (bodyH - 2 * s) / 2, (W - 2 * s) / 2);  // scale for small bubbles
+  const k = r * (12.15 / 22);  // proportional bezier handle
 
   const edgeY = bodyH - s; // body-path bottom
 
@@ -946,8 +946,8 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
         ? 'top-[calc(22vh+240px)] md:top-[18vh]'
       : 'top-[calc(22vh+210px)] md:top-[calc(30vh-130px)]');
 
-  const bubbleLeft =
-    step === 1 ? 'md:left-[calc(18%+500px)]'
+  const bubbleLeft = isLandMobile ? ''
+    : step === 1 ? 'md:left-[calc(18%+500px)]'
     : step >= 2 && step <= 5 ? 'md:left-[42%]'
     : 'md:left-[18%]';
 
@@ -960,11 +960,11 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
         return (
           <>
             <video key={desktopSrc} autoPlay loop muted playsInline
-              className="hidden md:block absolute inset-0 w-full h-full object-cover">
+              className="hidden md:block short:hidden absolute inset-0 w-full h-full object-cover">
               <source src={desktopSrc} type="video/mp4" />
             </video>
             <video key={mobileSrc} autoPlay loop muted playsInline
-              className="block md:hidden absolute inset-0 w-full h-full object-cover">
+              className="block md:hidden short:block absolute inset-0 w-full h-full object-cover">
               <source src={mobileSrc} type="video/mp4" />
             </video>
           </>
@@ -1018,42 +1018,42 @@ export const Tutorial: React.FC<TutorialProps> = ({ onClose, onNavigate }) => {
 
       {/* ── Step 1 — Tile showcase ── */}
       {step === 1 && (
-        <div className={`absolute z-10 left-[4vw] ${isLandMobile ? 'top-[17vh]' : 'top-[18vh]'} md:left-[5%] md:top-[26vh]`}>
+        <div className={`absolute z-10 left-[4vw] ${isLandMobile ? 'top-[17vh]' : 'top-[18vh] md:left-[5%] md:top-[26vh]'}`}>
           <TileSection key="tiles" />
         </div>
       )}
 
       {/* ── Step 2 — Kong + Mahjong with stickers ── */}
       {step === 2 && (
-        <div className={`absolute z-10 left-[4vw] ${isLandMobile ? 'top-[17vh]' : 'top-[calc(18vh-30px)]'} md:left-[5%] md:top-[18vh]`}>
+        <div className={`absolute z-10 left-[4vw] ${isLandMobile ? 'top-[17vh]' : 'top-[calc(18vh-30px)] md:left-[5%] md:top-[18vh]'}`}>
           <Step3Section key="step3" />
         </div>
       )}
 
       {/* ── Step 3 — Table with hand pointing (centered mobile, left-aligned desktop) ── */}
       {step === 3 && (
-        <div className={`absolute z-10 inset-x-0 ${isLandMobile ? 'top-[17vh]' : 'top-[14vh]'} md:left-[5%] md:right-auto md:top-[16vh] px-4 md:px-0`}>
+        <div className={`absolute z-10 inset-x-0 ${isLandMobile ? 'top-[17vh]' : 'top-[14vh] md:left-[5%] md:right-auto md:top-[16vh] md:px-0'} px-4`}>
           <Step4TableSection key="step4" />
         </div>
       )}
 
       {/* ── Step 4 — Kong + Profiles ── */}
       {step === 4 && (
-        <div className={`absolute z-10 left-[4vw] ${isLandMobile ? 'top-[17vh]' : 'top-[14vh]'} md:left-[5%] md:top-[16vh]`}>
+        <div className={`absolute z-10 left-[4vw] ${isLandMobile ? 'top-[17vh]' : 'top-[14vh] md:left-[5%] md:top-[16vh]'}`}>
           <Step5KongSection key="step5" />
         </div>
       )}
 
       {/* ── Step 5 — Mahjong tiles only ── */}
       {step === 5 && (
-        <div className={`absolute z-10 left-[4vw] ${isLandMobile ? 'top-[18vh]' : 'top-[calc(14vh+30px)]'} md:left-[5%] md:top-[16vh]`}>
+        <div className={`absolute z-10 left-[4vw] ${isLandMobile ? 'top-[18vh]' : 'top-[calc(14vh+30px)] md:left-[5%] md:top-[16vh]'}`}>
           <Step6MahjongSection key="step6" />
         </div>
       )}
 
       {/* ── Step 6 — Celebration title ── */}
       {step === 6 && (
-        <div className={`absolute z-20 inset-x-0 ${isLandMobile ? 'top-[17vh]' : 'top-[14vh]'} md:top-[12vh] flex justify-center`}>
+        <div className={`absolute z-20 inset-x-0 ${isLandMobile ? 'top-[17vh]' : 'top-[14vh] md:top-[12vh]'} flex justify-center`}>
           <CelebrationTitle key="celebration" />
         </div>
       )}

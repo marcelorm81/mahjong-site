@@ -105,7 +105,7 @@ main {
   .table-card-wrap { width: min(45vh, 180px) !important; }
 
   /* CalloutLabel inner text: smaller font + tighter padding */
-  .callout-label-text { font-size: 14px !important; padding: 4px 12px !important; }
+  .callout-label-text { font-size: 14px !important; padding: 8px 14px !important; }
 
   /* Profile images: 120 → 70px */
   .player-profile .profile-img-wrap { width: 70px !important; height: 70px !important; }
